@@ -187,3 +187,11 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/dumb/add_effect(mob/living/carbon/human/H, latespawn)
 	H.adjustBrainLoss(rand(30, 99))
+
+
+/datum/quality/dnd
+	desc = "Вы непредсказуемы, даже для самого себя."
+	requirement = "Кадет, Офицер, Варден, ГСБ."
+
+/datum/quality/dnd/add_effect(mob/living/carbon/human/H, latespawn)
+	ADD_TRAIT(H, TRAIT_RANDOM_DAMAGE, QUALITY_TRAIT)
