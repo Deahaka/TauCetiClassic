@@ -165,6 +165,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 					H.adjustFireLoss(20)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
+		REMOVE_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
 	else
 		busy = FALSE
 
