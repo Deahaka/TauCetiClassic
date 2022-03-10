@@ -187,3 +187,13 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/dumb/add_effect(mob/living/carbon/human/H, latespawn)
 	H.adjustBrainLoss(rand(30, 99))
+
+/datum/quality/trypanophobia
+	desc = "Вам с самого начала не понравились шприцы. Вам не хочется, чтобы ваше тело кололи иглой."
+	requirement = "Не СПУ."
+
+/datum/quality/trypanophobia/satisfies_requirements(mob/living/carbon/human/H, latespawn)
+	return !H.species.flags[IS_SYNTHETIC]
+
+/datum/quality/trypophobia/add_effect(mob/living/carbon/human/H, latespawn)
+	ADD_TRAIT(H, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT)
