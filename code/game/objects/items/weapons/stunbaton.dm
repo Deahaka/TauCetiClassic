@@ -87,7 +87,12 @@
 		//H.apply_effect(10, STUN, 0)
 		//H.apply_effect(10, WEAKEN, 0)
 		//H.apply_effect(10, STUTTER, 0)
-		H.apply_effect(agony,AGONY,0)
+		if(HAS_TRAIT(src, TRAIT_RANDOM_DAMAGE))
+			var/dice = "10d6"
+			var/r = roll(dice)
+			H.apply_effect(r,AGONY,0)
+		else
+			H.apply_effect(agony,AGONY,0)
 		H.set_lastattacker_info(user)
 		if(isrobot(src.loc))
 			var/mob/living/silicon/robot/R = src.loc
