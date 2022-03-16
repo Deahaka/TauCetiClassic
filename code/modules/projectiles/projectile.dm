@@ -172,6 +172,23 @@
 		if(!isliving(A))
 			loc = A.loc
 			return 0// nope.avi
+		if(HAS_TRAIT(firer, TRAIT_RANDOM_DAMAGE))
+			var/dice = 0
+			var/sum = roll(dice)
+			if(damage)
+				if(damage < 39)
+					dice = "4d10"
+					damage = sum
+				if(damage > 39)
+					dice = "3d20"
+					damage = sum
+			if(agony)
+				if(agony < 30)
+					dice = "5d4"
+					agony = sum
+				if(agony > 30)
+					dice = "4d20"
+					agony = sum
 		var/distance = get_dist(starting,loc) //More distance = less damage, except for high fire power weapons.
 		var/miss_modifier = 0
 		if(damage && (distance > 7))
