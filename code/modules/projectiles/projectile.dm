@@ -172,23 +172,6 @@
 		if(!isliving(A))
 			loc = A.loc
 			return 0// nope.avi
-		if(HAS_TRAIT(firer, TRAIT_RANDOM_DAMAGE))
-			var/dice = 0
-			var/sum = roll(dice)
-			if(damage)
-				if(damage < 39)
-					dice = "4d10"
-					damage = sum
-				if(damage > 39)
-					dice = "3d20"
-					damage = sum
-			if(agony)
-				if(agony < 30)
-					dice = "5d4"
-					agony = sum
-				if(agony > 30)
-					dice = "4d20"
-					agony = sum
 		var/distance = get_dist(starting,loc) //More distance = less damage, except for high fire power weapons.
 		var/miss_modifier = 0
 		if(damage && (distance > 7))
@@ -196,6 +179,28 @@
 				damage = max(1, damage - round(damage * (((distance-6)*3)/100)))
 				miss_modifier = - 100 // so sniper rifle and PTR-rifle projectiles cannot miss
 		if (istype(shot_from,/obj/item/weapon/gun))	//If you aim at someone beforehead, it'll hit more often.
+			if(HAS_TRAIT(firer, TRAIT_RANDOM_DAMAGE))
+				var/d_dice
+				var/a_dice
+				if(damage <= 10)
+					d_dice = "1d10"
+				if(damage > 10 && damage < 55)
+					d_dice = "5d10"
+				if(damage >= 55)
+					d_dice = "4d20"
+
+				if(agony < 25)
+					a_dice = "4d6"
+				if(agony >= 25 && agony < 60)
+					a_dice = "5d12"
+				if(agony >= 60)
+					a_dice = "4d20"
+				
+				var/r_damage = roll(d_dice)
+				var/r_agony = roll(a_dice)
+				damage = r_damage
+				agony = r_agony
+				
 			var/obj/item/weapon/gun/daddy = shot_from //Kinda balanced by fact you need like 2 seconds to aim
 			if (daddy.target && (original in daddy.target)) //As opposed to no-delay pew pew
 				miss_modifier -= 60
