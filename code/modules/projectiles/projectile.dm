@@ -196,6 +196,24 @@
 				if(agony >= 60)
 					a_dice = "4d20"
 				
+				if(TK in firer.mutations)
+					var/r_damage = roll(d_dice+10)
+					var/r_agony = roll(a_dice+10)
+					if(firer, MOOD_LEVEL_HAPPY4 to INFINITY)
+						var/r_damage = roll(d_dice+5)
+						var/r_agony = roll(a_dice+5)
+					if(TK in firer.mutations)
+						var/r_damage = roll(d_dice+10)
+						var/r_agony = roll(a_dice+10)
+					if(firer.examine(VOX))
+						var/r_damage = roll(d_dice+10)
+						var/r_agony = roll(a_dice+10)
+					if(psilocybin)
+						var/r_damage = roll(d_dice+15)
+						var/r_agony = roll(a_dice+15)
+				else
+					var/r_damage = roll(d_dice)
+					var/r_agony = roll(a_dice)
 				var/r_damage = roll(d_dice)
 				var/r_agony = roll(a_dice)
 				damage = r_damage
