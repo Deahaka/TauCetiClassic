@@ -197,14 +197,17 @@
 					a_dice = "4d20"
 				
 				if(TK in firer.mutations)							//how to increase the luck
-					2n9 = 10										//2n9 just randomname for var
+					var/order										// just randomname for var
+					var/d4c
+					var/a4c
+					n9large = (10)
 					if(firer, MOOD_LEVEL_HAPPY4 to INFINITY)
-						2n9 = 15
+						n6extradip = (5)
 						if(psilocybin in firer.total_volume)
-							2n9 = 30
-					
-					(d_dice+2n9) = d4c								//d4c just randomname for var
-					(a_dice+2n9) = a4c
+							n7 = (15)
+					order = (n9large)+(n6extradip)+(n7)
+					(d_dice+(order)) = d4c							//d4c just randomname for var
+					(a_dice+(order)) = a4c
 					var/r_damage = roll(d4c)
 					var/r_agony = roll(a4c)
 				else
