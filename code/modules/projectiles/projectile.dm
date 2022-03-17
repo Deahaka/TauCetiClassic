@@ -179,43 +179,37 @@
 				damage = max(1, damage - round(damage * (((distance-6)*3)/100)))
 				miss_modifier = - 100 // so sniper rifle and PTR-rifle projectiles cannot miss
 		if (istype(shot_from,/obj/item/weapon/gun))	//If you aim at someone beforehead, it'll hit more often.
+	
 			if(HAS_TRAIT(firer, TRAIT_RANDOM_DAMAGE))
 				var/d_dice
 				var/a_dice
-				if(damage <= 10)
+				if(damage <= 10)									//damage
 					d_dice = "1d10"
 				if(damage > 10 && damage < 55)
-					d_dice = "5d10"
+					d_dice = "7d8"
 				if(damage >= 55)
 					d_dice = "4d20"
-
-				if(agony < 25)
+				if(agony < 25)										//stun
 					a_dice = "4d6"
 				if(agony >= 25 && agony < 60)
 					a_dice = "5d12"
 				if(agony >= 60)
 					a_dice = "4d20"
 				
-				if(TK in firer.mutations)
-					var/r_damage = roll(d_dice+10)
-					var/r_agony = roll(a_dice+10)
+				if(TK in firer.mutations)							//how to increase the luck
+					2n9 = 10										//2n9 just randomname for var
 					if(firer, MOOD_LEVEL_HAPPY4 to INFINITY)
-						var/r_damage = roll(d_dice+5)
-						var/r_agony = roll(a_dice+5)
-					if(TK in firer.mutations)
-						var/r_damage = roll(d_dice+10)
-						var/r_agony = roll(a_dice+10)
-					if(firer.examine(VOX))
-						var/r_damage = roll(d_dice+10)
-						var/r_agony = roll(a_dice+10)
-					if(psilocybin)
-						var/r_damage = roll(d_dice+15)
-						var/r_agony = roll(a_dice+15)
+						2n9 = 15
+						if(psilocybin in firer.total_volume)
+							2n9 = 30
+					
+					(d_dice+2n9) = d4c								//d4c just randomname for var
+					(a_dice+2n9) = a4c
+					var/r_damage = roll(d4c)
+					var/r_agony = roll(a4c)
 				else
 					var/r_damage = roll(d_dice)
 					var/r_agony = roll(a_dice)
-				var/r_damage = roll(d_dice)
-				var/r_agony = roll(a_dice)
 				damage = r_damage
 				agony = r_agony
 				
