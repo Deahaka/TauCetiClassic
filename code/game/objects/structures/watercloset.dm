@@ -610,6 +610,9 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 		if(ishuman(user))
 			user:update_inv_gloves()
 		user.visible_message("<span class='notice'>[user] washes their hands using \the [src].</span>")
+		if(HAS_TRAIT(user, TRAIT_GREASY_FINGERS))
+			var/return_of_greasy = addtimer(CALLBACK(src, /mob/living/carbon/human/.proc/gr_fin_trigger, (5 MINUTES), TIMER_STOPPABLE))
+		REMOVE_TRAIT(user, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 	else
 		busy = FALSE
 
