@@ -202,6 +202,21 @@
 			else
 				H.visible_message("<span class='danger'>[H.name] stares cluelessly at [src] and drools.</span>")
 				return 1
+		if(HAS_TRAIT(user, TRAIT_WET_HANDS))
+			var/dice = "1d20"
+			var/t = roll(dice)
+			if(t > 12)
+				emp_act(1)
+				to_chat(user, "<span class='warning'>You pressed something and sparks appeared.</span>")
+				return TRUE
+			else if(t <= 2)
+				emp_act(2)
+				to_chat(user, "<span class='warning'>You pressed something and everything is gone.</span>")
+				return TRUE
+			else if(t == 10)
+				emp_act(3)
+				to_chat(user, "<span class='warning'>You poured water on the device.</span>") 
+				return TRUE
 	. = ..()
 
 /obj/machinery/computer/attack_paw(mob/user)
