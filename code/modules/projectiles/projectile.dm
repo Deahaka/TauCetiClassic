@@ -196,20 +196,21 @@
 				if(agony >= 60)
 					a_dice = "4d20"
 				
-				var/n9large = 0										//just randomname for var
+				var/n9large = 0
 				var/n6extradip = 0
 				var/n7 = 0
+				var/datum/component/mood/mood = GetComponent(/datum/component/mood)
 				if(TK in firer.mutations)							//how to increase the luck
 					n9large = 10
-				if(firer, MOOD_LEVEL_HAPPY4 to INFINITY)
-					n6extradip = 5
+				if(mood)
+					if(mood.mood_level >= 8)
+						n6extradip = 5
 				if(firer.reagents.has_reagent("psilocybin"))
 					n7 = 15
-				var/order = (n9large)+(n6extradip)+(n7)
+				var/order = (n9large)+(n6extradip)+(n7)				//just randomname for var
+
 				var/r_damage = roll(d_dice+(order))
 				var/r_agony = roll(a_dice+(order))
-				damage = r_damage
-				agony = r_agony
 				damage = r_damage
 				agony = r_agony
 				
