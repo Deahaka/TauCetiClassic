@@ -24,6 +24,8 @@
 	update_icon()
 
 /obj/item/weapon/reagent_containers/syringe/pickup(mob/living/user)
+	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+		syringe_fear_trigger(user)
 	. = ..()
 	update_icon()
 
@@ -61,6 +63,8 @@
 		if((CLUMSY in user.mutations) && prob(50))
 			target = user
 		syringestab(target, user)
+		if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+			syringe_fear_trigger(user)
 		return
 
 
@@ -295,6 +299,9 @@
 	if(!proximity)
 		return
 	if(!target.reagents) return
+	
+	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+		syringe_fear_trigger(user)
 
 	switch(mode)
 		if(SYRINGE_DRAW)
