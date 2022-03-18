@@ -611,7 +611,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 			user:update_inv_gloves()
 		user.visible_message("<span class='notice'>[user] washes their hands using \the [src].</span>")
 		if(HAS_TRAIT(user, TRAIT_GREASY_FINGERS))
-			addtimer(CALLBACK(src, /mob/living/carbon/human/.proc/gr_fin_trigger), rand(3000, 6000), TIMER_STOPPABLE)
+			addtimer(CALLBACK(src, .proc/gr_fin_trigger, user), rand(3000, 6000), TIMER_STOPPABLE)
 		REMOVE_TRAIT(user, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 	else
 		busy = FALSE
@@ -677,6 +677,9 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	else
 		busy = FALSE
 
+/obj/structure/sink/proc/gr_fin_trigger(mob/living/carbon/human/H)
+	if(!HAS_TRAIT(H, TRAIT_GREASY_FINGERS))
+		ADD_TRAIT(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 
 /obj/structure/sink/kitchen
 	name = "kitchen sink"
