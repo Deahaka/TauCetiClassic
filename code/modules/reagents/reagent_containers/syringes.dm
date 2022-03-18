@@ -220,6 +220,8 @@
 	add_blood(target)
 	add_fingerprint(usr)
 	update_icon()
+	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+		syringe_fear_trigger(user)
 
 /obj/item/weapon/reagent_containers/syringe/update_icon()
 	if(mode == SYRINGE_BROKEN)
@@ -277,6 +279,8 @@
 	update_icon()
 
 /obj/item/weapon/reagent_containers/ld50_syringe/pickup(mob/living/user)
+	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+		return
 	. = ..()
 	update_icon()
 
@@ -300,9 +304,6 @@
 		return
 	if(!target.reagents) return
 	
-	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
-		syringe_fear_trigger(user)
-
 	switch(mode)
 		if(SYRINGE_DRAW)
 
@@ -465,22 +466,21 @@
 
 /obj/item/weapon/reagent_containers/syringe/proc/syringe_fear_trigger(mob/living/carbon/human/user)
 	to_chat(user, "<font color='red' size='7'>IT'S SYRINGE!!!.</font>")
-	var/mob/living/carbon/human/user = H
 	if(prob(5))
-		H.eye_blind = 20
-		H.blurEyes(40)
-		to_chat(H, "<span class='warning'>Darkness closes in...</span>")
+		user.eye_blind = 20
+		user.blurEyes(40)
+		to_chat(user, "<span class='warning'>Darkness closes in...</span>")
 	if(prob(5))
-		H.hallucination = max(H.hallucination, 2)
-		to_chat(H, "<span class='warning'>Ringing in your ears. The visions are coming.</span>")
+		user.hallucination = max(user.hallucination, 2)
+		to_chat(user, "<span class='warning'>Ringing in your ears. The visions are coming.</span>")
 	if(prob(10))
-		SetSleeping(40 SECONDS)
-		to_chat(H, "<span class='warning'>Your will to fight wavers.</span>")
+		user.SetSleeping(40 SECONDS)
+		to_chat(user, "<span class='warning'>Your will to fight wavers.</span>")
 	if(prob(15))
 		var/bodypart_name = pick(BP_CHEST , BP_L_ARM , BP_R_ARM , BP_HEAD , BP_GROIN)
-		var/obj/item/organ/external/BP = H.bodyparts_by_name[bodypart_name]
+		var/obj/item/organ/external/BP = user.bodyparts_by_name[bodypart_name]
 		BP.take_damage(8, used_weapon = "Syringe") 	//half kithen-knife damage, without message for antiflud
 	if(prob(30))
-		H.Paralyse(20)
+		user.Paralyse(20)
 	if(prob(40))
-		H.make_dizzy(200)
+		user.make_dizzy(200)
