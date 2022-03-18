@@ -2306,10 +2306,6 @@
 		//310 is the normal bodytemp. 310.055
 		bodytemperature = min(330, bodytemperature + 10 * effect_coeff * TEMPERATURE_DAMAGE_COEFFICIENT)
 
-/mob/living/carbon/human/proc/gr_fin_trigger()
-	if(!HAS_TRAIT(src, TRAIT_GREASY_FINGERS))
-		ADD_TRAIT(src, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
-
 /mob/living/carbon/human/get_pumped(bodypart)
 	var/obj/item/organ/external/BP = get_bodypart(bodypart)
 	if(!BP)
