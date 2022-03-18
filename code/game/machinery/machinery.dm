@@ -392,8 +392,6 @@ Class Procs:
 		if(p < 16)
 			to_chat(user, "<span class='notice'>Your fingers are slipping.</span>")
 			return TRUE
-		else
-			to_chat(user, "<span class='notice'>Were you able to push the buttons.</span>")
 
 	if(hasvar(src, "wires"))              // Lets close wires window if panel is closed.
 		var/datum/wires/DW = vars["wires"] // Wires and machinery that uses this feature actually should be refactored.
