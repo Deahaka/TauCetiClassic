@@ -109,6 +109,8 @@
 						reagents.handle_reactions()
 					infect_limb(user, target)
 					user.visible_message("<span class='warning'>[user] takes a blood sample from [target].</span>", self_message = "<span class='notice'>You take a blood sample from [target]</span>", viewing_distance = 4)
+					if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+						syringe_fear_trigger(target)
 
 			else //if not mob
 				if(!target.reagents.total_volume)
@@ -157,6 +159,8 @@
 					M.log_combat(user, "injected with [name], reagents: [contained] (INTENT: [uppertext(user.a_intent)])")
 
 					reagents.reaction(target, INGEST)
+					if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+						syringe_fear_trigger(target)
 				else
 					if(!L.try_inject(user, TRUE, TRUE))
 						return
