@@ -247,10 +247,11 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/trypanophobia
 	desc = "Вам с самого начала не понравились шприцы. Вам не хочется, чтобы ваше тело кололи иглой."
-	requirement = "Не СПУ."
+	requirement = "Не СПУ, не Диона"
 
 /datum/quality/trypanophobia/satisfies_requirements(mob/living/carbon/human/H, latespawn)
 	return !H.species.flags[IS_SYNTHETIC]
+	return !H.species.flags[IS_PLANT]
 
 /datum/quality/trypanophobia/add_effect(mob/living/carbon/human/H, latespawn)
 	ADD_TRAIT(H, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT)
