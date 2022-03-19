@@ -488,6 +488,7 @@
 		user.Paralyse(20)
 	if(prob(40))
 		user.make_dizzy(150)
+	SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "scared", /datum/mood_event/scared)
 
 /obj/item/weapon/reagent_containers/syringe/nutriment
 
