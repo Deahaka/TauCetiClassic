@@ -165,6 +165,9 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 					H.adjustFireLoss(20)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
+		if(HAS_TRAIT(user, TRAIT_WET_HANDS))
+			addtimer(CALLBACK(src, .proc/wt_hnds_trigger, user), rand(3000, 6000), TIMER_STOPPABLE)
+		REMOVE_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
 	else
 		busy = FALSE
 
@@ -278,6 +281,10 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	icon_state = "dryer-emag"
 	to_chat(user, "<span class='warning'>You swipe near card and crack it to be hot.</span>")
 	return TRUE
+
+/obj/structure/dryer/proc/wt_hnds_trigger(mob/living/carbon/human/H)
+	if(!HAS_TRAIT(H, TRAIT_WET_HANDS))
+		ADD_TRAIT(H, TRAIT_WET_HANDS, QUALITY_TRAIT)
 
 /obj/machinery/shower
 	name = "shower"
@@ -610,6 +617,9 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 		if(ishuman(user))
 			user:update_inv_gloves()
 		user.visible_message("<span class='notice'>[user] washes their hands using \the [src].</span>")
+		if(HAS_TRAIT(user, TRAIT_GREASY_FINGERS))
+			addtimer(CALLBACK(src, .proc/gr_fin_trigger, user), rand(3000, 6000), TIMER_STOPPABLE)
+		REMOVE_TRAIT(user, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 	else
 		busy = FALSE
 
@@ -674,6 +684,9 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	else
 		busy = FALSE
 
+/obj/structure/sink/proc/gr_fin_trigger(mob/living/carbon/human/H)
+	if(!HAS_TRAIT(H, TRAIT_GREASY_FINGERS))
+		ADD_TRAIT(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 
 /obj/structure/sink/kitchen
 	name = "kitchen sink"
