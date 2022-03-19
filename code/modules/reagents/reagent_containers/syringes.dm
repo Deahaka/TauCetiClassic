@@ -63,8 +63,6 @@
 		if((CLUMSY in user.mutations) && prob(50))
 			target = user
 		syringestab(target, user)
-		if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
-			syringe_fear_trigger(user)
 		return
 
 
