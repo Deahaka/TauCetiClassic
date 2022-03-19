@@ -305,7 +305,7 @@
 	if(!proximity)
 		return
 	if(!target.reagents) return
-	
+
 	switch(mode)
 		if(SYRINGE_DRAW)
 
