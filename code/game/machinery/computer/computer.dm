@@ -203,8 +203,7 @@
 				H.visible_message("<span class='danger'>[H.name] stares cluelessly at [src] and drools.</span>")
 				return 1
 		if(HAS_TRAIT(H, TRAIT_WET_HANDS))
-			var/dice = "1d20"
-			var/t = roll(dice)
+			var/t = rand (1,20)
 			if(t > 12)
 				emp_act(1)
 				to_chat(H, "<span class='warning'>You pressed something and sparks appeared.</span>")
