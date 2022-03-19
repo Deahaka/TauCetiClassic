@@ -387,9 +387,7 @@ Class Procs:
 	if(!can_interact_with(user))
 		return TRUE
 	if(HAS_TRAIT(user, TRAIT_GREASY_FINGERS))
-		var/dice = "1d20"
-		var/p = roll(dice)
-		if(p < 16)
+		if(prob (75))
 			to_chat(user, "<span class='notice'>Your fingers are slipping.</span>")
 			return TRUE
 
