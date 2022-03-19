@@ -471,16 +471,16 @@
 		user.blurEyes(40)
 		to_chat(user, "<span class='warning'>Darkness closes in...</span>")
 	if(prob(5))
-		user.hallucination = max(user.hallucination, 2)
+		user.hallucination = max(user.hallucination, 200)
 		to_chat(user, "<span class='warning'>Ringing in your ears. The visions are coming.</span>")
 	if(prob(10))
 		user.SetSleeping(40 SECONDS)
 		to_chat(user, "<span class='warning'>Your will to fight wavers.</span>")
 	if(prob(15))
-		var/bodypart_name = pick(BP_CHEST , BP_L_ARM , BP_R_ARM , BP_HEAD , BP_GROIN)
+		var/bodypart_name = pick(BP_CHEST , BP_L_ARM , BP_R_ARM , BP_GROIN)
 		var/obj/item/organ/external/BP = user.bodyparts_by_name[bodypart_name]
-		BP.take_damage(8, used_weapon = "Syringe") 	//half kithen-knife damage, without message for antiflud
+		BP.take_damage(8, used_weapon = "Syringe") 										//half kithen-knife damage, without message for antiflud
 	if(prob(30))
 		user.Paralyse(20)
 	if(prob(40))
-		user.make_dizzy(200)
+		user.make_dizzy(150)
