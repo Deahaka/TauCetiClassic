@@ -246,7 +246,7 @@ var/global/list/allergen_reagents_list
 
 
 /datum/quality/trypanophobia
-	desc = "Вам с самого начала не понравились шприцы. Вам не хочется, чтобы ваше тело кололи иглой."
+	desc = "Вы с самого детства боитесь уколов."
 	requirement = "Не СПУ, не Диона"
 
 /datum/quality/trypanophobia/satisfies_requirements(mob/living/carbon/human/H, latespawn)
