@@ -482,7 +482,7 @@
 		if(ishuman(user))
 			var/bodypart_name = pick(BP_CHEST , BP_L_ARM , BP_R_ARM , BP_GROIN)
 			var/obj/item/organ/external/BP = user.get_bodypart(bodypart_name)
-			BP.take_damage(8, used_weapon = "Syringe") 	//half kithen-knife damage, without message for antiflood
+			BP.take_damage(8, used_weapon = "Syringe") 	//half kithen-knife damage
 			to_chat(user, "<span class='warning'>You got a cut with a syringe.</span>")
 	if(prob(30))
 		user.Paralyse(20)
