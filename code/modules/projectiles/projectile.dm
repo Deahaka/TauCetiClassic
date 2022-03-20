@@ -183,35 +183,32 @@
 			if(HAS_TRAIT(firer, TRAIT_RANDOM_DAMAGE))
 				var/d_dice
 				var/a_dice
-				if(damage <= 10)										//damage
-					d_dice = "1d10"
-				if(damage > 10 && damage < 55)
-					d_dice = "7d8"
-				if(damage >= 55)
-					d_dice = "4d20"
-				if(agony < 25)											//stun
-					a_dice = "4d6"
-				if(agony >= 25 && agony < 60)
-					a_dice = "5d12"
-				if(agony >= 60)
-					a_dice = "4d20"
-				
-				var/n_9_large = 0										//randomname for vars
-				var/n_6_extradip = 0
-				var/n_7 = 0
+				if(damage > 20 && damage <= 40)
+					d_dice = "5d8"
+				if(damage > 40 && damage <= 60)
+					d_dice = "3d20"
+
+				if(agony > 25 && agony <= 36)
+					a_dice = "3d12"
+				if(agony > 36 && agony <= 60)
+					a_dice = "3d20"
+				if(agony > 60)
+					a_dice = "6d20"
+				var/telekinesis_buff = 0
+				var/mood_buff = 0
+				var/drugs_buff = 0
 				var/datum/component/mood/mood = GetComponent(/datum/component/mood)
-				if(TK in firer.mutations)								//3 Science-Based Ways to Attract Good Luck:
-					n_9_large = 10										//1 - THING BIG
-				if(mood)												//2 - TAKE LIFE POSITIVELY
-					if(mood.mood_level >= 8)							//3 - DO SOMETHING THIS WEEK THAT YOU'VE NEVER DONE BEFORE.
-						n_6_extradip = 5								//IF YOU INTERACT WITH THE SAME PEOPLE EVERY DAY,
-				if(firer.reagents.has_reagent("psilocybin"))			//EAT THE SAME FOOD AND DO THE SAME CHORES,
-					n_7 = 15											//TRY TO  DIVERSIFY YOUR LIFE
-				var/twon_9 = roll(d_dice)								//AND CATCH LUCK BY THE TAIL
-				var/r_damage = twon_9+n_9_large+n_6_extradip+n_7
+				if(TK in firer.mutations)							//how to increase the luck
+					telekinesis_buff = "5"
+				if(mood && mood.mood_level)
+					if(mood.mood_level >= 8)
+						mood_buff = "5"
+				if(firer.reagents.has_reagent("psilocybin"))
+					drugs_buff = "5"
+				var/r_damage = roll(d_dice)+telekinesis_buff+mood_buff+drugs_buff
 				var/r_agony = roll(a_dice)
-				damage = r_damage
 				agony = r_agony
+				damage = r_damage
 				
 			var/obj/item/weapon/gun/daddy = shot_from //Kinda balanced by fact you need like 2 seconds to aim
 			if (daddy.target && (original in daddy.target)) //As opposed to no-delay pew pew
