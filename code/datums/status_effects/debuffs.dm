@@ -113,3 +113,5 @@
 	name = "Stasis Bag"
 	desc = "Your biological functions have halted. You could live forever this way, but it's pretty boring."
 	icon_state = "stasis"
+
+/datum/status_effect/dry_hands
