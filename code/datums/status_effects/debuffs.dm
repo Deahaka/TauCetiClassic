@@ -115,5 +115,9 @@
 	icon_state = "stasis"
 
 /datum/status_effect/dry_hands
-	if(CHECK_WET_HANDS(QUALITY_TRAIT))
-		ADD_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT))
+	REMOVE_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
+	addtimer(CALLBACK(src, /datum/status_effect/proc/make_wet_hands, user), rand(3000, 6000), TIMER_STOPPABLE)
+
+/datum/status_effect/proc/make_wet_hands(mob/living/carbon/human/user)
+	if(CHECK_WET_HANDS(user))
+		ADD_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
