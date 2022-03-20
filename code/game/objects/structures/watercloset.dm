@@ -165,7 +165,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 					H.adjustFireLoss(20)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
-		if(CHECK_WET_HANDS(user))
+		if(HAS_TRAIT(user, TRAIT_WET_HANDS))
 			var/mob/living/carbon/human/H = user
 			H.apply_status_effect(STATUS_EFFECT_DRY_HANDS, H)
 	else
