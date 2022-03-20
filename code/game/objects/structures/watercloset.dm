@@ -165,9 +165,8 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 					H.adjustFireLoss(20)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
-		if(HAS_TRAIT(user, TRAIT_WET_HANDS))
-			addtimer(CALLBACK(src, .proc/makes_hands_wet, user), rand(3000, 6000), TIMER_STOPPABLE)
-		REMOVE_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
+		if(CHECK_WET_HANDS(user))
+			user.apply_status_effect(STATUS_EFFECT_DRY_HANDS, user)
 	else
 		busy = FALSE
 
