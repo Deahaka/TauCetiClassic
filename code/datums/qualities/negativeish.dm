@@ -265,21 +265,6 @@ var/global/list/allergen_reagents_list
 	ADD_TRAIT(H, TRAIT_WET_HANDS, QUALITY_TRAIT)
 
 
-/datum/quality/dnd
-	desc = "Вы непредсказуемы, даже для самого себя."
-	requirement = "Кадет, Офицер, Варден, ГСБ."
-	
-	jobs_required = list(
-		"Security Officer",
-		"Security Cadet",
-		"Warden",
-		"Head of Security",
-	)
-
-/datum/quality/dnd/add_effect(mob/living/carbon/human/H, latespawn)
-	ADD_TRAIT(H, TRAIT_RANDOM_DAMAGE, QUALITY_TRAIT)
-
-
 /datum/quality/greasy_fingers
 	desc = "Ваши пальцы часто покрываются природным жиром."
 	requirement = "Не СПУ."
