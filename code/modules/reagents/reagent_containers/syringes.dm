@@ -282,8 +282,6 @@
 
 /obj/item/weapon/reagent_containers/ld50_syringe/pickup(mob/living/user)
 	. = ..()
-	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
-		user.drop_item()
 	update_icon()
 
 /obj/item/weapon/reagent_containers/ld50_syringe/dropped(mob/user)
