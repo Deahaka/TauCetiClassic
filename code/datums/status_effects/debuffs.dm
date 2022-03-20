@@ -115,3 +115,4 @@
 	icon_state = "stasis"
 
 /datum/status_effect/dry_hands
+	ADD_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT))
