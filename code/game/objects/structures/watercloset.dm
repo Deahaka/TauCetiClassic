@@ -166,7 +166,8 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
 		if(CHECK_WET_HANDS(user))
-			user.apply_status_effect(STATUS_EFFECT_DRY_HANDS, user)
+			var/mob/living/carbon/human/H = user
+			H.apply_status_effect(STATUS_EFFECT_DRY_HANDS, H)
 	else
 		busy = FALSE
 
@@ -281,9 +282,6 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	to_chat(user, "<span class='warning'>You swipe near card and crack it to be hot.</span>")
 	return TRUE
 
-/obj/structure/dryer/proc/makes_hands_wet(mob/living/carbon/human/H)
-	if(!HAS_TRAIT(H, TRAIT_WET_HANDS))
-		ADD_TRAIT(H, TRAIT_WET_HANDS, QUALITY_TRAIT)
 
 /obj/machinery/shower
 	name = "shower"
