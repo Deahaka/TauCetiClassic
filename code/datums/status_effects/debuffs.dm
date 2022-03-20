@@ -115,20 +115,22 @@
 	icon_state = "stasis"
 
 /datum/status_effect/dry_hands
-	id = "dry hands" //Used for screen alerts.
-	duration = 100
-	tick_interval = 10 //How many deciseconds between ticks, approximately. Leave at 10 for every second.
-	status_type = STATUS_EFFECT_REFRESH   //How many of the effect can be on one mob, and what happens when you try to add another
-	examine_text = "aboba"
-	
+	id = "dry hands"
+	tick_interval = 10
+	status_type = STATUS_EFFECT_REFRESH
+	alert_type = null
+	var/rand_duration
+
 /datum/status_effect/dry_hands/on_creation(mob/living/new_owner)
+	rand_duration = rand(3000, 6000)
+	duration = rand_duration
 	. = ..()
 	REMOVE_TRAIT(owner, TRAIT_WET_HANDS, QUALITY_TRAIT)
 
 /datum/status_effect/dry_hands/on_remove()
 	. = ..()
-	if(CHECK_WET_HANDS(owner))
+	if(!HAS_TRAIT_FROM(owner, TRAIT_WET_HANDS, QUALITY_TRAIT))
 		ADD_TRAIT(owner, TRAIT_WET_HANDS, QUALITY_TRAIT)
 
-/datum/status_effect/dry_hands/be_replaced()
+/datum/status_effect/dry_hands/refresh()
 	. = ..()
