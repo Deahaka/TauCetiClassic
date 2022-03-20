@@ -115,9 +115,20 @@
 	icon_state = "stasis"
 
 /datum/status_effect/dry_hands
-	REMOVE_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
-	addtimer(CALLBACK(src, /datum/status_effect/proc/make_wet_hands, user), rand(3000, 6000), TIMER_STOPPABLE)
+	id = "dry hands" //Used for screen alerts.
+	duration = 100
+	tick_interval = 10 //How many deciseconds between ticks, approximately. Leave at 10 for every second.
+	status_type = STATUS_EFFECT_REFRESH   //How many of the effect can be on one mob, and what happens when you try to add another
+	examine_text = "aboba"
 
-/datum/status_effect/proc/make_wet_hands(mob/living/carbon/human/user)
-	if(CHECK_WET_HANDS(user))
-		ADD_TRAIT(user, TRAIT_WET_HANDS, QUALITY_TRAIT)
+/datum/status_effect/dry_hands/on_creation(mob/living/new_owner)
+	. = ..()
+	REMOVE_TRAIT(owner, TRAIT_WET_HANDS, QUALITY_TRAIT)
+	ADD_TRAIT(owner, TRAIT_DRY_HANDS, QUALITY_TRAIT)
+/datum/status_effect/dry_hands/on_remove()
+	. = ..()
+	if(CHECK_WET_HANDS(owner))
+		ADD_TRAIT(owner, TRAIT_WET_HANDS, QUALITY_TRAIT)
+
+/datum/status_effect/dry_hands/be_replaced()
+	. = ..()
