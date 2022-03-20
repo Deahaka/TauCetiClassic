@@ -187,7 +187,8 @@
 					d_dice = "5d8"
 				if(damage > 40 && damage <= 60)
 					d_dice = "3d20"
-
+				if(damage > 60)
+					d_dice = "6d20"
 				if(agony > 25 && agony <= 36)
 					a_dice = "3d12"
 				if(agony > 36 && agony <= 60)
@@ -199,16 +200,16 @@
 				var/drugs_buff = 0
 				var/datum/component/mood/mood = GetComponent(/datum/component/mood)
 				if(TK in firer.mutations)							//how to increase the luck
-					telekinesis_buff = "5"
+					telekinesis_buff = 5
 				if(mood && mood.mood_level)
 					if(mood.mood_level >= 8)
-						mood_buff = "5"
+						mood_buff = 5
 				if(firer.reagents.has_reagent("psilocybin"))
-					drugs_buff = "5"
-				var/r_damage = roll(d_dice)+telekinesis_buff+mood_buff+drugs_buff
+					drugs_buff = 5
+				var/r_damage = roll(d_dice)+(telekinesis_buff+mood_buff+drugs_buff)
 				var/r_agony = roll(a_dice)
-				agony = r_agony
 				damage = r_damage
+				agony = r_agony
 				
 			var/obj/item/weapon/gun/daddy = shot_from //Kinda balanced by fact you need like 2 seconds to aim
 			if (daddy.target && (original in daddy.target)) //As opposed to no-delay pew pew
