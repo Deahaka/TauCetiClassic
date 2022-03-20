@@ -180,6 +180,8 @@
 			else
 				trans = reagents.trans_to(target, amount_per_transfer_from_this)
 			to_chat(user, "<span class='notice'>You inject [trans] units of the solution. The syringe now contains [src.reagents.total_volume] units.</span>")
+			if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+				causes_fear(target)
 			if (reagents.total_volume <= 0 && mode == SYRINGE_INJECT)
 				mode = SYRINGE_DRAW
 				update_icon()
@@ -472,7 +474,7 @@
 		to_chat(user, "<span class='warning'>Darkness closes in...</span>")
 	if(prob(5))
 		user.hallucination = max(user.hallucination, 200)
-		to_chat(user, "<span class='warning'>Ringing in your ears. The visions are coming.</span>")
+		to_chat(user, "<span class='warning'>Ringing in your ears...</span>")
 	if(prob(10))
 		user.SetSleeping(40 SECONDS)
 		to_chat(user, "<span class='warning'>Your will to fight wavers.</span>")
@@ -487,6 +489,7 @@
 	if(prob(40))
 		user.make_dizzy(150)
 	SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "scared", /datum/mood_event/scared)
+
 
 /obj/item/weapon/reagent_containers/syringe/nutriment
 
