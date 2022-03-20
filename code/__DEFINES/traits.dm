@@ -153,7 +153,6 @@
 #define TRAIT_GHOST_BUSTER        "ghost_buster"
 #define TRAIT_SYRINGE_FEAR        "syringe_fear"
 #define TRAIT_WET_HANDS           "wet_hands"
-#define TRAIT_DRY_HANDS           "dry_hands"
 #define TRAIT_GREASY_FINGERS      "greasy_fingers"
 
 /*
