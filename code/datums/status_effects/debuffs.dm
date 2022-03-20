@@ -120,11 +120,11 @@
 	tick_interval = 10 //How many deciseconds between ticks, approximately. Leave at 10 for every second.
 	status_type = STATUS_EFFECT_REFRESH   //How many of the effect can be on one mob, and what happens when you try to add another
 	examine_text = "aboba"
-
+	
 /datum/status_effect/dry_hands/on_creation(mob/living/new_owner)
 	. = ..()
 	REMOVE_TRAIT(owner, TRAIT_WET_HANDS, QUALITY_TRAIT)
-	ADD_TRAIT(owner, TRAIT_DRY_HANDS, QUALITY_TRAIT)
+
 /datum/status_effect/dry_hands/on_remove()
 	. = ..()
 	if(CHECK_WET_HANDS(owner))
