@@ -23,6 +23,8 @@
 
 #define STATUS_EFFECT_STASIS_BAG /datum/status_effect/incapacitating/stasis_bag // Halts biological functions like bleeding, chemical processing, blood regeneration, etc
 
+#define CHECK_WET_HANDS(source) HAS_TRAIT(source, TRAIT_WET_HANDS) && !HAS_TRAIT(source, TRAIT_DRY_HANDS)
+
 /////////////
 // NEUTRAL //
 /////////////
