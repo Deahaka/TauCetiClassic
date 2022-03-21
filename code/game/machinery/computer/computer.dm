@@ -202,7 +202,7 @@
 			else
 				H.visible_message("<span class='danger'>[H.name] stares cluelessly at [src] and drools.</span>")
 				return 1
-		if(HAS_TRAIT(H, TRAIT_WET_HANDS))
+		if((HAS_TRAIT(H, TRAIT_WET_HANDS)) || (H.gloves.wet))
 			var/t = rand (1,20)
 			if(t > 12)
 				emp_act(1)
