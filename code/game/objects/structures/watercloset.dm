@@ -682,7 +682,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 		busy = FALSE
 
 /obj/structure/sink/proc/makes_hands_greasy(mob/living/carbon/human/H)
-	if(!HAS_TRAIT(H, TRAIT_GREASY_FINGERS))
+	if(!HAS_TRAIT_FROM(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT))
 		ADD_TRAIT(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 
 /obj/structure/sink/kitchen
