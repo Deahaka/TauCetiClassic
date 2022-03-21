@@ -165,7 +165,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 					H.adjustFireLoss(20)
 		busy = FALSE
 		user.visible_message("<span class='notice'>[user] dried their hands using \the [src].</span>")
-		if(HAS_TRAIT(user, TRAIT_WET_HANDS))
+		if(HAS_TRAIT_FROM(user, TRAIT_WET_HANDS, QUALITY_TRAIT))
 			var/mob/living/carbon/human/H = user
 			H.apply_status_effect(STATUS_EFFECT_DRY_HANDS, H)
 	else
@@ -679,10 +679,6 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 			"<span class='notice'>You wash \a [I] using \the [src].</span>")
 	else
 		busy = FALSE
-
-/obj/structure/sink/proc/makes_hands_greasy(mob/living/carbon/human/H)
-	if(!HAS_TRAIT_FROM(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT))
-		ADD_TRAIT(H, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 
 /obj/structure/sink/kitchen
 	name = "kitchen sink"
