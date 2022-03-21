@@ -25,7 +25,7 @@
 
 /obj/item/weapon/reagent_containers/syringe/pickup(mob/living/user)
 	. = ..()
-	if(HAS_TRAIT(user, TRAIT_SYRINGE_FEAR))
+	if(HAS_TRAIT_FROM(user, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT))
 		causes_fear(user)
 	update_icon()
 
@@ -107,7 +107,7 @@
 						reagents.handle_reactions()
 					infect_limb(user, target)
 					user.visible_message("<span class='warning'>[user] takes a blood sample from [target].</span>", self_message = "<span class='notice'>You take a blood sample from [target]</span>", viewing_distance = 4)
-					if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+					if(HAS_TRAIT_FROM(target, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT))
 						causes_fear(target)
 
 			else //if not mob
@@ -157,7 +157,7 @@
 					M.log_combat(user, "injected with [name], reagents: [contained] (INTENT: [uppertext(user.a_intent)])")
 
 					reagents.reaction(target, INGEST)
-					if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+					if(HAS_TRAIT_FROM(target, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT))
 						causes_fear(target)
 				else
 					if(!L.try_inject(user, TRUE, TRUE))
@@ -180,7 +180,7 @@
 			else
 				trans = reagents.trans_to(target, amount_per_transfer_from_this)
 			to_chat(user, "<span class='notice'>You inject [trans] units of the solution. The syringe now contains [src.reagents.total_volume] units.</span>")
-			if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+			if(HAS_TRAIT_FROM(target, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT))
 				causes_fear(target)
 			if (reagents.total_volume <= 0 && mode == SYRINGE_INJECT)
 				mode = SYRINGE_DRAW
@@ -224,7 +224,7 @@
 	add_blood(target)
 	add_fingerprint(usr)
 	update_icon()
-	if(HAS_TRAIT(target, TRAIT_SYRINGE_FEAR))
+	if(HAS_TRAIT_FROM(target, TRAIT_SYRINGE_FEAR, QUALITY_TRAIT))
 		causes_fear(target)
 
 /obj/item/weapon/reagent_containers/syringe/update_icon()
