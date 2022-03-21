@@ -614,7 +614,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 		if(ishuman(user))
 			user:update_inv_gloves()
 		user.visible_message("<span class='notice'>[user] washes their hands using \the [src].</span>")
-		if(HAS_TRAIT(user, TRAIT_GREASY_FINGERS))
+		if(HAS_TRAIT_FROM(user, TRAIT_GREASY_FINGERS, QUALITY_TRAIT))
 			addtimer(CALLBACK(src, .proc/makes_hands_greasy, user), rand(3000, 6000), TIMER_STOPPABLE)
 		REMOVE_TRAIT(user, TRAIT_GREASY_FINGERS, QUALITY_TRAIT)
 	else
