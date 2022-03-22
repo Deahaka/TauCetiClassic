@@ -115,25 +115,27 @@
 	icon_state = "stasis"
 
 /datum/status_effect/remove_trait
-	id = "removes_traits"
+	id = "remove_traits"
 	tick_interval = 10
 	status_type = STATUS_EFFECT_REFRESH
-	alert_type = null
-    var/trait
-    var/trait_source
+	var/trait
+	var/trait_source
 
-/datum/status_effect/remove_trait/on_creation(mob/living/new_owner)
+/datum/status_effect/remove_trait/on_creation(mob/living/new_owner, time_amount)
+	duration = time_amount
 	. = ..()
-    REMOVE_TRAIT(owner, trait, trait_source)
+	REMOVE_TRAIT(owner, trait, trait_source)
 
-/datum/status_effect/remove_trait/on_remove
+/datum/status_effect/remove_trait/on_remove()
+	ADD_TRAIT(owner, trait, trait_source)
 	. = ..()
-    ADD_TRAIT(owner, trait, trait_source)
 
-/datum/status_effect/remove_trait/wet_hands
-    trait = TRAIT_WET_HANDS
-    trait_source = QUALITY_TRAIT
+/datum/status_effect/remove_trait/wet_hands/on_creation()
+	trait = TRAIT_WET_HANDS
+	trait_source = QUALITY_TRAIT
+	. = ..()
 
-/datum/status_effect/remove_trait/greasy_hands
-    trait = TRAIT_GREASY_HANDS
-    trait_source = QUALITY_TRAIT
+/datum/status_effect/remove_trait/greasy_hands/on_creation()
+	trait = TRAIT_GREASY_FINGERS
+	trait_source = QUALITY_TRAIT
+	. = ..()
