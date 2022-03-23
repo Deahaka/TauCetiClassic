@@ -440,3 +440,10 @@ var/global/static/list/taser_projectiles = list(
 	/obj/item/projectile/beam/stun,
 	/obj/item/ammo_casing/energy/electrode
 )
+
+//Quality proc to increase damage
+/obj/item/projectile/proc/roll_buff_dice(telekinesis_buff, drugs_buff)
+	if(TK in firer.mutations)
+		telekinesis_buff = 5
+	if(firer.reagents.has_reagent("psilocybin"))
+		drugs_buff = 5
