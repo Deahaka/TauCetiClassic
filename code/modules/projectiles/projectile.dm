@@ -201,7 +201,7 @@
 				var/telekinesis_buff = 0
 				var/drugs_buff = 0
 				roll_buff_dice(telekinesis_buff, drugs_buff)
-				var/r_damage = roll(d_dice)+(telekinesis_buff+mood_buff+drugs_buff)
+				var/r_damage = roll(d_dice)+(telekinesis_buff+drugs_buff)
 				var/r_agony = roll(a_dice)
 				damage = r_damage
 				agony = r_agony
