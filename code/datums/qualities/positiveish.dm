@@ -250,3 +250,10 @@
 /datum/quality/crusader/add_effect(mob/living/carbon/human/H, latespawn)
 	H.equip_or_collect(new /obj/item/clothing/head/helmet/crusader(H), SLOT_HEAD)
 	H.equip_or_collect(new /obj/item/clothing/suit/armor/crusader(H), SLOT_WEAR_SUIT)
+
+/datum/quality/lefty
+	desc = "Вы левша."
+	requirement = "Нет."
+
+/datum/quality/lefty/add_effect(mob/living/carbon/human/H, latespawn)
+	ADD_TRAIT(H, TRAIT_LEFTY, QUALITY_TRAIT)
