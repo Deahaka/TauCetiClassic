@@ -770,7 +770,9 @@ note dizziness decrements automatically in the mob's Life() proc.
 		was_lying = lying
 
 	if(lying && ((l_hand && l_hand.canremove) || (r_hand && r_hand.canremove)) && !isxeno(src))
-		drop_l_hand()
+		if(!HAS_TRAIT_FROM(src, TRAIT_LEFTY, QUALITY_TRAIT))
+			to_chat(src, "<span class='warning'>Boob.</span>")
+			drop_l_hand()
 		drop_r_hand()
 
 	for(var/obj/item/weapon/grab/G in grabbed_by)
