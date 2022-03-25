@@ -190,7 +190,7 @@ var/global/list/allergen_reagents_list
 
 
 /datum/quality/dnd
-	desc = "Вы непредсказуемы, даже для самого себя."
+	desc = "Вы непредсказуемы в бою, даже для самого себя."
 	requirement = "Кадет, Офицер, Варден, ГСБ."
 
 	jobs_required = list(
