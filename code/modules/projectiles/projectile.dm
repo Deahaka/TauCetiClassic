@@ -184,17 +184,17 @@
 				miss_modifier -= 60
 			
 			if(HAS_TRAIT_FROM(firer, TRAIT_RANDOM_DAMAGE, QUALITY_TRAIT))
-				var/d_dice										//broken		//SMG, tommy-gun, 
-				var/a_dice										//notrandom		//repeater, shotguns, revolver
+				var/d_dice
+				var/a_dice
 				if(damage >= 10 && damage < 20)		//grenade-launcher, plasma, pyrometer, kinetic
-					d_dice = "2d8"						//glock/colt but without damage
+					d_dice = "2d8"
 				if(damage >= 25 && damage <= 40)	//laser riffle, submachine, uzi, CE-pyrometer
 					d_dice = "5d8"
 				if(damage > 40 && damage <= 60)		//upgraded laser, saw, eagle, sniper
 					d_dice = "3d20"
 				if(damage > 60)
 					d_dice = "6d20"
-				if(agony >= 10 && agony <= 36)		//now???
+				if(agony >= 20 && agony <= 36)
 					a_dice = "3d12"
 				if(agony > 36 && agony <= 60)		//taser, colt, glock
 					a_dice = "3d20"
@@ -205,9 +205,9 @@
 				roll_buff_dice(telekinesis_buff, drugs_buff)
 				var/r_damage = roll(d_dice)+(telekinesis_buff+drugs_buff)
 				var/r_agony = roll(a_dice)
-				if(agony >= 10 || damage >= 10)
+				if(agony >= 20 || damage >= 10)
 					damage = r_damage
-					agony = r_agony						//foron pistol i arbalet tox damage ne randomet
+					agony = r_agony
 
 		if(distance > 1)
 			def_zone = get_zone_with_miss_chance(def_zone, M, miss_modifier)
