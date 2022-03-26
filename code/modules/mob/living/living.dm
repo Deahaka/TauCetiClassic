@@ -19,6 +19,8 @@
 
 	beauty.AddModifier("stat", additive=beauty_living)
 
+	verbs += /mob/living/carbon/proc/crawl
+
 /mob/living/Destroy()
 	allowed_combos = null
 	known_combos = null
