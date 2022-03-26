@@ -120,10 +120,9 @@
 					var/dice = "3d20"
 					var/r_agony = roll(dice)
 					agony = r_agony
-					H.apply_effect(agony,AGONY,0)
 				else
 					agony = 60
-					H.apply_effect(agony,AGONY,0)
+				H.apply_effect(agony,AGONY,0)
 				charges--
 
 				for(var/mob/M in player_list) if(M.key == src.fingerprintslast)
