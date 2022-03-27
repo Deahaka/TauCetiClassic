@@ -1030,11 +1030,16 @@
 						CM.drop_from_inventory(CM.legcuffed)
 
 /// What should the mob do when laying down. Return TRUE to prevent default behavior.
-/mob/living/proc/on_lay_down()
-	return
+/mob/living/proc/crawl_can_use()
+	var/turf/T = get_turf(src)
+	if( (locate(/obj/structure/table) in T) || (locate(/obj/structure/stool/bed) in T) || (locate(/obj/structure/plasticflaps) in T))
+		return FALSE
+	return TRUE
 
-/mob/living/verb/lay_down()
-	set name = "Rest"
+/mob/living/var/crawl_getup = FALSE
+
+/mob/living/verb/crawl()
+	set name = "Crawl"
 	set category = "IC"
 
 	if(isrobot(usr))
@@ -1042,9 +1047,14 @@
 		R.toggle_all_components()
 		to_chat(R, "<span class='notice'>You toggle all your components.</span>")
 		return
-
-//Already resting and have others debuffs
-	if( resting && (IsSleeping() || weakened || paralysis || stunned) )
+	
+	if(crawl_getup)
+		return
+	
+	if((status_flags & FAKEDEATH) || buckled)
+		return
+//Already crawling and have others debuffs
+	if( crawling && (IsSleeping() || weakened || paralysis || stunned) )
 		to_chat(src, "<span class='rose'>You can't wake up.</span>")
 
 //Restrained and some debuffs
@@ -1056,14 +1066,36 @@
 		to_chat(src, "<span class='rose'>You can't move.</span>")
 
 //Debuffs check
-	else if(!resting && (IsSleeping() || weakened || paralysis || stunned) )
+	else if(!crawling && (IsSleeping() || weakened || paralysis || stunned) )
 		to_chat(src, "<span class='rose'>You can't control yourself.</span>")
-
-	else
-		if(on_lay_down())
+		
+	if(crawling)
+		crawl_getup = TRUE
+		if(do_after(src, 100, target = src))
+			crawl_getup = FALSE
+			if(!crawl_can_use())
+				playsound(src, 'sound/weapons/tablehit1.ogg', VOL_EFFECTS_MASTER)
+				if(ishuman(src))
+					var/mob/living/carbon/human/H = src
+					var/obj/item/organ/external/BP = H.bodyparts_by_name[BP_HEAD]
+					BP.take_damage(5, used_weapon = "Facepalm") // what?.. that guy was insane anyway.
+				else
+					take_overall_damage(5, used_weapon = "Table")
+				Stun(1)
+				to_chat(src, "<span class='danger'>Ouch!</span>")
+				return
+			layer = 4.0
+		else
+			crawl_getup = FALSE
 			return
-		resting = !resting
-		to_chat(src, "<span class='notice'>You are now [resting ? "resting" : "getting up"].</span>")
+	else
+		if(!crawl_can_use())
+			to_chat(src, "<span class='notice'>You can't crawl here!</span>")
+			return
+	pass_flags ^= PASSCRAWL
+	update_canmove()
+	crawling = !crawling
+	to_chat(src, "<span class='notice'>You are now [crawling ? "crawling" : "getting up"].</span>")
 
 //called when the mob receives a bright flash
 /mob/living/proc/flash_eyes(intensity = 1, override_blindness_check = 0, affect_silicon = 0, visual = 0, type = /atom/movable/screen/fullscreen/flash)
