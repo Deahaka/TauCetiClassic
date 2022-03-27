@@ -78,7 +78,7 @@
 	if(locate(/obj/structure/alien/weeds) in loc)
 		if(health >= maxHealth)
 			adjustToxLoss(plasma_rate)
-		else if(resting)
+		else if(crawling)
 			adjustBruteLoss(-heal_rate*2)
 			adjustFireLoss(-heal_rate*2)
 			adjustOxyLoss(-heal_rate*2)
@@ -284,6 +284,7 @@ Hit Procs
 	return "xltrails"
 
 /mob/living/carbon/xenomorph/crawl()
+	..()
 	return
 
 /mob/living/carbon/xenomorph/swap_hand()
