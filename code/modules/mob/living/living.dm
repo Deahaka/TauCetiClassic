@@ -1092,9 +1092,9 @@
 		if(!crawl_can_use())
 			to_chat(src, "<span class='notice'>You can't crawl here!</span>")
 			return
+	crawling = !crawling
 	pass_flags ^= PASSCRAWL
 	update_canmove()
-	crawling = !crawling
 	to_chat(src, "<span class='notice'>You are now [crawling ? "crawling" : "getting up"].</span>")
 
 //called when the mob receives a bright flash
