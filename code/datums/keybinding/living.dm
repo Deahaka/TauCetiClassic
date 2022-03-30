@@ -45,7 +45,7 @@
 	return TRUE
 
 /datum/keybinding/living/crawl
-	hotkey_keys = list("B")
+	hotkey_keys = list("None")
 	name = "crawl"
 	full_name = "Crawl"
 	description = "crawl"
