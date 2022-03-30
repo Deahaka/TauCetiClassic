@@ -283,9 +283,13 @@ Hit Procs
 /mob/living/carbon/xenomorph/getTrail()
 	return "xltrails"
 
+/mob/living/carbon/xenomorph/update_canmove()
+	canmove = !(weakened || paralysis || stat || (status_flags & FAKEDEATH) || crawling || stunned || captured || pinned.len)
+
 /mob/living/carbon/xenomorph/crawl()
-	..()
-	return
+	crawling = !crawling
+	update_canmove()
+	to_chat(src, "<span class='notice'>You are now [crawling ? "resting" : "getting up"].</span>")
 
 /mob/living/carbon/xenomorph/swap_hand()
 	var/obj/item/item_in_hand = get_active_hand()
