@@ -193,7 +193,7 @@
 	icon_state = "pbag"
 	my_icon_state = "pbag"
 	pixel_y = 0
-	crawling = FALSE
+	SetCrawling(0)
 
 /mob/living/pbag/verb/user_hang()
 	set name = "Hang Bag"
