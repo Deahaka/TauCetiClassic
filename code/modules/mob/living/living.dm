@@ -1095,7 +1095,6 @@
 			to_chat(src, "<span class='notice'>You can't crawl here!</span>")
 			return
 	SetCrawling(!crawling)
-	pass_flags ^= PASSCRAWL
 	update_canmove()
 	to_chat(src, "<span class='notice'>You are now [crawling ? "crawling" : "getting up"].</span>")
 
