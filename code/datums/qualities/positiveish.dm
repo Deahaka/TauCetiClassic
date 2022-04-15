@@ -329,3 +329,11 @@
 
 /datum/quality/negativeish/anatomist/add_effect(mob/living/carbon/human/H, latespawn)
 	ADD_TRAIT(H, TRAIT_ANATOMIST, QUALITY_TRAIT)
+
+
+/datum/quality/positiveish/lefty
+	desc = "Вы левша."
+	requirement = "Нет."
+
+/datum/quality/positiveish/lefty/add_effect(mob/living/carbon/human/H, latespawn)
+	ADD_TRAIT(H, TRAIT_LEFTY, QUALITY_TRAIT)
