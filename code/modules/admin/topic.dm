@@ -723,12 +723,6 @@
 		else
 			jobs += "<td width='20%'><a href='?src=\ref[src];jobban3=[ROLE_BLOB];jobban4=\ref[M]'>[ROLE_BLOB]</a></td>"
 
-		//Malfunctioning AI
-		if(jobban_isbanned(M, ROLE_MALF) || isbanned_dept)
-			jobs += "<td width='20%'><a class='red' href='?src=\ref[src];jobban3=[ROLE_MALF];jobban4=\ref[M]'>[ROLE_MALF]</a></td>"
-		else
-			jobs += "<td width='20%'><a href='?src=\ref[src];jobban3=[ROLE_MALF];jobban4=\ref[M]'>[ROLE_MALF]</a></td>"
-
 		//Families
 		if(jobban_isbanned(M, ROLE_FAMILIES) || isbanned_dept)
 			jobs += "<td width='20%'><a class='red' href='?src=\ref[src];jobban3=[ROLE_FAMILIES];jobban4=\ref[M]'>[ROLE_FAMILIES]</a></td>"
