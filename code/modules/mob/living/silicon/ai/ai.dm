@@ -754,16 +754,6 @@ var/global/list/ai_verbs_default = list(
 		return
 	gen_radial_holo(asnwer)
 
-/*/mob/living/silicon/ai/proc/corereturn()
-	set category = "Malfunction"
-	set name = "Return to Main Core"
-
-	var/obj/machinery/power/apc/apc = src.loc
-	if(!istype(apc))
-		to_chat(src, "<span class='notice'>You are already in your Main Core.</span>")
-		return
-	apc.malfvacate()*/
-
 //Toggles the luminosity and applies it by re-entereing the camera.
 /mob/living/silicon/ai/proc/toggle_camera_light()
 
