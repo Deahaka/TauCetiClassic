@@ -110,7 +110,6 @@
 		if(H.stat != DEAD)
 			target = H
 			return
-	return
 
 /obj/singularity/attack_ai() //to prevent ais from gibbing themselves when they click on one.
 	return
