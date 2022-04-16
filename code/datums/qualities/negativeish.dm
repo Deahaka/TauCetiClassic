@@ -294,8 +294,8 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/negativeish/singularly_attractive/add_effect(mob/living/carbon/human/H, latespawn)
 	singularity_beacon_list += H
-	RegisterSignal(mob, list(COMSIG_PARENT_QDELETING), .proc/remove)
-	RegisterSignal(mob, list(COMSIG_MOB_DIED), .proc/remove)
+	RegisterSignal(H, list(COMSIG_PARENT_QDELETING), .proc/remove)
+	RegisterSignal(H, list(COMSIG_MOB_DIED), .proc/remove)
 
 /datum/quality/negativeish/singularly_attractive/proc/remove()
 	SIGNAL_HANDLER
