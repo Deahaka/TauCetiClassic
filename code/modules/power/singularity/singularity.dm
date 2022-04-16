@@ -102,11 +102,11 @@
 	eat()
 	dissipate()
 	check_energy()
-	for(var/obj/machinery/singularity_beacon/singubeacon in singularity_beacon_list)
+	for(var/obj/machinery/singularity_beacon/singubeacon in global.singularity_beacon_list)
 		if(singubeacon.active)
 			target = singubeacon
 			return
-	for(var/mob/living/carbon/human/H in singularity_beacon_list)
+	for(var/mob/living/carbon/human/H in global.singularity_beacon_list)
 		if(H.stat != DEAD)
 			target = H
 			return
