@@ -289,7 +289,7 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/negativeish/singularly_attractive
 	name = "Singularly Attractive"
-	desc = "Вы чрезвычайно привлекательны... для лорда Сингуло."
+	desc = "Вы чрезвычайно привлекательны... для неприятностей."
 	requirement = "Нет."
 
 /datum/quality/negativeish/singularly_attractive/add_effect(mob/living/carbon/human/H, latespawn)
