@@ -102,9 +102,6 @@
 		if(user)
 			to_chat(user, "<span class='notice'>The connected wire doesn't have enough current.</span>")
 		return 1
-	for(var/obj/singularity/singulo in poi_list)
-		if(singulo.z == z)
-			singulo.target = src
 	icon_state = "[icontype]1"
 	singularity_beacon_list += src
 	active = 1
