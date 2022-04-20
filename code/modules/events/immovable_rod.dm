@@ -88,7 +88,7 @@ In my current plan for it, 'solid' will be defined as anything with density == 1
 			var/turf/T = get_turf(clong)
 			for(T in view(1,src))
 				T.ex_act(EXPLODE_HEAVY)
-			qdel(src)
+				qdel(src)
 	else if(istype(clong, type))
 		var/obj/effect/immovablerod/other = clong
 		visible_message("<span class='danger'>[src] collides with [other]!</span>")
