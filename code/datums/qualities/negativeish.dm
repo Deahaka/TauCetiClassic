@@ -298,4 +298,7 @@ var/global/list/allergen_reagents_list
 
 /datum/quality/negativeish/singularly_attractive/proc/remove(mob/living/carbon/human/H)
 	SIGNAL_HANDLER
+	for(var/obj/singularity/singulo in poi_list)
+		if(singulo.target == H)
+			singulo.target = null
 	LAZYREMOVE(global.singularity_beacon_list, H)
