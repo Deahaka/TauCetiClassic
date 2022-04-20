@@ -86,7 +86,8 @@ In my current plan for it, 'solid' will be defined as anything with density == 1
 			clong.ex_act(EXPLODE_HEAVY)
 		for(clong in global.singularity_beacon_list)
 			var/turf/T = get_turf(clong)
-			T.ex_act(EXPLODE_HEAVY)
+			for(T in view(1,src))
+				T.ex_act(EXPLODE_HEAVY)
 			qdel(src)
 	else if(istype(clong, type))
 		var/obj/effect/immovablerod/other = clong
