@@ -38,10 +38,9 @@ In my current plan for it, 'solid' will be defined as anything with density == 1
 		message_admins("[src] has spawned at [COORD(src)] [ADMIN_JMP(src)] [ADMIN_FLW(src)].")
 	z_original = z
 	destination = end
+	var/list/target_list = list()
 	for(var/mob/living/carbon/human/H in global.singularity_beacon_list)
-		var/list/target_list = list()
-		if(H)
-			target_list += H
+		target_list += H
 		var/target_mob = pick(target_list)
 		var/turf_mob = get_turf(target_mob)
 		destination = turf_mob
