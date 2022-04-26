@@ -425,7 +425,7 @@
 //proc for pest-animals (mouse, lizard)
 /mob/living/simple_animal/proc/handle_gnaw()
 	var/turf/T = get_turf(src)
-	if(ismouse(src) || islizard(src))
+	if(israt(src) || islizard(src))
 		for(var/obj/structure/cable/C in T)
 			C.get_health_damage()
 	if(ismouse(src))
