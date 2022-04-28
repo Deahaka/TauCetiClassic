@@ -104,6 +104,10 @@
 		return
 	..()
 
+/mob/living/simple_animal/mouse/handle_gnaw()
+	. = ..()
+
+
 //copy paste from alien/larva, if that func is updated please update this one alsoghost
 /mob/living/simple_animal/mouse/verb/hide()
 	set name = "Hide"
@@ -196,9 +200,8 @@ ADD_TO_GLOBAL_LIST(/mob/living/simple_animal/mouse/brown/Tom, chief_animal_list)
 
 /mob/living/simple_animal/mouse/rat
 	name = "Rat"
-	melee_damage = 1
+	melee_damage = 3
 	ventcrawler = 0
-	var/structure_damage = 2
 
 /mob/living/simple_animal/mouse/rat/atom_init()
 	. = ..()
@@ -210,4 +213,11 @@ ADD_TO_GLOBAL_LIST(/mob/living/simple_animal/mouse/brown/Tom, chief_animal_list)
 
 /mob/living/simple_animal/mouse/rat/Life()
 	..()
-	handle_gnaw(structure_damage)
+	handle_gnaw()
+
+/mob/living/simple_animal/mouse/rat/handle_gnaw()
+	. = ..()
+	var/turf/T = get_turf(src)
+	for(var/obj/structure/disposalpipe/D in T)
+		D.wear_out(melee_damage)
+	return
