@@ -200,7 +200,7 @@ ADD_TO_GLOBAL_LIST(/mob/living/simple_animal/mouse/brown/Tom, chief_animal_list)
 
 /mob/living/simple_animal/mouse/rat
 	name = "Rat"
-	melee_damage = 3
+	melee_damage = 2
 	ventcrawler = 0
 
 /mob/living/simple_animal/mouse/rat/atom_init()
