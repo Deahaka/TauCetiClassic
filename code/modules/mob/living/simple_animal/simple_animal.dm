@@ -423,7 +423,8 @@
 	return FALSE
 
 //proc for pest-animals (rat, lizard)
-/mob/living/simple_animal/proc/handle_gnaw(mob/living/simple_animal/A, structure_damage)
+/mob/living/simple_animal/proc/handle_gnaw(structure_damage)
+	var/A = src
 	var/turf/T = get_turf(A)
 	for(var/obj/structure/cable/C in T)
 		C.get_damage(structure_damage)
