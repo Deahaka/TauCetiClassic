@@ -216,9 +216,5 @@ ADD_TO_GLOBAL_LIST(/mob/living/simple_animal/mouse/brown/Tom, chief_animal_list)
 	AddComponent(/datum/component/wear_out)
 	..()
 
-/mob/living/simple_animal/mouse/rat/Life()
-	..()
-	handle_gnaw()
-
 /mob/living/simple_animal/mouse/rat/snuffles()
 	return
