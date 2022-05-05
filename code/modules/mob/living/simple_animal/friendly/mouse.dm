@@ -212,3 +212,7 @@ ADD_TO_GLOBAL_LIST(/mob/living/simple_animal/mouse/brown/Tom, chief_animal_list)
 /mob/living/simple_animal/mouse/rat/atom_init()
 	. = ..()
 	AddComponent(/datum/component/gnawing)
+	create_spawner(/datum/spawner/living/rat, src)
+
+/mob/living/simple_animal/mouse/rat/attack_ghost(mob/dead/observer/O)
+	try_request_n_transfer(O, "Do you want to become a rat?", ROLE_GHOSTLY, , show_warnings = TRUE)
