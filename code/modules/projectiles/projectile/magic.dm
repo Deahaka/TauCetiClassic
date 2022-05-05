@@ -142,6 +142,7 @@
 		// Change our allegiance!
 		var/mob/living/simple_animal/hostile/mimic/copy/C = change
 		C.ChangeOwner(firer)
+		create_spawner(/datum/spawner/living/mimic, C)
 
 /obj/item/projectile/magic/resurrection
 	name = "bolt of resurrection"
