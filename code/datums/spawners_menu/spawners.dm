@@ -652,4 +652,3 @@ var/global/list/datum/spawners_cooldown = list()
 
 /datum/spawner/living/mimic/spawn_ghost(mob/dead/observer/ghost)
 	. = ..()
-	mob.transfer_personality(ghost.client)

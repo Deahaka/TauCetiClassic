@@ -1,5 +1,5 @@
 /mob/living/carbon/xenomorph/humanoid/maid
-	name = "lasty alien maid"
+	name = "lusty alien maid"
 	caste = "m"
 	maxHealth = 160
 	health = 160
@@ -23,7 +23,7 @@
 	alien_list[ALIEN_MAID] += src
 	. = ..()
 
-/mob/living/carbon/xenomorph/humanoid/drone/Destroy()
+/mob/living/carbon/xenomorph/humanoid/maid/Destroy()
 	alien_list[ALIEN_MAID] -= src
 	return ..()
 
@@ -31,6 +31,6 @@
 	return(1 + move_delay_add + config.alien_delay)
 
 /mob/living/carbon/xenomorph/humanoid/maid/can_pickup(obj/O)
-	if((istype(O, /obj/item/weapon/reagent_containers/spray)) || (istype(O, /obj/item/weapon/mop)) || (istype(O, /obj/item/weapon/storage/bag/trash/)) || (istype(O, /obj/item/device/lightreplacer)) || (istype(O, /obj/item/weapon/reagent_containers/glass/bucket)))
+	if((istype(O, /obj/item/weapon/reagent_containers/spray)) || (istype(O, /obj/item/weapon/mop)) || (istype(O, /obj/item/weapon/storage/bag/trash/)) || (istype(O, /obj/item/device/lightreplacer)) || (istype(O, /obj/item/weapon/reagent_containers/glass/bucket)) || (istype(O, /obj/item/weapon/reagent_containers/glass/rag)))
 		return TRUE
 	return FALSE
