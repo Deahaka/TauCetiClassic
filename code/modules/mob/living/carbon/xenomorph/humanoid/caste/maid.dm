@@ -1,5 +1,5 @@
 /mob/living/carbon/xenomorph/humanoid/maid
-	name = "lasty alien maid"
+	name = "lusty alien maid"
 	caste = "m"
 	maxHealth = 160
 	health = 160
