@@ -36,7 +36,6 @@
 	var/randomize = pick("monkey","robot","human", "animal", "xeno")
 	if(isxeno(M))
 		randomize = "xeno"
-	randomize = "animal"
 	switch(randomize)
 		if("monkey")
 			new_mob = new /mob/living/carbon/monkey(M.loc)
