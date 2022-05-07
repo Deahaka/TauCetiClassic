@@ -1,5 +1,5 @@
 /mob/living/carbon/xenomorph/humanoid/maid
-	name = "lasty alien maid"
+	name = "lusty alien maid"
 	caste = "m"
 	maxHealth = 160
 	health = 160
@@ -13,7 +13,7 @@
                         )
 
 
-/mob/living/carbon/xenomorph/humanoid/maid/atom_init(become_big_maid)
+/mob/living/carbon/xenomorph/humanoid/maid/atom_init()
 	var/datum/reagents/R = new/datum/reagents(100)
 	reagents = R
 	R.my_atom = src
@@ -23,7 +23,7 @@
 	alien_list[ALIEN_MAID] += src
 	. = ..()
 
-/mob/living/carbon/xenomorph/humanoid/drone/Destroy()
+/mob/living/carbon/xenomorph/humanoid/maid/Destroy()
 	alien_list[ALIEN_MAID] -= src
 	return ..()
 
