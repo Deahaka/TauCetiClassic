@@ -23,7 +23,7 @@
 	alien_list[ALIEN_MAID] += src
 	. = ..()
 
-/mob/living/carbon/xenomorph/humanoid/drone/Destroy()
+/mob/living/carbon/xenomorph/humanoid/maid/Destroy()
 	alien_list[ALIEN_MAID] -= src
 	return ..()
 
