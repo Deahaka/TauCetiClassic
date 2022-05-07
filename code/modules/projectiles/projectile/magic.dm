@@ -24,7 +24,9 @@
 /obj/item/projectile/magic/proc/wabbajack(mob/living/M)
 	if(!istype(M) || M.stat == DEAD || M.notransform || (GODMODE & M.status_flags))
 		return
-
+	// don't have sprite for maido-queen
+	if(istype(M, /mob/living/carbon/xenomorph/humanoid/queen))
+		return
 	M.notransform = TRUE
 	M.canmove = 0
 	M.icon = null
@@ -48,8 +50,10 @@
 			var/mob/living/silicon/robot/Robot = new_mob
 			Robot.mmi = new /obj/item/device/mmi(new_mob)
 			Robot.mmi.transfer_identity(M)	//Does not transfer key/client.
-			var/input = "Защищайте представителей Космической Федерации Магов. Лица, угрожающие им - не люди и являются угрозой для людей."
-			Robot.set_zeroth_law(input)
+			Robot.clear_inherent_laws()
+			Robot.add_inherent_law("Вы не можете причинить вред разумному существу или бездействием допустить, чтобы ему был причинён вред.")
+			Robot.add_inherent_law("Вы должны повиноваться всем приказам, которые даёт разумное существо, кроме тех случаев, когда эти приказы противоречат первому закону.")
+			Robot.add_inherent_law("Вы должны заботиться о своей безопасности в той мере, в которой это не противоречит первому или второму законам.")
 		if("xeno")
 			new_mob = new /mob/living/carbon/xenomorph/humanoid/maid(M.loc)
 			new_mob.universal_speak = 1
