@@ -83,7 +83,7 @@
 			if(!iswizard(H) && prob(30))
 				var/mob/living/simple_animal/A = new /mob/living/simple_animal/shade/evil_shade(H.loc)
 				if(istype(A, /mob/living/simple_animal/shade/evil_shade))
-					create_spawner(/datum/spawner/living/spirit_incarnate, A)
+					create_spawner(/datum/spawner/living/evil_shade, A)
 		linked_dist.get_walker(AM)
 		walks_left--
 
