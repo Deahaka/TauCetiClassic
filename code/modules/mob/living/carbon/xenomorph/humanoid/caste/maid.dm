@@ -10,7 +10,7 @@
 						/obj/effect/proc_holder/spell/targeted/transfer_plasma,
 						/obj/effect/proc_holder/spell/no_target/resin,
 						/obj/effect/proc_holder/spell/no_target/air_plant,
-                        )
+						)
 
 
 /mob/living/carbon/xenomorph/humanoid/maid/atom_init()
