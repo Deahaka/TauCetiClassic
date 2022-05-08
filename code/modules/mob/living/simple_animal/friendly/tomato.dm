@@ -27,10 +27,10 @@
 
 /mob/living/simple_animal/hostile/tomato/angry_tomato
 	icon = 'icons/mob/livestock.dmi'
-	icon_state = "OLDtomato"
-	icon_living = "OLDtomato"
-	icon_dead = "OLDtomato_dead"
-	icon_move = "null"
+	icon_state = "OLDkillertomato"
+	icon_living = "OLDkillertomato"
+	icon_dead = "OLDkillertomato_d"
+	icon_move = "OLDkillertomato"
 
 /mob/living/simple_animal/hostile/tomato/angry_tomato/atom_init()
 	. = ..()
