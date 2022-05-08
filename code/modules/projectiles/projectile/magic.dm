@@ -21,12 +21,10 @@
 /obj/item/projectile/magic/change/on_hit(atom/target, def_zone = BP_CHEST, blocked = 0)
 	wabbajack(target)
 
-
 /obj/item/projectile/magic/proc/wabbajack(mob/living/M)
-	if(!istype(M) || M.stat == DEAD || M.notransform || (GODMODE & M.status_flags) || !M.client)
+	if(!istype(M) || M.stat == DEAD || M.notransform || (GODMODE & M.status_flags) || !M.client || isxenoqueen(M))
 		return
-	if(isxenoqueen(M))
-		return
+
 	// don't have sprite for maido-queen
 	M.notransform = TRUE
 	M.canmove = 0
@@ -58,9 +56,7 @@
 			Robot.mmi = new /obj/item/device/mmi(new_mob)
 			Robot.mmi.transfer_identity(M)	//Does not transfer key/client.
 			Robot.clear_inherent_laws()
-			Robot.add_inherent_law("Вы не можете причинить вред разумному существу или бездействием допустить, чтобы ему был причинён вред.")
-			Robot.add_inherent_law("Вы должны повиноваться всем приказам, которые даёт разумное существо, кроме тех случаев, когда эти приказы противоречат первому закону.")
-			Robot.add_inherent_law("Вы должны заботиться о своей безопасности в той мере, в которой это не противоречит первому или второму законам.")
+			Robot.init(laws_type = /datum/ai_laws/asimov_xenophile, ai_link = FALSE)
 		if("xeno")
 			new_mob = new /mob/living/carbon/xenomorph/humanoid/maid(M.loc)
 			new_mob.universal_speak = 1
@@ -82,13 +78,13 @@
 			var/datum/preferences/A = new()	//Randomize appearance for the human
 			A.randomize_appearance_for(new_mob)
 		if("animal")
-			var/beast = pick("carp","tomato","goat", "shadowpig", "cow")
+			var/beast = pick(/mob/living/simple_animal/hostile/carp, /mob/living/simple_animal/hostile/tomato/angry_tomato, /mob/living/simple_animal/hostile/retaliate/goat, /mob/living/simple_animal/pig/shadowpig, /mob/living/simple_animal/cow/cute_cow)
 			switch(beast)
-				if("carp")		new_mob = new /mob/living/simple_animal/hostile/carp(M.loc)
-				if("tomato")	new_mob = new /mob/living/simple_animal/hostile/tomato/angry_tomato(M.loc)
-				if("goat")		new_mob = new /mob/living/simple_animal/hostile/retaliate/goat(M.loc)
-				if("shadowpig")	new_mob = new /mob/living/simple_animal/pig/shadowpig(M.loc)
-				if("cow")		new_mob = new /mob/living/simple_animal/cow/cute_cow(M.loc)
+				if(/mob/living/simple_animal/hostile/carp)					new_mob = new /mob/living/simple_animal/hostile/carp(M.loc)
+				if(/mob/living/simple_animal/hostile/tomato/angry_tomato)	new_mob = new /mob/living/simple_animal/hostile/tomato/angry_tomato(M.loc)
+				if(/mob/living/simple_animal/hostile/retaliate/goat)		new_mob = new /mob/living/simple_animal/hostile/retaliate/goat(M.loc)
+				if(/mob/living/simple_animal/pig/shadowpig)					new_mob = new /mob/living/simple_animal/pig/shadowpig(M.loc)
+				if(/mob/living/simple_animal/cow/cute_cow)					new_mob = new /mob/living/simple_animal/cow/cute_cow(M.loc)
 			new_mob.universal_speak = 1
 
 	if(!new_mob)
