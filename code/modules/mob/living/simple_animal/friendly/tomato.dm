@@ -34,6 +34,6 @@
 
 /mob/living/simple_animal/hostile/tomato/angry_tomato/atom_init()
 	. = ..()
-	melee_damage = 5
-	maxHealth = 20
+	melee_damage = 15
+	maxHealth = 40
 	health = maxHealth
