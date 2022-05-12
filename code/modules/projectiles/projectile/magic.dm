@@ -41,7 +41,7 @@
 			new_mob = pick(new /mob/living/simple_animal/hostile/carp(M.loc), new /mob/living/simple_animal/hostile/tomato/angry_tomato(M.loc), new /mob/living/simple_animal/hostile/retaliate/goat(M.loc), new /mob/living/simple_animal/pig/shadowpig(M.loc), new /mob/living/simple_animal/cow/cute_cow(M.loc))
 			new_mob.universal_speak = TRUE
 		if(2)
-			new_mob = new /mob/living/silicon/robot(M.loc)
+			new_mob = new /mob/living/silicon/robot(M.loc, "Default", /datum/ai_laws/asimov_xenophile, FALSE, global.chaplain_religion)
 			new_mob.gender = M.gender
 			new_mob.invisibility = 0
 			new_mob.job = "Cyborg"
