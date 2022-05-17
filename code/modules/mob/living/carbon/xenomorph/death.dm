@@ -20,7 +20,13 @@
 	tod = worldtime2text() //weasellos time of death patch
 	if(mind)	mind.store_memory("Time of death: [tod]", 0)
 	alive_mob_list -= src
-
+	
+	create_reagents(15)
+	reagents.add_reagent("polyacid", 15)
+	var/obj/effect/decal/chempuff/D = reagents.create_chempuff(15)
+	D.reagents.reaction(get_turf(D))
+	for(var/atom/A in get_turf(D))
+		D.reagents.reaction(A)
 	return ..(gibbed)
 
 /mob/living/carbon/xenomorph/humanoid/death(gibbed)
