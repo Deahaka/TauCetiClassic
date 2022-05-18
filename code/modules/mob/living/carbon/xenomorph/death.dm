@@ -21,12 +21,12 @@
 	if(mind)	mind.store_memory("Time of death: [tod]", 0)
 	alive_mob_list -= src
 	
-	create_reagents(15)
-	reagents.add_reagent("polyacid", 15)
-	var/obj/effect/decal/chempuff/D = reagents.create_chempuff(15)
-	D.reagents.reaction(get_turf(D))
-	for(var/atom/A in get_turf(D))
-		D.reagents.reaction(A)
+	var/datum/effect/effect/system/smoke_spread/chem/S = new
+	S.color = "#5f0344"
+	reagents.add_reagent("pacid", 5)
+	S.set_up(reagents, 5, 0, src.loc)
+	S.start()
+
 	return ..(gibbed)
 
 /mob/living/carbon/xenomorph/humanoid/death(gibbed)
