@@ -163,11 +163,11 @@
 			Tloc = target.loc
 
 	var/atom/Uloc = null
-	var/dist = null
+	var/check_distance = FALSE
 	if(can_move == CANT_MOVE)
 		Uloc = user.loc
 	if(can_move == CAN_MOVE_NEARBY)
-		dist = get_dist(user.loc, Tloc)
+		check_distance = TRUE
 
 	var/obj/item/holding = user.get_active_hand()
 
@@ -197,8 +197,11 @@
 		if(user.stat || user.weakened || user.stunned)
 			. = FALSE
 			break
+		if(check_distance && (get_dist(user.loc, Tloc) > 1))
+			. = FALSE
+			break
 
-		if(Uloc && (user.loc != Uloc) || dist && dist > 1 || Tloc && (Tloc != target.loc))
+		if(Uloc && (user.loc != Uloc) || Tloc && (Tloc != target.loc))
 			. = FALSE
 			break
 		if(extra_checks && !extra_checks.Invoke(user, target))
