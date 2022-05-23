@@ -1651,7 +1651,7 @@
 	flesh_color = "00FF00"
 	icobase = 'icons/mob/human_races/r_moth.dmi'
 	deform = 'icons/mob/human_races/r_moth.dmi'
-	tail = moth_wings
+	tail = "moth_wings"
 	flags = list(NO_EYES, NO_BREATHE, NO_BLOOD, NO_EMBED,RAD_IMMUNE, VIRUS_IMMUNE, NO_FINGERPRINT, NO_SCAN, NO_MINORCUTS, NO_VOMIT, NO_EMOTION, HAS_TAIL)
 	language = LANGUAGE_LEPIDOPTERIAN
 	unarmed_type = /datum/unarmed_attack/claws
