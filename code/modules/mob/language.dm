@@ -191,6 +191,16 @@
 	"SKRE","AHK","EHK","RAWK","KRA","AAA","EEE","KI","II","KRI","KA")
 	allowed_speak = list(IPC)
 
+/datum/language/moth
+	name = LANGUAGE_LEPIDOPTERIAN
+	desc = "The common language of moths, composed of various noises made of wing fluttering and clicks."
+	speech_verb = "flutters"
+	ask_verb = "clicks"
+	exclaim_verb = "buzzes"
+	key = "t"
+	space_chance = 90
+	syllables = list("bz", "ba", "mah", "fa", "ki", "nr")
+
 /datum/language/diona
 	name = LANGUAGE_ROOTSPEAK
 	desc = "A creaking, subvocal language spoken instinctively by the Dionaea. Due to the unique makeup of the average Diona, a phrase of Rootspeak can be a combination of anywhere from one to twelve individual voices and notes."

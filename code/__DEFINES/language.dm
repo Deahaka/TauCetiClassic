@@ -11,6 +11,7 @@
 #define LANGUAGE_SIIKTAJR "Siik'tajr"
 #define LANGUAGE_SKRELLIAN "Skrellian"
 #define LANGUAGE_VOXPIDGIN "Vox-pidgin"
+#define LANGUAGE_LEPIDOPTERIAN "Lepidopterian"
 #define LANGUAGE_ROOTSPEAK "Rootspeak"
 #define LANGUAGE_ROOTSONG "Rootsong"
 #define LANGUAGE_SOLCOMMON "Sol Common"

@@ -1644,3 +1644,44 @@
 		O.adjust_pumped(rand(0, 60))
 		if(prob(80) && (part_species.name in list(UNATHI, SKRELL, TAJARAN)))
 			O.original_color = pick(list(COLOR_GREEN, COLOR_LIGHT_PINK, COLOR_ROSE_PINK, COLOR_VIOLET, COLOR_DEEP_SKY_BLUE, COLOR_RED, COLOR_LIME, COLOR_PINK))
+
+
+/datum/species/moth
+	name = "Moth"
+	flesh_color = "00FF00"
+	icobase = 'icons/mob/human_races/r_moth.dmi'
+	deform = 'icons/mob/human_races/r_moth.dmi'
+	flags = list(NO_EYES, NO_BREATHE, NO_BLOOD, NO_EMBED,RAD_IMMUNE, VIRUS_IMMUNE, NO_FINGERPRINT, NO_SCAN, NO_MINORCUTS, NO_VOMIT, NO_EMOTION)
+	language = LANGUAGE_LEPIDOPTERIAN
+	unarmed_type = /datum/unarmed_attack/claws
+	dietflags = DIET_OMNI
+	blood_datum_path = /datum/dirt_cover/gray_blood
+	min_age = 1
+	max_age = 5
+	darksight = 8
+	nighteyes = 1
+	var/possible_names = list(
+							"Attacus",
+							"Catocala",
+							"Helicoverpa",
+							"Spodoptera",
+							"Maruca",
+							"Plutella",
+							"Eacles",
+							"Epiphyas",
+							"Bombyx",
+							"Callosamia",
+							"Acherontia",
+							"Axylia",
+							"Diarsia"
+							)
+
+/datum/species/moth/on_gain(mob/living/carbon/C)
+	. = ..()
+	C.real_name = pick(possible_names)
+
+/datum/species/moth/handle_post_spawn(mob/living/carbon/human/H)
+	H.gender = NEUTER
+
+/datum/species/moth/call_digest_proc(mob/living/M, datum/reagent/R)
+	return

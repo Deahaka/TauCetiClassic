@@ -90,6 +90,7 @@
 #define ZOMBIE_UNATHI  "Zombie Unathi"
 #define SLIME          "Slime"
 #define ABOMINATION    "disgusting abomination"
+#define MOTH		   "moth"
 
 #define MONKEY         "Monkey"
 
