@@ -62,7 +62,7 @@
 	. = ..()
 	if(can_convert)
 		var/mob/living/carbon/human/M = user
-		if(!(isrevhead(M) || isrev(M) || M.ismindprotect() || jobban_isbanned(M, ROLE_REV) || jobban_isbanned(M, "Syndicate")))
+		if(!isrevhead(M) && !isrev(M) && !M.ismindprotect() && !jobban_isbanned(M, ROLE_REV) && !jobban_isbanned(M, "Syndicate"))
 			var/datum/faction/revolution/R = find_faction_by_type(/datum/faction/revolution)
 			if(R)
 				add_faction_member(R, M, TRUE)
