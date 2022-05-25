@@ -235,3 +235,12 @@
 	icon_living = "ghost2"
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
+
+/mob/living/simple_animal/shade/atom_init()
+	. = ..()
+	wizard_shade_list += src
+
+/mob/living/simple_animal/shade/Destroy()
+	wizard_shade_list -= src
+	return ..()
+	
