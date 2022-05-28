@@ -430,7 +430,7 @@
 
 	join_to_revolution = new /atom/movable/screen()
 	join_to_revolution.name = "Join To Revolution"
-	join_to_revolution.icon = 'icons/mob/screen_alert.dmi'
+	join_to_revolution.icon = 'icons/mob/screen1.dmi'
 	join_to_revolution.icon_state = "revolution"
 	join_to_revolution.screen_loc = ui_lingstingdisplay
 	join_to_revolution.plane = ABOVE_HUD_PLANE
