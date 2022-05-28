@@ -31,6 +31,8 @@
 	beauty_dead = -1500
 
 	appearance_flags = TILE_BOUND|PIXEL_SCALE|KEEP_TOGETHER
+	
+	var/rev_choices = "no_choice"
 
 /mob/living/carbon/human/atom_init(mapload, new_species)
 
