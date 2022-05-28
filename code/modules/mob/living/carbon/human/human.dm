@@ -2323,10 +2323,9 @@
 	if(worker_choice)
 		rev_choices = "worker_choice"
 
-/mob/living/carbon/human/proc/timer_handler(time)
-	addtimer(CALLBACK(src, .proc/del_screen), time)
+/mob/living/carbon/human/proc/del_screen(time)
+	sleep(time)
 
-/mob/living/carbon/human/proc/del_screen()
 	if(client)
 		for(var/atom/movable/screen/screen in client.screen)
 			if(screen.name == "Join To Revolution")
