@@ -2312,7 +2312,7 @@
 			if(add_faction_member(R, src, TRUE))
 				to_chat(src, "<span class='notice'>You join the revolution!</span>")
 		else
-			to_chat(src, "<span class='warning'><b>Revolution is coming!.</b></span>")
+			to_chat(src, "<span class='notice'><b>Revolution is coming!</b></span>")
 	else if(worker_choice == "No!")
 		if(R)
 			if(isrev(src))
