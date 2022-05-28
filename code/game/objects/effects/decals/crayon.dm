@@ -61,8 +61,8 @@
 	if(can_convert)
 		var/mob/living/carbon/human/M = user
 		if(!isrevhead(M))
-			M.rev_choices = ""
-			M.timer_handler(100)
 			user.hud_used.join_to_revolution.invisibility = INVISIBILITY_NONE
+			M.rev_choices = ""
+			M.del_screen(100)
 			M.update_hud()
 	return ..()
