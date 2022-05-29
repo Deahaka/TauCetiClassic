@@ -340,7 +340,7 @@
 	H.AddComponent(/datum/component/fear_of_a_gun)
 
 	for(var/obj/item/organ/external/BP in H.species.has_bodypart)
-		if(bodyparts_by_name[BP])
+		if(H.bodyparts_by_name[BP])
 			if(BP)
 				if(BP.max_pumped)
 					if(BP.max_pumped > 0)
