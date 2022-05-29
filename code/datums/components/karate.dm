@@ -3,7 +3,7 @@
 /datum/component/karate/Initialize()
   if(!ishuman(parent))
     return COMPONENT_INCOMPATIBLE
-  RegisterSignal(parent, list(COMSIG_PUMPED_MAX), .proc/strengthen_muscles)
+  RegisterSignal(parent, list(COMSIG_PUMPED_LIMIT_RICHED), .proc/strengthen_muscles)
   RegisterSignal(parent, list(COMSIG_CAUGHT_A_BULLET), .proc/gun_fear)
 
 /datum/component/karate/proc/gun_fear()
