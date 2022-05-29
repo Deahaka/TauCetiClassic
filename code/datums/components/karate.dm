@@ -1,7 +1,7 @@
 /datum/component/karate
 
 /datum/component/karate/Initialize()
-	if(!ishuman(parent)
+	if(!ishuman(parent))
 		return COMPONENT_INCOMPATIBLE
 	RegisterSignal(victim, list(COMSIG_KISSED_THE_WALL), .proc/side_kick)
 
