@@ -488,7 +488,6 @@
 		to_chat(usr, "<span class='boldnotice'>[name]</span> - <span class='info'>[desc]</span>")
 		if(name == "Revolution")
 			var/mob/living/carbon/human/H = usr
-			H.rev_choices = ""
 			H.join_to_revolution()
 		return
 	if(master)
