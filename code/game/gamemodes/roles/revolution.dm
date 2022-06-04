@@ -107,9 +107,6 @@
 		lead.rev_cooldown = world.time + 50
 
 /mob/living/carbon/human/proc/join_to_revolution()
-	if(rev_choices)
-		return
-
 	var/datum/faction/revolution/R = find_faction_by_type(/datum/faction/revolution)
 	var/worker_choice
 	worker_choice = tgui_alert(src,"Do you want to support the revolution?","Join the Revolution!",list("No!","Yes!"))
@@ -125,6 +122,3 @@
 				var/datum/role/my_role = src.mind.GetRole(REV)
 				my_role.Deconvert()
 		to_chat(src, "<span class='warning'>Don't forget to install the mindshield.</span>")
-
-	if(worker_choice)
-		rev_choices = "worker_choice"
