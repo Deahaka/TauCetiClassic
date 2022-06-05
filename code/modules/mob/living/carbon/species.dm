@@ -1647,7 +1647,7 @@
 
 
 /datum/species/moth
-	name = "Moth"
+	name = MOTH
 	flesh_color = "00FF00"
 	icobase = 'icons/mob/human_races/r_moth.dmi'
 	deform = 'icons/mob/human_races/r_moth.dmi'
@@ -1691,11 +1691,12 @@
 							)
 
 /datum/species/moth/on_gain(mob/living/carbon/C)
-	. = ..()
 	C.real_name = pick(possible_names)
+	return ..()
 
 /datum/species/moth/handle_post_spawn(mob/living/carbon/human/H)
 	H.gender = NEUTER
+	return ..()
 
 /datum/species/moth/call_digest_proc(mob/living/M, datum/reagent/R)
-	return
+	return R.on_moth_digest(M)

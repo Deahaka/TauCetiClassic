@@ -197,7 +197,7 @@
 	speech_verb = "flutters"
 	ask_verb = "clicks"
 	exclaim_verb = "buzzes"
-	key = "t"
+	key = list("t", "е")
 	space_chance = 90
 	syllables = list("bz", "ba", "mah", "fa", "ki", "nr")
 

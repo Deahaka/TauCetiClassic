@@ -121,6 +121,9 @@
 /mob/living/carbon/human/golem/atom_init(mapload)
 	. = ..(mapload, GOLEM)
 
+/mob/living/carbon/human/moth/atom_init(mapload)
+	. = ..(mapload, MOTH)
+
 /mob/living/carbon/human/shadowling/atom_init(mapload)
 	. = ..(mapload, SHADOWLING)
 	var/newNameId = pick(possibleShadowlingNames)
