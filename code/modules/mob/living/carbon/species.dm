@@ -1651,6 +1651,7 @@
 	flesh_color = "00FF00"
 	icobase = 'icons/mob/human_races/r_moth.dmi'
 	deform = 'icons/mob/human_races/r_moth.dmi'
+	tail = "moth_wings"
 	flags = list(NO_EYES = TRUE,
 				NO_BREATHE = TRUE,
 				NO_BLOOD = TRUE,
