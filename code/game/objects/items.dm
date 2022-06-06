@@ -468,6 +468,8 @@
 	if(ishuman(M))
 		//START HUMAN
 		var/mob/living/carbon/human/H = M
+		if(istype(H, /mob/living/carbon/human/moth))
+			return FALSE
 		if(!H.has_bodypart_for_slot(slot))
 			return FALSE
 		if(!H.specie_has_slot(slot))
