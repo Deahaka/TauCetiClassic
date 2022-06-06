@@ -1665,11 +1665,14 @@
 				NO_EMOTION = TRUE,
 				HAS_TAIL = TRUE,
 				NO_DNA = TRUE
+				NO_DNA = TRUE,
+				NO_PAIN = TRUE
 				)
 	language = LANGUAGE_LEPIDOPTERIAN
 	unarmed_type = /datum/unarmed_attack/claws
 	dietflags = DIET_OMNI
 	blood_datum_path = /datum/dirt_cover/gray_blood
+	damage_mask = FALSE
 	min_age = 1
 	max_age = 5
 	darksight = 8

@@ -470,7 +470,7 @@
 		var/mob/living/carbon/human/H = M
 		if(!H.has_bodypart_for_slot(slot))
 			return FALSE
-		if(!H.specie_has_slot(slot))
+		if(!H.specie_has_slot(slot) || istype(H, /mob/living/carbon/human/moth))
 			if(!disable_warning)
 				to_chat(H, "<span class='warning'>Your species can not wear clothing of this type.</span>")
 			return FALSE
