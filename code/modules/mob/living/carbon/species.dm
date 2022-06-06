@@ -1665,6 +1665,8 @@
 				NO_EMOTION = TRUE,
 				HAS_TAIL = TRUE,
 				NO_DNA = TRUE
+				NO_DNA = TRUE,
+				NO_PAIN = TRUE
 				)
 	language = LANGUAGE_LEPIDOPTERIAN
 	unarmed_type = /datum/unarmed_attack/claws
