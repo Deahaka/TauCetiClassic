@@ -459,7 +459,7 @@
 		var/datum/faction/malf_silicons/malf = find_faction_by_type(/datum/faction/malf_silicons)
 		if(malf?.malf_mode_declared)
 			stat(null, "Time left: [max(malf.AI_win_timeleft/(SSticker.hacked_apcs/APC_MIN_TO_MALF_DECLARE), 0)]")
-	return FALSE
+	return 0
 
 
 // update the status screen display
