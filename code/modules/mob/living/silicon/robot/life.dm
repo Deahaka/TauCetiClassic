@@ -108,10 +108,11 @@
 		eye_blind--
 		blinded = TRUE
 
-	if (ear_deaf > 0) src.ear_deaf--
+	if (ear_deaf > 0)
+		ear_deaf--
 	if (ear_damage < 25)
 		ear_damage -= 0.05
-		ear_damage = max(src.ear_damage, 0)
+		ear_damage = max(ear_damage, 0)
 
 	density = !lying
 
@@ -242,7 +243,7 @@
 		if(killswitch_time <= 0)
 			if(client)
 				to_chat(src, "<span class='danger'>Killswitch Activated</span>")
-			killswitch = TRUE
+			killswitch = FALSE
 			spawn(5)
 				gib()
 
