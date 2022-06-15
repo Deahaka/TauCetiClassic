@@ -14,5 +14,4 @@
 
 /datum/component/bullet_fear/Destroy()
 	UnregisterSignal(parent, list(COMSIG_TAKE_BULLET_DAMAGE))
-	. = ..()
- 
+	return ..()
