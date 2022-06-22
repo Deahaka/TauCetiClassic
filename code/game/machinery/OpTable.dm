@@ -109,6 +109,7 @@
 		icon_state = H.pulse ? "table2-active" : "table2-idle"
 	else
 		icon_state = "table2-idle"
+	C.layer = 3.9
 
 /obj/machinery/optable/verb/climb_on()
 	set name = "Climb On Table"
