@@ -24,26 +24,24 @@
 	clumsy_check = 0
 
 /obj/item/weapon/gun/energy/laser/selfcharging
-	var/charge_tick = 0
 	var/chargespeed = 0
 
-/obj/item/weapon/gun/energy/laser/selfcharging/atom_init()
-	. = ..()
-	START_PROCESSING(SSobj, src)
-
-
 /obj/item/weapon/gun/energy/laser/selfcharging/Destroy()
-	STOP_PROCESSING(SSobj, src)
+	STOP_PROCESSING(SSselfrecharge, src)
 	return ..()
 
+/obj/item/weapon/gun/energy/laser/selfcharging/process_chamber()
+	. = ..()
+	START_PROCESSING(SSselfrecharge, src)
+
 /obj/item/weapon/gun/energy/laser/selfcharging/process()
-	charge_tick++
-	if(charge_tick < 4) return 0
-	charge_tick = 0
-	if(!power_supply) return 0
+	if(!power_supply)
+		return FALSE
+	if(power_supply.charge == power_supply.maxcharge)
+		STOP_PROCESSING(SSselfrecharge, src)
 	power_supply.give(100 * chargespeed)
 	update_icon()
-	return 1
+	return TRUE
 
 /obj/item/weapon/gun/energy/laser/selfcharging/cyborg
 	name = "laser gun"
@@ -59,16 +57,16 @@
 
 /obj/item/weapon/gun/energy/laser/selfcharging/cyborg/process()
 	if(!isrobot(loc))
-		return 0
+		return FALSE
 	var/mob/living/silicon/robot/R = loc
+	if(power_supply.charge == power_supply.maxcharge)
+		return FALSE
 	if(R.cell)
 		var/obj/item/ammo_casing/energy/shot = ammo_type[select]
 		if(R.cell.use(shot.e_cost))
-			if(power_supply.charge == power_supply.maxcharge)
-				return 0
 			..()
-			return 1
-	return 0
+			return TRUE
+	return FALSE
 
 /obj/item/weapon/gun/energy/laser/selfcharging/captain
 	name = "antique laser gun"
@@ -144,8 +142,6 @@
 	origin_tech = "combat=1;magnets=2"
 	clumsy_check = 0
 	can_be_holstered = TRUE
-	var/charge_tick = 0
-
 	var/lasertag_color = "none"
 
 /obj/item/weapon/gun/energy/laser/lasertag/special_check(mob/living/carbon/human/M)
@@ -159,17 +155,13 @@
 
 /obj/item/weapon/gun/energy/laser/lasertag/atom_init()
 	. = ..()
-	START_PROCESSING(SSobj, src)
+	START_PROCESSING(SSselfrecharge, src)
 
 /obj/item/weapon/gun/energy/laser/lasertag/Destroy()
-	STOP_PROCESSING(SSobj, src)
+	STOP_PROCESSING(SSselfrecharge, src)
 	return ..()
 
 /obj/item/weapon/gun/energy/laser/lasertag/process()
-	charge_tick++
-	if(charge_tick < 4)
-		return FALSE
-	charge_tick = 0
 	if(!power_supply)
 		return FALSE
 	power_supply.give(130)
