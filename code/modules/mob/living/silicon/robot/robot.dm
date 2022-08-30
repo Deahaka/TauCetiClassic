@@ -302,6 +302,7 @@
 			module_sprites["Combat Android"] = "droid-combat"
 			module_sprites["Acheron"] = "mechoid-Combat"
 			module_sprites["Kodiak"] = "kodiak-combat"
+			module_sprites["Bloodhound"] = "syndie_bloodhound"
 			module.channels = list("Security" = 1)
 
 	module_icon.update_icon(src)
