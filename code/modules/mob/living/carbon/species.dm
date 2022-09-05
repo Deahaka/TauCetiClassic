@@ -1664,7 +1664,6 @@
 				NO_VOMIT = TRUE,
 				NO_EMOTION = TRUE,
 				HAS_TAIL = TRUE,
-				NO_DNA = TRUE
 				NO_DNA = TRUE,
 				NO_PAIN = TRUE
 				)
