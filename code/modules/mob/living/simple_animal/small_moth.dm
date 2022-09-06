@@ -18,7 +18,10 @@
 	minbodytemp = 288
 	maxbodytemp = 301
 	heat_damage_per_tick = 9
+	//died after spawn (!)
+	bodytemperature = 293
 
+	turns_per_move = 4
 	speed = 3
 
 	has_head = TRUE
@@ -28,36 +31,32 @@
 
 /mob/living/simple_animal/small_moth/atom_init()
 	. = ..()
-	addtimer(CALLBACK(src, .proc/handle_evolving), 1200, TIMER_UNIQUE)
+	handle_evolving()
 
-/mob/living/simple_animal/small_moth/Life()
-	. = ..()
-	var/matrix/Mx = matrix()
-	switch(stage)
-	if(1)
-		Mx.Scale(0.75)
-		Mx.Translate(0,-5)
-	if(2)
-		Mx.Scale(0.8)
-		Mx.Translate(0,-4)
-	if(3)
-		Mx.Scale(1)
-		Mx.Translate(0,0)
-	transform = Mx
-	default_transform = Mx
+/mob/living/simple_animal/small_moth/Stat()
+	..()
+	stat(null)
+	if(statpanel("Status"))
+		stat("Прогресс роста: [stage * 25]/100")
 
 /mob/living/simple_animal/small_moth/proc/handle_evolving()
+	if(stat == DEAD)
+		return
+	if(!mind || !client || !key)
+		//no need wait for adult moth, play
+		addtimer(CALLBACK(src, .proc/handle_evolving), 100, TIMER_UNIQUE)
+		return
 	if(stage < 4)
-		addtimer(CALLBACK(src, .proc/handle_evolving), 1200, TIMER_UNIQUE)
+		addtimer(CALLBACK(src, .proc/handle_evolving), 100, TIMER_UNIQUE)
 		stage++
 		if(2)
 			maxHealth = 20
-			speed = 2
+			health += 20
 		if(3)
 			maxHealth = 40
-			speed = 1
-		return
-	if(!mind || !client || !stat || !key)
+			health += 40
+			speed--
+			melee_damage = 2
 		return
 	var/mob/living/carbon/human/moth/M = new(loc)
 	mind.transfer_to(M)
@@ -70,9 +69,10 @@
 
 	health = 5
 	maxHealth = 5
+	melee_damage = 0
 
-	icon_state = "newmorn_moth"
-	icon_living = "newmorn_moth"
+	icon_state = "newborn_moth"
+	icon_living = "newborn_moth"
 	icon_dead = "small_moth_dead"
 	icon_move = null
 
@@ -91,6 +91,8 @@
 	minbodytemp = 288
 	maxbodytemp = 301
 	heat_damage_per_tick = 9
+	//died after spawn (!)
+	bodytemperature = 293
 
 	holder_type = null
 	faction = "neutral"
@@ -101,13 +103,13 @@
 
 /mob/living/simple_animal/mouse/rat/newborn_moth/atom_init()
 	. = ..()
-	addtimer(CALLBACK(src, .proc/handle_evolving), 1200, TIMER_UNIQUE)
+	addtimer(CALLBACK(src, .proc/handle_evolving), 100, TIMER_UNIQUE)
 
 /mob/living/simple_animal/mouse/rat/newborn_moth/proc/handle_evolving()
-	if(!stat)
+	if(stat == DEAD)
 		return
 	if(!key || !client || !mind)
-		addtimer(CALLBACK(src, .proc/handle_evolving), 1200, TIMER_UNIQUE)
+		addtimer(CALLBACK(src, .proc/handle_evolving), 100, TIMER_UNIQUE)
 		return
 	var/mob/living/simple_animal/small_moth/moth = new(loc)
 	mind.transfer_to(moth)
