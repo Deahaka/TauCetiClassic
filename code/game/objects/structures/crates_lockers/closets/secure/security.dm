@@ -251,6 +251,36 @@ ADD_TO_GLOBAL_LIST(/obj/structure/closet/secure_closet/security, sec_closets_lis
 		new /obj/item/clothing/shoes/winterboots(src)
 		new /obj/item/clothing/head/ushanka(src)
 
+/obj/structure/closet/secure_closet/security/prison/PopulateContents()
+	if(prob(50))
+		new /obj/item/weapon/storage/backpack/security(src)
+	else
+		new /obj/item/weapon/storage/backpack/satchel/sec(src)
+
+	new /obj/item/clothing/gloves/security(src)
+	new /obj/item/clothing/suit/storage/flak(src)
+	new /obj/item/clothing/head/helmet(src)
+	new /obj/item/weapon/storage/belt/security(src)
+	new /obj/item/clothing/accessory/holster/armpit(src)
+	new /obj/item/device/radio/headset/headset_sec(src)
+	new /obj/item/device/flash(src)
+	new /obj/item/weapon/reagent_containers/spray/pepper(src)
+	new /obj/item/weapon/melee/baton(src)
+	new /obj/item/clothing/glasses/sunglasses/hud/sechud(src)
+	new /obj/item/taperoll/police(src)
+	new /obj/item/device/hailer(src)
+	new /obj/item/device/flashlight/flare(src)
+	new /obj/item/device/flashlight/seclite(src)
+	new /obj/item/weapon/storage/pouch/pistol_holster(src)
+	new /obj/item/weapon/storage/pouch/baton_holster(src)
+	new /obj/item/weapon/gun/energy/taser(src)
+	new /obj/item/device/remote_device/head_of_security(src)(src)
+
+	if(SSenvironment.envtype[z] == ENV_TYPE_SNOW)
+		new /obj/item/clothing/suit/hooded/wintercoat/security(src)
+		new /obj/item/clothing/shoes/winterboots(src)
+		new /obj/item/clothing/head/ushanka(src)
+
 
 /obj/structure/closet/secure_closet/security/cargo
 
@@ -413,7 +443,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/closet/secure_closet/security, sec_closets_lis
 
 /obj/structure/closet/secure_closet/usp_cartridges
 	name = "USP cartridges Secure Closet"
-	req_access = list(access_keycard_auth)	
+	req_access = list(access_keycard_auth)
 
 /obj/structure/closet/secure_closet/usp_cartridges/PopulateContents()
 	new /obj/item/weapon/skill_cartridge/usp7(src)
