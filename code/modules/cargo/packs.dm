@@ -1893,6 +1893,18 @@ var/global/list/all_supply_groups = list("Operations","Security","Hospitality","
 	access = access_theatre
 	group = "Miscellaneous"
 
+/datum/supply_pack/randomised/cigarettes_packs
+	num_contained = 10
+	contains = list(/obj/item/weapon/storage/fancy/cigarettes/dromedaryco,
+					/obj/item/weapon/storage/fancy/cigarettes/menthol,
+					/obj/item/weapon/storage/fancy/cigarettes,
+					)
+	name = "Cigarettes packs"
+	cost = 5000
+	crate_type = /obj/structure/closet/crate/internals
+	crate_name = "Cigarettes"
+	group = "Hospitality"
+
 //----------------------------------------------
 //-----------------XENO THREAT-------------------
 //----------------------------------------------
