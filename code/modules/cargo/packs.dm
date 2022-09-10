@@ -1904,6 +1904,29 @@ var/global/list/all_supply_groups = list("Operations","Security","Hospitality","
 	crate_type = /obj/structure/closet/crate/internals
 	crate_name = "Cigarettes"
 	group = "Hospitality"
+//всунуть заточку в хлеб с шансом (сделать подтип хлеба)
+/datum/supply_pack/randomised/food_supply
+	num_contained = 10
+	contains = list(/obj/item/weapon/reagent_containers/food/snacks/twobread,
+					/obj/item/weapon/reagent_containers/food/snacks/sliceable/bread,
+					/obj/item/weapon/storage/fancy/donut_box,
+					/obj/item/weapon/storage/box/donkpockets,
+					/obj/item/weapon/reagent_containers/food/snacks/spagetti,
+					/obj/item/weapon/reagent_containers/food/snacks/beans,
+					/obj/item/weapon/reagent_containers/food/snacks/wrap,
+					/obj/item/weapon/reagent_containers/food/snacks/candy/taffy,
+					/obj/item/weapon/reagent_containers/food/snacks/soup,
+					/obj/item/weapon/reagent_containers/food/drinks/bottle/wine,
+					/obj/item/weapon/reagent_containers/food/drinks/bottle/vodka,
+					/obj/item/weapon/reagent_containers/food/drinks/bottle/beer,
+					/obj/item/weapon/reagent_containers/food/drinks/bottle/whiskey,
+					/obj/item/weapon/reagent_containers/food/drinks/drinkingglass,
+					)
+	name = "Food Supply"
+	cost = 7000
+	crate_type = /obj/structure/closet/crate/internals
+	crate_name = "Food"
+	group = "Hospitality"
 
 //----------------------------------------------
 //-----------------XENO THREAT-------------------
