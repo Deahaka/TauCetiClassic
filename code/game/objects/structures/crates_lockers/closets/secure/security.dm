@@ -274,7 +274,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/closet/secure_closet/security, sec_closets_lis
 	new /obj/item/weapon/storage/pouch/pistol_holster(src)
 	new /obj/item/weapon/storage/pouch/baton_holster(src)
 	new /obj/item/weapon/gun/energy/taser(src)
-	new /obj/item/device/remote_device/head_of_security(src)(src)
+	new /obj/item/device/remote_device/head_of_security(src)
 
 	if(SSenvironment.envtype[z] == ENV_TYPE_SNOW)
 		new /obj/item/clothing/suit/hooded/wintercoat/security(src)
