@@ -1,5 +1,6 @@
 #define SOLAR_MAX_DIST 40
 #define SOLARGENRATE 1500
+#define SOLARGENHIGHRATE 4500
 
 // This will choose whether to get the solar list from the powernet or the powernet nodes,
 // depending on the size of the nodes.
@@ -132,12 +133,15 @@
 
 	if(obscured)	return
 
-	var/sgen = SOLARGENRATE * sunfrac
+	var/sgen = calculate_power()
 	add_avail(sgen)
 	if(powernet && control)
 		if(powernet.nodes[control])
 			control.gen += sgen
 
+/obj/machinery/power/solar/proc/calculate_power()
+	var/genpower = SOLARGENRATE * sunfrac
+	return genpower
 
 /obj/machinery/power/solar/proc/broken()
 	stat |= BROKEN
@@ -176,6 +180,9 @@
 	. = PROCESS_KILL
 	return
 
+/obj/machinery/power/solar/high/calculate_power()
+	var/genpower = SOLARGENHIGHRATE * sunfrac
+	return genpower
 
 //
 // Solar Assembly - For construction of solar arrays.
