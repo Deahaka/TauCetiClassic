@@ -19,5 +19,10 @@ SUBSYSTEM_DEF(economy)
 				charge_to_account(D.account_number, D.account_number, "Salary payment", "CentComm", D.owner_salary)
 	payment_counter += 1
 
+	//TODO: if(config.passive_import)
+	var/list/supply = list("Cigarettes packs" = 1, "Food Supply" = 1)
+	SSshuttle.send_import_crew(supply, null, null, "Supplies")
+
+
 /datum/controller/subsystem/economy/proc/set_endtime()
 	endtime = world.timeofday + wait

@@ -143,11 +143,11 @@
 		SSshuttle.fake_recall = FALSE
 		win_declared = TRUE
 	else if(data[ALIEN_PERCENT] >= FIRST_HELP_PERCENT && !first_help_sent)
-		send_help_crew(first_help, /datum/announcement/centcomm/xeno/first_help, /datum/announcement/centcomm/xeno/first_help/fail)
+		SSshuttle.send_import_crew(first_help, /datum/announcement/centcomm/xeno/first_help, /datum/announcement/centcomm/xeno/first_help/fail, "Xeno Threat")
 		first_help_sent = TRUE
 		SSshuttle.fake_recall = TRUE //Quarantine
 	else if(data[ALIEN_PERCENT] >= SECOND_HELP_PERCENT && !second_help_sent)
-		send_help_crew(second_help, /datum/announcement/centcomm/xeno/second_help, /datum/announcement/centcomm/xeno/second_help/fail)
+		SSshuttle.send_import_crew(second_help, /datum/announcement/centcomm/xeno/second_help, /datum/announcement/centcomm/xeno/second_help/fail, "Xeno Threat")
 		second_help_sent = TRUE
 
 /datum/faction/infestation/check_win()
@@ -235,42 +235,5 @@
 	dat += "</table>"
 
 	return dat
-
-//send help to cargo from Cent Comm
-//*list/supply_crates - associative list, string key - name of supply pack, int value - number of crates to send
-//*announce - successful shuttle dispatch announcement
-//*announce_fail - the shuttle was busy, the crates were added to the shopping list. Send the shuttle yourself
-/datum/faction/infestation/proc/send_help_crew(list/supply_crates, announce, announce_fail)
-	//find supply pack by name and create supply order
-	for(var/crate_name in supply_crates)
-		var/supply_name = ckey(crate_name)
-		var/datum/supply_pack/P = SSshuttle.supply_packs[supply_name]
-		var/datum/supply_order/O = new /datum/supply_order(P, "Cent Comm", "Cent Comm", "", "Xeno threat")
-		//add supply orders to shopping list
-		var/number_supply_orders = supply_crates[crate_name]
-		for(var/i in 1 to number_supply_orders)
-			SSshuttle.shoppinglist += O
-
-	if(send_shuttle())
-		var/datum/announcement/centcomm/xeno/announcement = new announce
-		announcement.play()
-	else
-		var/datum/announcement/centcomm/xeno/announcement = new announce_fail
-		announcement.play()
-
-/datum/faction/infestation/proc/send_shuttle()
-	if(!SSshuttle.can_move())
-		return FALSE
-	if(SSshuttle.at_station)
-		SSshuttle.send()
-		SSshuttle.sell()
-		SSshuttle.buy()
-		SSshuttle.moving = 1
-		SSshuttle.set_eta_timeofday()
-	else
-		SSshuttle.buy()
-		SSshuttle.moving = 1
-		SSshuttle.set_eta_timeofday()
-	return TRUE
 
 #undef CHECK_PERIOD

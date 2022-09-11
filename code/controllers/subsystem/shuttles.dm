@@ -650,6 +650,46 @@ SUBSYSTEM_DEF(shuttle)
 /datum/controller/subsystem/shuttle/proc/set_eta_timeofday(flytime = SSshuttle.movetime)
 	eta_timeofday = (REALTIMEOFDAY + flytime) % MIDNIGHT_ROLLOVER
 
+//send help to cargo from Cent Comm
+//*list/supply_crates - associative list, string key - name of supply pack, int value - number of crates to send
+//*announce - successful shuttle dispatch announcement
+//*announce_fail - the shuttle was busy, the crates were added to the shopping list. Send the shuttle yourself
+
+/datum/controller/subsystem/shuttle/proc/send_import_crew(list/supply_crates, announce, announce_fail, reason)
+	//find supply pack by name and create supply order
+	for(var/crate_name in supply_crates)
+		var/supply_name = ckey(crate_name)
+		var/datum/supply_pack/P = supply_packs[supply_name]
+		var/datum/supply_order/O = new /datum/supply_order(P, "Cent Comm", "Cent Comm", "", "[reason]")
+		//add supply orders to shopping list
+		var/number_supply_orders = supply_crates[crate_name]
+		for(var/i in 1 to number_supply_orders)
+			shoppinglist += O
+
+	if(send_shuttle())
+		if(announce)
+			var/datum/announcement/centcomm/announcement = new announce
+			announcement.play()
+	else
+		if(announce_fail)
+			var/datum/announcement/centcomm/announcement = new announce_fail
+			announcement.play()
+
+/datum/controller/subsystem/shuttle/proc/send_shuttle()
+	if(!can_move())
+		return FALSE
+	if(at_station)
+		send()
+		sell()
+		buy()
+		moving = 1
+		set_eta_timeofday()
+	else
+		buy()
+		moving = 1
+		set_eta_timeofday()
+	return TRUE
+
 /obj/effect/bgstar
 	name = "star"
 	var/speed = 10

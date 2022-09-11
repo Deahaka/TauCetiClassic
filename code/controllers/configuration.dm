@@ -203,6 +203,7 @@ var/global/bridge_secret = null
 	var/load_junkyard = TRUE
 	var/load_mine = TRUE
 	var/load_space_levels = TRUE
+	//TODO: var/passive_import = TRUE	//prison station stuff
 
 	var/record_replays = FALSE
 
@@ -654,6 +655,9 @@ var/global/bridge_secret = null
 
 				if("no_space_levels")
 					config.load_space_levels = FALSE
+
+				//TODO: if("passive_import")
+					//TODO: config.passive_import = TRUE
 
 				if("record_replays")
 					config.record_replays = TRUE
