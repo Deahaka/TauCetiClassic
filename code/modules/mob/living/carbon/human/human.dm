@@ -2477,3 +2477,8 @@
 		return 0
 
 	return BP.pumped
+
+/mob/living/carbon/human/prisoner/atom_init(mapload, new_species)
+	. = ..()
+	var/obj/item/weapon/implant/storage/prisoner_storage/storage = new(src)
+	storage.stealth_inject(src)
