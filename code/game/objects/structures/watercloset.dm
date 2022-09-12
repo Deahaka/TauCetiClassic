@@ -315,7 +315,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	if(.)
 		return
 	user.SetNextMove(CLICK_CD_RAPID)
-	if(is_payed)
+	if(is_payed())
 		on = !on
 		update_icon()
 		if(on)
@@ -328,6 +328,16 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 			is_payed = 0 // If the player closes ahead of time - force cancel the fee
 	else
 		to_chat(user, "You didn't pay for that. Swipe a card against [src].")
+
+/obj/machinery/shower/proc/is_servise_provided()
+	if(is_payed)
+		return TRUE
+	return FALSE
+
+/obj/machinery/shower/prison/is_servise_provided()
+	if(!is_payed)
+		is_payed = 60
+	return TRUE
 
 /obj/machinery/shower/attackby(obj/item/I, mob/user)
 	if(I.type == /obj/item/device/analyzer) // istype?
