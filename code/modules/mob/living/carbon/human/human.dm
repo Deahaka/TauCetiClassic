@@ -2480,5 +2480,5 @@
 
 /mob/living/carbon/human/prisoner/atom_init(mapload, new_species)
 	. = ..()
-	var/obj/item/weapon/implant/storage/prisoner_storage/storage = new(src)
-	storage.stealth_inject(src)
+	var/obj/item/weapon/implant/storage/prisoner_storage = new(src)
+	prisoner_storage.stealth_inject(src)
