@@ -232,6 +232,8 @@
 #define COMSIG_ITEM_BECOME_INACTIVE "item_become_inactive"
 /// from /obj/item/weapon/stock_parts/cell
 #define COMSIG_CELL_CHARGE_CHANGED "cell_charge_changed"
+/// from /datum/component/sharpening
+#define COMSIG_ATTACKED_BY_SHARP_ITEM "attacked_by_sharp_item"
 
 // hand_like /obj/item signals
 /// check if item is hand_like: ()

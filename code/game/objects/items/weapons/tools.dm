@@ -103,6 +103,8 @@
 	pixel_y = rand(-6, 6)
 	pixel_x = rand(-4, 4)
 
+	AddComponent(/datum/component/sharpening, force, 6, TRUE)
+
 /obj/item/weapon/screwdriver/power
 	name = "Hand Drill"
 	desc = "A simple hand drill with a screwdriver bit attached."
@@ -158,6 +160,7 @@
 			param_color = pick("yellow","red","green","brown","blue")
 		icon_state = "cutters_[param_color]"
 		item_state = "cutters_[param_color]"
+	AddComponent(/datum/component/sharpening, force, 5, TRUE)
 
 /obj/item/weapon/wirecutters/attack(mob/living/carbon/C, mob/user)
 	if(istype(C) && C.handcuffed && user.a_intent == INTENT_HELP)
@@ -563,6 +566,10 @@
 	qualities = list(
 		QUALITY_PRYING = 1
 	)
+
+/obj/item/weapon/crowbar/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 5, FALSE)
 
 /obj/item/weapon/crowbar/red
 	name = "emergency crowbar"

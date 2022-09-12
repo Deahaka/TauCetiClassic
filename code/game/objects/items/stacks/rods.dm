@@ -17,6 +17,11 @@
 		QUALITY_PRYING = 0.5
 	)
 
+/obj/item/stack/rods/atom_init()
+	. = ..()
+	//common material, it is better not to make the damage impressive
+	AddComponent(/datum/component/sharpening, force, 5, FALSE)
+
 /obj/item/stack/rods/update_icon()
 	var/amount = get_amount()
 	if((amount <= 5) && (amount > 0))

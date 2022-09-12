@@ -411,6 +411,8 @@
 			else if(S.can_be_inserted(src))
 				S.handle_item_insertion(src)
 			return FALSE
+	if(I.sharp || I.edge)
+		SEND_SIGNAL(src, COMSIG_ATTACKED_BY_SHARP_ITEM)
 	return ..()
 
 /obj/item/throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback)

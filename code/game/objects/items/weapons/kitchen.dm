@@ -63,11 +63,15 @@
 	icon_state = "spoon"
 	attack_verb = list("attacked", "poked")
 
-/obj/item/weapon/kitchen/utensil/pspoon
+/obj/item/weapon/kitchen/utensil/spoon/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 7, TRUE)
+
+/obj/item/weapon/kitchen/utensil/spoon/pspoon
 	name = "plastic spoon"
 	desc = "Super dull action!"
 	icon_state = "pspoon"
-	attack_verb = list("attacked", "poked")
+
 
 /*
  * Forks
@@ -78,6 +82,10 @@
 	force = 3
 	hitsound = list('sound/items/tools/screwdriver-stab.ogg')
 	icon_state = "fork"
+
+/obj/item/weapon/kitchen/utensil/fork/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 7, TRUE)
 
 /obj/item/weapon/kitchen/utensil/fork/afterattack(atom/target, mob/user, proximity, params)
 	if(istype(target,/obj/item/weapon/reagent_containers/food/snacks))	return // fork is not only for cleanning
@@ -102,6 +110,9 @@
 	icon_state = "pfork"
 	force = 0
 
+/obj/item/weapon/kitchen/utensil/pfork/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 7, TRUE)
 
 /obj/item/weapon/kitchen/utensil/pfork/afterattack(atom/target, mob/user, proximity, params)  //make them useful or some slow soap for plastic. Just copy-paste from usual fork
 	if(istype(target,/obj/item/weapon/reagent_containers/food/snacks))	return // fork is not only for cleanning
@@ -145,6 +156,7 @@
 	SCB.can_sweep = TRUE
 	SCB.can_spin = TRUE
 	AddComponent(/datum/component/swiping, SCB)
+	AddComponent(/datum/component/sharpening, force, 5, TRUE)
 
 /obj/item/weapon/kitchenknife/suicide_act(mob/user)
 	to_chat(viewers(user), pick("<span class='warning'><b>[user] is slitting \his wrists with the [src.name]! It looks like \he's trying to commit suicide.</b></span>", \
@@ -163,6 +175,10 @@
 	icon_state = "pknife"
 	force = 0
 	throwforce = 0
+
+/obj/item/weapon/kitchenknife/plastic/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 7, TRUE)
 
 /obj/item/weapon/kitchenknife/ritual
 	name = "ritual knife"
@@ -222,6 +238,10 @@
 	throw_range = 7
 	w_class = SIZE_SMALL
 	attack_verb = list("bashed", "battered", "bludgeoned", "thrashed", "whacked") //I think the rollingpin attackby will end up ignoring this anyway.
+
+/obj/item/weapon/kitchen/rollingpin/atom_init()
+	. = ..()
+	AddComponent(/datum/component/sharpening, force, 5, FALSE)
 
 /obj/item/weapon/kitchen/rollingpin/attack(mob/living/M, mob/living/user)
 	if ((CLUMSY in user.mutations) && prob(50))
