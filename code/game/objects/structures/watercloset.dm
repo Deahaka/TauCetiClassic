@@ -315,7 +315,7 @@ ADD_TO_GLOBAL_LIST(/obj/structure/toilet, toilet_list)
 	if(.)
 		return
 	user.SetNextMove(CLICK_CD_RAPID)
-	if(is_payed())
+	if(is_servise_provided())
 		on = !on
 		update_icon()
 		if(on)
