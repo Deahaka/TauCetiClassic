@@ -567,10 +567,6 @@
 		QUALITY_PRYING = 1
 	)
 
-/obj/item/weapon/crowbar/atom_init()
-	. = ..()
-	AddComponent(/datum/component/sharpening, force, 5, FALSE)
-
 /obj/item/weapon/crowbar/red
 	name = "emergency crowbar"
 	desc = "A little emergency crowbar, used to open unpowered doors and emergency shutters."

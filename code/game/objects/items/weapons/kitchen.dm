@@ -156,7 +156,6 @@
 	SCB.can_sweep = TRUE
 	SCB.can_spin = TRUE
 	AddComponent(/datum/component/swiping, SCB)
-	AddComponent(/datum/component/sharpening, force, 5, TRUE)
 
 /obj/item/weapon/kitchenknife/suicide_act(mob/user)
 	to_chat(viewers(user), pick("<span class='warning'><b>[user] is slitting \his wrists with the [src.name]! It looks like \he's trying to commit suicide.</b></span>", \
@@ -238,10 +237,6 @@
 	throw_range = 7
 	w_class = SIZE_SMALL
 	attack_verb = list("bashed", "battered", "bludgeoned", "thrashed", "whacked") //I think the rollingpin attackby will end up ignoring this anyway.
-
-/obj/item/weapon/kitchen/rollingpin/atom_init()
-	. = ..()
-	AddComponent(/datum/component/sharpening, force, 5, FALSE)
 
 /obj/item/weapon/kitchen/rollingpin/attack(mob/living/M, mob/living/user)
 	if ((CLUMSY in user.mutations) && prob(50))
