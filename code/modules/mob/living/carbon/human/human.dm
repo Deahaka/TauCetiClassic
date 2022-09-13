@@ -2482,3 +2482,4 @@
 	. = ..()
 	var/obj/item/weapon/implant/storage/prisoner_storage = new(src)
 	prisoner_storage.stealth_inject(src)
+	AddComponent(/datum/component/altcraft)

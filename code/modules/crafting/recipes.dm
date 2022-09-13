@@ -232,3 +232,6 @@
 	result = /obj/item/weapon/storage/pneumatic
 	time = 45
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_PRO)
+
+/datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
+	return

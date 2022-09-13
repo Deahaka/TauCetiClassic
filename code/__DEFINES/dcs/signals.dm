@@ -234,6 +234,8 @@
 #define COMSIG_CELL_CHARGE_CHANGED "cell_charge_changed"
 /// from /datum/component/sharpening
 #define COMSIG_ATTACKED_BY_SHARP_ITEM "attacked_by_sharp_item"
+/// from base of obj/item/AltClick(): (/mob/living/target, /mob/living/user, def_zone)
+#define COMSIG_ITEM_CTRLSHIFTCLICK "item_altclick"
 
 // hand_like /obj/item signals
 /// check if item is hand_like: ()
