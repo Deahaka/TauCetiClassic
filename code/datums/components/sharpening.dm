@@ -3,8 +3,10 @@
 	var/current_sharpness = 0
 	var/max_sharpness = 0
 	var/affect_modifier = FALSE
+	var/sprite_modified = FALSE
+	var/mask = null
 
-/datum/component/sharpening/Initialize(_default_force = 0, _max_sharpness = 0, _affect_modifier = FALSE)
+/datum/component/sharpening/Initialize(_default_force = 0, _max_sharpness = 0, _affect_modifier = FALSE, _mask = null)
 	if(!isitem(parent))
 		return COMPONENT_INCOMPATIBLE
 
@@ -15,6 +17,7 @@
 	default_force = _default_force
 	max_sharpness = _max_sharpness
 	affect_modifier = _affect_modifier
+	mask = _mask
 
 	RegisterSignal(parent, list(COMSIG_PARENT_EXAMINE), .proc/get_info)
 	RegisterSignal(parent, list(COMSIG_ATTACKED_BY_SHARP_ITEM), .proc/try_increase)
@@ -46,6 +49,7 @@
 	current_sharpness++
 	var/damage = default_force + current_sharpness
 	update_damage(damage)
+	update_icon()
 
 /datum/component/sharpening/proc/update_damage(amount)
 	if(amount < 0)
@@ -67,6 +71,22 @@
 	if(current_sharpness >= max_sharpness)
 		return FALSE
 	return TRUE
+
+/datum/component/sharpening/proc/update_icon()
+	if(sprite_modified)
+		return
+	var/obj/item/I = parent
+	var/source = I.icon
+	var/sprite = I.icon_state
+	var/icon/image = new(source, sprite)
+	var/broken_mask = mask
+	if(!mask)
+		broken_mask = pick("broken", "broken1", "broken2", "broken3")
+	var/icon/broken_outline = icon('icons/obj/drinks.dmi',broken_mask)
+	image.Blend(broken_outline, ICON_OVERLAY, rand(5), 1)
+	image.SwapColor(rgb(255, 0, 220, 255), rgb(0, 0, 0, 0))
+	I.icon = image
+	sprite_modified = TRUE
 
 /datum/component/sharpening/Destroy()
 	UnregisterSignal(parent, list(COMSIG_PARENT_EXAMINE))

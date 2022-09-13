@@ -85,7 +85,7 @@
 
 /obj/item/weapon/kitchen/utensil/fork/atom_init()
 	. = ..()
-	AddComponent(/datum/component/sharpening, force, 7, TRUE)
+	AddComponent(/datum/component/sharpening, force, 7, TRUE, "broken3")
 
 /obj/item/weapon/kitchen/utensil/fork/afterattack(atom/target, mob/user, proximity, params)
 	if(istype(target,/obj/item/weapon/reagent_containers/food/snacks))	return // fork is not only for cleanning
@@ -112,7 +112,7 @@
 
 /obj/item/weapon/kitchen/utensil/pfork/atom_init()
 	. = ..()
-	AddComponent(/datum/component/sharpening, force, 7, TRUE)
+	AddComponent(/datum/component/sharpening, force, 7, TRUE, "broken3")
 
 /obj/item/weapon/kitchen/utensil/pfork/afterattack(atom/target, mob/user, proximity, params)  //make them useful or some slow soap for plastic. Just copy-paste from usual fork
 	if(istype(target,/obj/item/weapon/reagent_containers/food/snacks))	return // fork is not only for cleanning
