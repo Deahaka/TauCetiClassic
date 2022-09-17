@@ -372,3 +372,42 @@
 
 	else
 		return ..()
+
+/obj/item/weapon/soap_in_sock
+	icon = 'icons/obj/makeshift.dmi'
+	icon_state = "soap_in_sock"
+	name = "Weighty sock"
+	desc = "There is soap inside, it looks like a makeshift weapon."
+	force = 5
+	damtype = HALLOSS
+	w_class = SIZE_SMALL
+	slot_flags = null
+	throwforce = 2
+
+/obj/item/weapon/soap_in_sock/attack(mob/living/M, mob/user)
+	. = ..()
+	if(!ishuman(M))
+		return
+	var/mob/living/carbon/human/H = M
+	var/target_zone = user.get_targetzone()
+	var/armor = H.run_armor_check(target_zone)
+	if(armor > 10)
+		return
+	if(prob(50 - armor))
+		addtimer(CALLBACK(src, .proc/organ_harm, target_zone, H), rand(600,1800))
+	else
+		H.apply_effect(force * 2, AGONY, armor)
+
+/obj/item/weapon/soap_in_sock/proc/organ_harm(target_zone = null, mob/living/carbon/human/H)
+	if(!target_zone)
+		return
+	var/obj/item/organ/external/BP = H.get_bodypart(target_zone)
+	if(!BP)
+		return
+	if(prob(5))
+		BP.sever_artery()
+		return
+	for(var/obj/item/organ/internal/I in BP.bodypart_organs)
+		if(!I)
+			continue
+		I.take_damage(1)

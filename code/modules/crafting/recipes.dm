@@ -233,5 +233,19 @@
 	time = 45
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_PRO)
 
+/datum/crafting_recipe/soap_in_sock
+	name = "Soap in sock"
+	reqs = list(/obj/item/weapon/reagent_containers/food/snacks/soap = 1)
+	result = /obj/item/weapon/soap_in_sock
+	time = 20
+	parts = list(/obj/item/weapon/reagent_containers/food/snacks/soap = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
+
+/datum/crafting_recipe/soap_in_sock/on_craft_completion(mob/user, atom/result)
+	var/mob/living/carbon/human/H = user
+	if(H && H.socks && H.socks < 23)
+		H.socks = 23
+		H.update_body()
+
 /datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
 	return
