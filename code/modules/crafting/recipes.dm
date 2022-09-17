@@ -247,5 +247,19 @@
 		H.socks = 0
 		H.update_body()
 
+/datum/crafting_recipe/cell_in_sock
+	name = "Cell in sock"
+	reqs = list(/obj/item/weapon/stock_parts/cell = 1)
+	result = /obj/item/weapon/soap_in_sock/cell_in_sock
+	time = 20
+	parts = list(/obj/item/weapon/stock_parts/cell = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
+
+/datum/crafting_recipe/cell_in_sock/on_craft_completion(mob/user, atom/result)
+	var/mob/living/carbon/human/H = user
+	if(H && H.socks)
+		H.socks = 0
+		H.update_body()
+
 /datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
 	return

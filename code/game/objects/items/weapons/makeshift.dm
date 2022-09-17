@@ -408,6 +408,24 @@
 	for(var/obj/item/organ/internal/I in BP.bodypart_organs)
 		if(!I)
 			continue
-		I.take_damage(1, silent = FALSE)
+		I.take_damage(1, silent = TRUE)
 
+/obj/item/weapon/soap_in_sock/cell_in_sock
+	icon_state = "cell_in_sock"
+	desc = "There is soap inside, it looks like a makeshift weapon."
+	force = 10
+	throwforce = 4
 
+/obj/item/weapon/soap_in_sock/cell_in_sock/organ_harm(target_zone = null, mob/living/carbon/human/H)
+	if(!target_zone)
+		return
+	var/obj/item/organ/external/BP = H.get_bodypart(target_zone)
+	if(!BP)
+		return
+	if(prob(15))
+		BP.sever_artery()
+		return
+	for(var/obj/item/organ/internal/I in BP.bodypart_organs)
+		if(!I)
+			continue
+		I.take_damage(3, silent = TRUE)
