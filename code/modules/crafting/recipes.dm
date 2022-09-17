@@ -243,8 +243,8 @@
 
 /datum/crafting_recipe/soap_in_sock/on_craft_completion(mob/user, atom/result)
 	var/mob/living/carbon/human/H = user
-	if(H && H.socks && H.socks < 23)
-		H.socks = 23
+	if(H && H.socks)
+		H.socks = 0
 		H.update_body()
 
 /datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)

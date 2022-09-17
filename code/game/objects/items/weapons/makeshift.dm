@@ -391,8 +391,6 @@
 	var/mob/living/carbon/human/H = M
 	var/target_zone = user.get_targetzone()
 	var/armor = H.run_armor_check(target_zone)
-	if(armor > 10)
-		return
 	if(prob(50 - armor))
 		addtimer(CALLBACK(src, .proc/organ_harm, target_zone, H), rand(600,1800))
 	else
@@ -410,4 +408,6 @@
 	for(var/obj/item/organ/internal/I in BP.bodypart_organs)
 		if(!I)
 			continue
-		I.take_damage(1)
+		I.take_damage(1, silent = FALSE)
+
+

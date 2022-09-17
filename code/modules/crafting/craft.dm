@@ -329,6 +329,7 @@
 			ui_interact(usr) //explicit call to show the busy display
 			var/fail_msg = construct_item(usr, TR)
 			if(!fail_msg)
+				TR.on_craft_completion(usr, TR.result)
 				to_chat(usr, "<span class='notice'>[TR.name] constructed.</span>")
 			else
 				to_chat(usr, "<span class='warning'>Construction failed[fail_msg]</span>")
