@@ -263,3 +263,13 @@
 
 /datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
 	return
+
+/datum/crafting_recipe/handmade_armor
+	name = "Handmade armor"
+	reqs = list(/obj/item/clothing/under/color = 1,
+				/obj/item/stack/sheet/metal = 10,
+				/obj/item/stack/cable_coil = 15,)
+	result = /obj/item/clothing/suit/armor/vest/fullbody/handmade_armor
+	time = 40
+	parts = list(/obj/item/stack/cable_coil = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)

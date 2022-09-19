@@ -429,3 +429,11 @@
 		if(!I)
 			continue
 		I.take_damage(3, silent = TRUE)
+
+/obj/item/clothing/suit/armor/vest/fullbody/handmade_armor
+	icon = 'icons/obj/clothing/suits.dmi'
+	icon_state = "armor_handmade_fullbody"
+	name = "Handmade armor"
+	desc = "Homemade item, looks like metal wired to uniform."
+	flags_inv = HIDEJUMPSUIT
+	armor = list(melee = 35, bullet = 15, laser = 15, energy = 5, bomb = 15, bio = 0, rad = 0)
