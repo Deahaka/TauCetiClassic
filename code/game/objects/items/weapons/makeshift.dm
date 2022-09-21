@@ -437,3 +437,40 @@
 	desc = "Homemade item, looks like metal wired to uniform."
 	flags_inv = HIDEJUMPSUIT
 	armor = list(melee = 35, bullet = 15, laser = 15, energy = 5, bomb = 15, bio = 0, rad = 0)
+
+/obj/item/weapon/hand_tele/handmade_teleporter
+	name = "Handmade teleporter"
+	desc = "A portable makeshift item using bluespace technology."
+	icon_state = "handmade_teleporter"
+	item_state = "handmade_teleporter"
+	m_amt = 3000
+	origin_tech = "magnets=1;bluespace=1"
+	var/obj/item/weapon/stock_parts/cell/cell = null
+
+/obj/item/weapon/hand_tele/handmade_teleporter/attack_self(mob/user)
+	if(!cell)
+		to_chat(user, "There is no power cell")
+		return FALSE
+	if(cell.charge < 2500)
+		to_chat(user, "Not enough charge")
+		return FALSE
+	if(..())
+		cell.use(2500)
+
+/obj/item/weapon/hand_tele/handmade_teleporter/find_destination()
+	return list()
+
+/obj/item/weapon/hand_tele/handmade_teleporter/attackby(obj/item/I, mob/user)
+	if(isscrewdriver(I))
+		if(cell)
+			to_chat(user, "You unscrew [cell] from the [src]")
+			var/obj/item/weapon/stock_parts/cell/new_cell = cell.type
+			new new_cell(get_turf(src))
+			cell = null
+	else if(istype(I, /obj/item/weapon/stock_parts/cell))
+		if(!cell)
+			to_chat(user, "You insert [I] to the [src]")
+			cell = I
+			qdel(I)
+	else
+		return ..()

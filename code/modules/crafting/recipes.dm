@@ -273,3 +273,16 @@
 	time = 40
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
+
+/datum/crafting_recipe/handmade_teleporter
+	name = "Handmade teleporter"
+	reqs = list(/obj/item/stack/sheet/glass = 2,
+				/obj/item/weapon/circuitboard = 1,
+				/obj/item/bluespace_crystal = 1,
+				/obj/item/weapon/stock_parts/capacitor = 1,
+				/obj/item/stack/sheet/mineral/plastic = 6,
+				/obj/item/stack/cable_coil = 7)
+	result = /obj/item/weapon/hand_tele/handmade_teleporter
+	time = 40
+	parts = list(/obj/item/stack/cable_coil = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_TRAINED)

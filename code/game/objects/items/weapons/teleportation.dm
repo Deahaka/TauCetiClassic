@@ -139,36 +139,27 @@ Frequency:
 /obj/item/weapon/hand_tele/attack_self(mob/user)
 	if(!user.IsAdvancedToolUser())
 		to_chat(user, "<span class='red'>You don't have the dexterity to do this!</span>")
-		return
+		return FALSE
 	var/turf/current_location = get_turf(user)//What turf is the user on?
 	if(!current_location || !SSmapping.has_level(current_location.z) || is_centcom_level(current_location.z) || is_junkyard_level(current_location.z))//If turf was not found or they're on z level 2 or >7 which does not currently exist.
 		to_chat(user, "<span class='notice'>\The [src] is malfunctioning.</span>")
-		return
+		return FALSE
 	var/list/L = list(  )
-	for(var/obj/machinery/computer/teleporter/com in teleporter_list)
-		if(com.target)
-			if(is_centcom_level(com.target.z))
-				continue
-			if(com.power_station && com.power_station.teleporter_hub && com.power_station.engaged)
-				L["[com.id] (Active)"] = com.target
-			else
-				L["[com.id] (Inactive)"] = com.target
-	var/list/turfs = list(	)
-	for(var/turf/T in orange(10))
-		if(T.x>world.maxx-8 || T.x<8)	continue	//putting them at the edge is dumb
-		if(T.y>world.maxy-8 || T.y<8)	continue
-		turfs += T
-	if(turfs.len)
-		L["None (Dangerous)"] = pick(turfs)
+	var/list/stat_teleporter_dest = find_destination()
+	if(stat_teleporter_dest.len)
+		L += stat_teleporter_dest
+	var/list/random_dest = find_random_dest()
+	if(random_dest.len)
+		L += random_dest
 	var/t1 = input(user, "Please select a teleporter to lock in on.", "Hand Teleporter") in L
-	if ((user.get_active_hand() != src || user.incapacitated()))
-		return
+	if((user.get_active_hand() != src || user.incapacitated()))
+		return FALSE
 	var/count = 0	//num of portals from this teleport in world
 	for(var/obj/effect/portal/PO in portal_list)
 		if(PO.creator == src)	count++
 	if(count >= 3)
 		to_chat(user, "<span class='notice'>\The [src] is recharging!</span>")
-		return
+		return FALSE
 	var/T = L[t1]
 
 	user.audible_message("<span class='notice'>Locked In.</span>") //why not personal audible message?
@@ -177,6 +168,27 @@ Frequency:
 	P.target = T
 	P.creator = src
 	add_fingerprint(user)
-	return
+	return TRUE
 
+/obj/item/weapon/hand_tele/proc/find_destination()
+	var/list/L = list()
+	for(var/obj/machinery/computer/teleporter/com in teleporter_list)
+		if(com.target)
+			if(is_centcom_level(com.target.z))
+				continue
+			if(com.power_station && com.power_station.teleporter_hub && com.power_station.engaged)
+				L["[com.id] (Active)"] = com.target
+			else
+				L["[com.id] (Inactive)"] = com.target
+	return L
 
+/obj/item/weapon/hand_tele/proc/find_random_dest()
+	var/list/L = list()
+	var/list/turfs = list(	)
+	for(var/turf/T in orange(10))
+		if(T.x>world.maxx-8 || T.x<8)	continue	//putting them at the edge is dumb
+		if(T.y>world.maxy-8 || T.y<8)	continue
+		turfs += T
+	if(turfs.len)
+		L["None (Dangerous)"] = pick(turfs)
+	return L
