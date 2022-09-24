@@ -52,7 +52,7 @@
 	desc = "This one protects your head and makes your enemies tremble."
 	icon_state = "battle_bucket"
 	item_state = "bucket"
-	armor = list(melee = 20, bullet = 5, laser = 5,energy = 3, bomb = 5, bio = 0, rad = 0)
+	armor = list(melee = 35, bullet = 15, laser = 15, energy = 5, bomb = 15, bio = 0, rad = 0)
 
 /obj/item/weapon/melee/cattleprod
 	icon = 'icons/obj/makeshift.dmi'
