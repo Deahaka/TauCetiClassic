@@ -1098,4 +1098,4 @@
 /obj/item/CtrlShiftClick(mob/user)
 	. = ..()
 	var/mob/living/carbon/human/H = user
-	SEND_SIGNAL(H, COMSIG_ITEM_CTRLSHIFTCLICK, src)
+	SEND_SIGNAL(H, COMSIG_CLICK_CTRL_SHIFT, src)
