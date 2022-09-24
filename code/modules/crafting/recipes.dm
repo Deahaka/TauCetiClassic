@@ -274,13 +274,13 @@
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
 
-/datum/craft_recipe/clothing/makeshift_helmet
+/datum/crafting_recipe/makeshift_helmet
 	name = "Makeshift helmet"
-	result = /obj/item/clothing/head/helmet/battlebucket
-	time = 30
 	reqs = list(/obj/item/weapon/reagent_containers/glass/bucket = 1,
 				/obj/item/stack/sheet/metal = 4,
 				/obj/item/stack/cable_coil = 4)
+	result = /obj/item/clothing/head/helmet/battlebucket
+	time = 30
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
 
