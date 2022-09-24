@@ -306,3 +306,13 @@
 	time = 40
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_TRAINED)
+
+/datum/crafting_recipe/handmade_hammer
+	name = "Handmade hammer"
+	reqs = list(/obj/item/weapon/reagent_containers/glass/paint = 1,
+				/obj/item/weapon/mop = 1,
+				/obj/item/stack/cable_coil = 10)
+	result = /obj/item/weapon/handmade_hammer
+	time = 40
+	parts = list(/obj/item/stack/cable_coil = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_TRAINED)

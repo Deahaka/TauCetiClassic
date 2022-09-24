@@ -496,3 +496,22 @@
 	var/armor = 100 - H.getarmor(user.get_targetzone())
 	var/hallos_damage = 30 * (armor / 100)
 	H.apply_effect(hallos_damage, AGONY)
+
+/obj/item/weapon/handmade_hammer
+	icon = 'icons/obj/makeshift.dmi'
+	icon_state = "makeshift_hammer"
+	item_state = "makeshift_hammer"
+	name = "Handmade hammer"
+	desc = "Weighty weapon comparable to a toolbox on a stick."
+	force = 7
+	throwforce = 7
+	w_class = SIZE_BIG
+	slot_flags = SLOT_FLAGS_BACK
+	sweep_step = 2
+
+/obj/item/weapon/handmade_hammer/atom_init()
+	. = ..()
+	var/datum/twohanded_component_builder/TCB = new
+	TCB.force_wielded = force * 2
+	TCB.force_unwielded = force
+	AddComponent(/datum/component/twohanded, TCB)
