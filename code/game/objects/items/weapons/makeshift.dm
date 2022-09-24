@@ -474,3 +474,25 @@
 			qdel(I)
 	else
 		return ..()
+
+/obj/item/weapon/elastic_baton // assembly component for spear and stunprod.
+	icon = 'icons/obj/makeshift.dmi'
+	icon_state = "elastic_baton"
+	name = "Elastic baton"
+	desc = "Elastic homemade weapon, consisting of soap wrapped in a towel."
+	item_state = "elastic_baton"
+	force = 5
+	throwforce = 5
+	w_class = SIZE_SMALL
+	slot_flags = SLOT_FLAGS_BELT
+	sweep_step = 2
+
+/obj/item/weapon/elastic_baton/attack(mob/living/M, mob/user)
+	. = ..()
+	if(!ishuman(M))
+		return
+	var/mob/living/carbon/human/H = M
+	//hallos damage deliberately ignores armor
+	var/armor = 100 - H.getarmor(user.get_targetzone())
+	var/hallos_damage = 30 * (armor / 100)
+	H.apply_effect(hallos_damage, AGONY)

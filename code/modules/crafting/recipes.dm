@@ -8,6 +8,10 @@
 	var/parts[] = list()            // type paths of items that will be placed in the result
 	var/chem_catalysts[] = list()   // like tools but for reagents
 	var/required_proficiency
+
+/datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
+	return
+
 /datum/crafting_recipe/can_grenade_igniter
 	name = "Can Grenade (igniter)"
 	result = /obj/item/weapon/grenade/cancasing
@@ -261,8 +265,14 @@
 		H.socks = 0
 		H.update_body()
 
-/datum/crafting_recipe/proc/on_craft_completion(mob/user, atom/result)
-	return
+/datum/crafting_recipe/makeshift_baton
+	name = "Makeshift baton"
+	reqs = list(/obj/item/clothing/under/bathtowel = 1,
+				/obj/item/weapon/reagent_containers/food/snacks/soap = 1)
+	result = /obj/item/weapon/elastic_baton
+	time = 20
+	parts = list(/obj/item/weapon/reagent_containers/food/snacks/soap = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_NOVICE)
 
 /datum/crafting_recipe/handmade_armor
 	name = "Handmade armor"
