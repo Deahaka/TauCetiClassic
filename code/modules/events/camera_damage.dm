@@ -14,7 +14,7 @@
 
 	for(var/obj/machinery/camera/cam in range(severity_range, C))
 		if(is_valid_camera(cam))
-			cam.toggle_cam(TRUE)
+			cam.emp_act(1)
 			if(prob(5 * severity))
 				cam.triggerCameraAlarm()
 
