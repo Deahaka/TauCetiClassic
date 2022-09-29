@@ -212,15 +212,17 @@
 	can_hold = list(
 		/obj/item/toy/crayon
 	)
+	var/list/content_init = list(/obj/item/toy/crayon/red,
+								 /obj/item/toy/crayon/orange,
+								 /obj/item/toy/crayon/yellow,
+								 /obj/item/toy/crayon/green,
+								 /obj/item/toy/crayon/blue,
+								 /obj/item/toy/crayon/purple)
 
 /obj/item/weapon/storage/fancy/crayons/atom_init()
 	. = ..()
-	new /obj/item/toy/crayon/red(src)
-	new /obj/item/toy/crayon/orange(src)
-	new /obj/item/toy/crayon/yellow(src)
-	new /obj/item/toy/crayon/green(src)
-	new /obj/item/toy/crayon/blue(src)
-	new /obj/item/toy/crayon/purple(src)
+	for(var/i in content_init)
+		new i(src)
 	update_icon()
 
 /obj/item/weapon/storage/fancy/crayons/update_icon()
@@ -246,6 +248,14 @@
 		to_chat(user, "\The [I] is too bulky to be contained in [src].")
 		return
 	return ..()
+
+/obj/item/weapon/storage/fancy/crayons/prison
+	content_init = list(/obj/item/toy/crayon/red/prison,
+						/obj/item/toy/crayon/orange/prison,
+						/obj/item/toy/crayon/yellow,
+						/obj/item/toy/crayon/green,
+						/obj/item/toy/crayon/blue/prison,
+						/obj/item/toy/crayon/purple/prison)
 
 /*
  * Glowsticks Box

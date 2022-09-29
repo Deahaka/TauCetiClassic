@@ -16,6 +16,10 @@
 #define DYE_WHITE "white"
 #define DYE_MIME "mime"
 #define DYE_RAINBOW "rainbow"
+#define DYE_DOCTOR "doctor"
+#define DYE_OFFICER "officer"
+#define DYE_ENGINEER "engineer"
+#define DYE_JANITOR "janitor"
 
 // Stamp dyes.
 #define DYE_CARGO "cargo"

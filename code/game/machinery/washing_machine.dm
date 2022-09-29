@@ -24,6 +24,10 @@ var/global/list/dyed_item_types = list(
 		DYE_CENTCOMM = /obj/item/clothing/under/rank/centcom/representative,
 		DYE_FAKECENTCOM = list(/obj/item/clothing/under/space, /obj/item/clothing/under/psyche),
 		DYE_SYNDICATE = /obj/item/clothing/under/syndicate,
+		DYE_DOCTOR = /obj/item/clothing/under/rank/medical,
+		DYE_OFFICER = /obj/item/clothing/under/rank/security,
+		DYE_ENGINEER = /obj/item/clothing/under/rank/engineer,
+		DYE_JANITOR = /obj/item/clothing/under/rank/janitor
 	),
 	DYED_GLOVES = list(
 		DYE_RED = /obj/item/clothing/gloves/red,

@@ -214,11 +214,17 @@
 	shadeColour = "#810c0c"
 	colourName = DYE_RED
 
+/obj/item/toy/crayon/red/prison
+	colourName = DYE_OFFICER
+
 /obj/item/toy/crayon/orange
 	icon_state = "crayonorange"
 	colour = "#ff9300"
 	shadeColour = "#a55403"
 	colourName = DYE_ORANGE
+
+/obj/item/toy/crayon/orange/prison
+	colourName = DYE_ENGINEER
 
 /obj/item/toy/crayon/yellow
 	icon_state = "crayonyellow"
@@ -238,11 +244,17 @@
 	shadeColour = "#0082a8"
 	colourName = DYE_BLUE
 
+/obj/item/toy/crayon/blue/prison
+	colourName = DYE_DOCTOR
+
 /obj/item/toy/crayon/purple
 	icon_state = "crayonpurple"
 	colour = "#da00ff"
 	shadeColour = "#810cff"
 	colourName = DYE_PURPLE
+
+/obj/item/toy/crayon/purple/prison
+	colourName = DYE_JANITOR
 
 /obj/item/toy/crayon/chalk
 	name = "white chalk"
