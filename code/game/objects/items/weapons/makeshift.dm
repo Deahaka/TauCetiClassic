@@ -515,3 +515,68 @@
 	TCB.force_wielded = force * 2
 	TCB.force_unwielded = force
 	AddComponent(/datum/component/twohanded, TCB)
+
+/obj/item/weapon/gun/handmade_pistol
+	name = "Handmade gun"
+	desc = "Looks unreliable. Maybe will blow up in your hands. Due to a strange design this one can be reload only after shot. Or with screwdriver."
+	icon_state = "hm_pistol"
+	item_state = "hm_pistol"
+	m_amt = 1500
+	fire_sound = 'sound/weapons/guns/gunshot_light.ogg'
+	var/chamber_closed = TRUE
+	var/jammed = FALSE
+	var/jam_chance = 15
+	//no needed load goliath rocket
+	var/whitelisted_bullets = list(/obj/item/ammo_casing/c9mm,
+									/obj/item/ammo_casing/c9mmr,
+									/obj/item/ammo_casing/c45,
+									/obj/item/ammo_casing/c45hp,
+									/obj/item/ammo_casing/c45hv,
+									/obj/item/ammo_casing/c45imp,
+									/obj/item/ammo_casing/c45r)
+
+/obj/item/weapon/gun/handmade_pistol/atom_init()
+	. = ..()
+	open_chamber()
+
+/obj/item/weapon/gun/handmade_pistol/special_check(mob/user)
+	. = ..()
+	if(jammed)
+		to_chat(user, "<span class='warning'>[src] is jammed!</span>")
+		return FALSE
+	else
+		if(chambered && prob(jam_chance))
+			jammed = TRUE
+			to_chat(user, "<span class='warning'>[src] is jammed!</span>")
+			return FALSE
+
+/obj/item/weapon/gun/handmade_pistol/shoot_live_shot()
+	. = ..()
+	open_chamber()
+
+/obj/item/weapon/gun/handmade_pistol/attackby(obj/item/W, mob/user)
+	if(chamber_closed)
+		if(istype(W, /obj/item/weapon/screwdriver) || istype(W, /obj/item/weapon/kitchen/utensil) || W.sharp)
+			open_chamber()
+			to_chat(user, "<span class='notice'>You force open chamber with [W].</span>")
+		else
+			to_chat(user, "<span class='warning'>You need to open chamber first.</span>")
+			return
+
+	if(istype(W, /obj/item/ammo_casing))
+		var/obj/item/ammo_casing/A = W
+		if(is_type_in_list(A, whitelisted_bullets))
+			playsound(src, 'sound/weapons/guns/reload_shotgun.ogg', VOL_EFFECTS_MASTER)
+			chamber_closed = TRUE
+			icon_state = "hm_pistol"
+			user.drop_from_inventory(A, src)
+			chambered = A
+
+/obj/item/weapon/gun/handmade_pistol/proc/open_chamber()
+	jammed = FALSE
+	chamber_closed = FALSE
+	icon_state = "hm_pistol_open"
+	if(chambered)
+		var/obj/item/ammo_casing/our_bullet = chambered
+		our_bullet.forceMove(get_turf(src))
+		chambered = null

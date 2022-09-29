@@ -316,3 +316,15 @@
 	time = 40
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_TRAINED)
+
+/datum/crafting_recipe/pistol
+	name = "handmade pistol"
+	reqs = list(/obj/item/pipe = 1,
+				/obj/item/weapon/crossbowframe1 = 1,
+				/obj/item/weapon/grenade/chem_grenade = 1,
+				/obj/item/device/assembly/igniter = 1,
+				/obj/item/stack/cable_coil = 2)
+	result = /obj/item/weapon/gun/handmade_pistol //obj/item/weapon/gun/projectile/handmade_pistol
+	time = 60
+	parts = list(/obj/item/stack/cable_coil = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_PRO)
