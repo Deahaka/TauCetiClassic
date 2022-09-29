@@ -568,15 +568,27 @@
 		if(is_type_in_list(A, whitelisted_bullets))
 			playsound(src, 'sound/weapons/guns/reload_shotgun.ogg', VOL_EFFECTS_MASTER)
 			chamber_closed = TRUE
-			icon_state = "hm_pistol"
+			icon_state = "[initial(icon_state)]"
 			user.drop_from_inventory(A, src)
 			chambered = A
 
 /obj/item/weapon/gun/handmade_pistol/proc/open_chamber()
 	jammed = FALSE
 	chamber_closed = FALSE
-	icon_state = "hm_pistol_open"
+	icon_state = "[initial(icon_state)]-o"
 	if(chambered)
 		var/obj/item/ammo_casing/our_bullet = chambered
 		our_bullet.forceMove(get_turf(src))
 		chambered = null
+
+/obj/item/weapon/gun/handmade_pistol/handmade_shotgun
+	name = "Handmade shotgun"
+	icon_state = "dshotgun-short"
+	item_state = "dshotgun-short"
+	m_amt = 2000
+	fire_sound = 'sound/weapons/guns/gunshot_shotgun.ogg'
+	whitelisted_bullets = list(	/obj/item/ammo_casing/shotgun/beanbag,
+								/obj/item/ammo_casing/shotgun/buckshot,
+								/obj/item/ammo_casing/shotgun/stunshot,
+								/obj/item/ammo_casing/shotgun/incendiary,
+								/obj/item/ammo_casing/shotgun)

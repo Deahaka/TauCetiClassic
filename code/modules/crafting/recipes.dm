@@ -324,7 +324,19 @@
 				/obj/item/weapon/grenade/chem_grenade = 1,
 				/obj/item/device/assembly/igniter = 1,
 				/obj/item/stack/cable_coil = 2)
-	result = /obj/item/weapon/gun/handmade_pistol //obj/item/weapon/gun/projectile/handmade_pistol
+	result = /obj/item/weapon/gun/handmade_pistol
+	time = 60
+	parts = list(/obj/item/stack/cable_coil = 1)
+	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_PRO)
+
+/datum/crafting_recipe/shotgun
+	name = "handmade shotgun"
+	reqs = list(/obj/item/pipe = 1,
+				/obj/item/weapon/crossbowframe1 = 1,
+				/obj/item/weapon/grenade/chem_grenade = 1,
+				/obj/item/device/assembly/igniter = 1,
+				/obj/item/stack/cable_coil = 15)
+	result = /obj/item/weapon/gun/handmade_pistol/handmade_shotgun
 	time = 60
 	parts = list(/obj/item/stack/cable_coil = 1)
 	required_proficiency = list(/datum/skill/construction = SKILL_LEVEL_PRO)
