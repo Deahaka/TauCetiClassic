@@ -11,8 +11,8 @@
 		return COMPONENT_INCOMPATIBLE
 
 	/*
-	max_sharpness = 0 is means the ability to sharpen indefinitely
-	unfortunately, no increase sharpening by bumping in wall
+	max_sharpness = 0 is means the ability to sharpen indefinitely.
+	unfortunately, no increase sharpening by bumping in wall.
 	*/
 	default_force = _default_force
 	max_sharpness = _max_sharpness
@@ -28,6 +28,7 @@
 	var/obj/item/I = parent
 	if((current_sharpness / max_sharpness) > 0)
 		I.visible_message("<span class='warning'>[I] looks deformed, like it has been sharpened!</span>" )
+	//to do peredatt usera i emu smsky
 
 /datum/component/sharpening/proc/chance_to_break()
 	var/chance = default_force + current_sharpness
@@ -83,7 +84,7 @@
 	if(!mask)
 		broken_mask = pick("broken", "broken1", "broken2", "broken3")
 	var/icon/broken_outline = icon('icons/obj/drinks.dmi',broken_mask)
-	image.Blend(broken_outline, ICON_OVERLAY, rand(5), 1)
+	image.Blend(broken_outline, ICON_OVERLAY, 1, 1)
 	image.SwapColor(rgb(255, 0, 220, 255), rgb(0, 0, 0, 0))
 	I.icon = image
 	sprite_modified = TRUE

@@ -65,7 +65,7 @@
 
 /obj/item/weapon/kitchen/utensil/spoon/atom_init()
 	. = ..()
-	AddComponent(/datum/component/sharpening, force, 7, TRUE)
+	AddComponent(/datum/component/sharpening, force, 7, TRUE, "broken3")
 
 /obj/item/weapon/kitchen/utensil/spoon/pspoon
 	name = "plastic spoon"
