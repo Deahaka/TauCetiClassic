@@ -6,7 +6,8 @@
 	slot_flags = SLOT_FLAGS_HEAD
 
 /obj/item/weapon/holder/atom_init()
-	..()
+	. = ..()
+	AddComponent(/datum/component/live_food, list(/obj/item/weapon/reagent_containers/food/snacks/meat = 1), list("protein" = 50))
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/item/weapon/holder/atom_init_late()
