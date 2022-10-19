@@ -30,6 +30,9 @@
 	var/target = null //its target. moves towards the target if it has one
 	var/last_failed_movement = 0//Will not move in the same dir if it couldnt before, will help with the getting stuck on fields thing
 	var/last_warning
+	var/turf/current_destination = null
+	var/run_over_edge = TRUE
+	var/shuttle_hunt = TRUE
 
 	var/atom/movable/singularity_effect/singulo_effect
 
@@ -43,7 +46,7 @@
 	..()
 
 	update_icon(STAGE_ONE)
-
+	RegisterSignal(src, COMSIG_SHUTTLE_DOCKED, .proc/shuttle_hunt_start)
 	START_PROCESSING(SSobj, src)
 	return INITIALIZE_HINT_LATELOAD
 
@@ -67,12 +70,29 @@
 /obj/singularity/attack_tk(mob/user)
 	return FALSE
 
+/obj/singularity/proc/shuttle_hunt_start(isCrewShuttle = TRUE)
+	if(!shuttle_hunt)
+		return FALSE
+	if(!is_station_level(get_turf(src)))
+		return FALSE
+	//no need destroy crew shuttle
+	if(isCrewShuttle)
+		return FALSE
+	var/list/turf_list = get_area_turfs(/area/shuttle/escape/station)
+	target = turf_list
+	return TRUE
+
+/obj/singularity/proc/find_destination()
+	current_destination = spaceDebrisFinishLoc(pick(cardinal), SSmapping.level_by_trait(ZTRAIT_STATION))
+
 /obj/singularity/Move(NewLoc, Dir = 0, step_x = 0, step_y = 0)
 	if(current_size >= STAGE_FIVE || check_turfs_in(Dir))
 		last_failed_movement = 0//Reset this because we moved
 		return ..()
 	else
 		last_failed_movement = Dir
+		if(run_over_edge)
+			addtimer(CALLBACK(src, .proc/find_destination), 600, (TIMER_UNIQUE|TIMER_OVERRIDE))
 		return FALSE
 
 /obj/singularity/blob_act(severity)
@@ -276,10 +296,17 @@
 	if(force_move)
 		movement_dir = force_move
 
-	if(target && prob(60))
-		movement_dir = get_dir(src,target) //moves to a singulo beacon, if there is one
+	if(target)
+		if(prob(60))
+			movement_dir = get_dir(src,target) //moves to a singulo beacon, if there is one
+	else
+		if(current_destination && run_over_edge)
+			movement_dir = get_dir(src, current_destination)
 
 	step(src, movement_dir)
+
+	if(get_turf(src) == current_destination)
+		current_destination = null
 
 /obj/singularity/proc/check_turfs_in(direction = 0, step = 0)
 	if(!direction)

@@ -70,6 +70,9 @@
 /// from base of role/OnPostSetup(): (laterole)
 #define COMSIG_ROLE_POSTSETUP "role_postsetup"
 
+// /datum/substystem signals
+#define COMSIG_SHUTTLE_DOCKED "shuttle_docked"
+
 // light related signals
 /// from base of /atom/movable/lighting_object/update(): (turf/my_turf)
 #define COMSIG_LIGHT_UPDATE_OBJECT "light_update_object"

@@ -223,7 +223,7 @@ SUBSYSTEM_DEF(shuttle)
 					attachment_msg = "Join now: <[BYOND_JOIN_LINK]>",
 					attachment_color = BRIDGE_COLOR_ROUNDSTAT,
 				)
-
+				SEND_SIGNAL(src, COMSIG_SHUTTLE_DOCKED, alert)
 				return TRUE
 
 		if(SHUTTLE_AT_STATION)
