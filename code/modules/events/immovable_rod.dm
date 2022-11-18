@@ -17,7 +17,10 @@ In my current plan for it, 'solid' will be defined as anything with density == 1
 	var/turf/startT = spaceDebrisStartLoc(startside, z)
 	var/turf/endT = spaceDebrisFinishLoc(startside, z)
 	//rod time!
-	new /obj/effect/immovable_rod(startT, endT)
+	var/obj/effect/immovable_rod/rod = new(startT, endT)
+	rod.notify_ghosts("Появился Неподвижный Жезл.")
+	for(var/mob/M as anything in observer_list)
+		to_chat(M, "<span class='ghostalert'>[FOLLOW_LINK(M, rod)] Появился металрод!</span>")
 
 /obj/effect/immovable_rod
 	name = "Immovable Rod"

@@ -27,6 +27,10 @@
 			spawn_fish(rand(4, 6))        // 12 to 30 carp, in small groups
 		else
 			spawn_fish(rand(1, 3), 1, 2)  // 1 to 6 carp, alone or in pairs
+	if(spawned_carp.len)
+		var/mob/living/simple_animal/hostile/carp/fish = pick(spawned_carp)
+		fish.notify_ghosts("Появилась стая космо-карпов.")
+
 
 /datum/event/carp_migration/end()
 	for(var/mob/living/simple_animal/hostile/carp/C in spawned_carp)

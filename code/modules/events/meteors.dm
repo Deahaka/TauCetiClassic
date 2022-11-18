@@ -74,7 +74,12 @@ var/global/list/obj/effect/meteor/meteors_dust = list(
 ///////////////////////////////
 /proc/spawn_meteors(number = 10, list/meteortypes = meteors_normal)
 	for(var/i in 1 to number)
-		spawn_meteor(meteortypes)
+		if(i == 1)
+			var/obj/effect/meteor/M = spawn_meteor(meteortypes)
+			M.notify_ghosts("Появились метеориты.")
+		else
+			spawn_meteor(meteortypes)
+
 
 /proc/spawn_meteor(list/meteortypes)
 	var/turf/pickedstart
@@ -94,7 +99,7 @@ var/global/list/obj/effect/meteor/meteors_dust = list(
 	//message_admins("[M] has spawned at [COORD(M)] [ADMIN_JMP(M)] [ADMIN_FLW(M)].")
 	spawn(0)
 		walk_towards(M, M.dest, 1)
-	return
+	return M
 
 /proc/spaceDebrisStartLoc(startSide, Z)
 	var/starty
@@ -157,6 +162,7 @@ var/global/list/obj/effect/meteor/meteors_dust = list(
 /obj/effect/meteor/atom_init()
 	. = ..()
 	z_original = loc.z
+	global.meteors_in_world += src
 
 /obj/effect/meteor/Move()
 	if(z != z_original || loc == dest)
@@ -182,6 +188,10 @@ var/global/list/obj/effect/meteor/meteors_dust = list(
 
 /obj/effect/meteor/Destroy()
 	walk(src,0) // this cancels the walk_towards() proc
+	global.meteors_in_world -= src
+	if(global.meteors_in_world.len)
+		for(var/mob/dead/observer/ghost in viewers(1, src))
+			ghost.ManualFollow(pick(global.meteors_in_world))
 	return ..()
 
 /obj/effect/meteor/Bump(atom/A)
