@@ -19,6 +19,8 @@
 	var/gnomed = 0 // timer used by gnomecurse.dm
 	var/hulk_activator = null
 
+	var/threatens_person = FALSE
+
 	var/last_massage = 0
 	var/massages_done_right = 0
 	attack_push_vis_effect = ATTACK_EFFECT_PUNCH

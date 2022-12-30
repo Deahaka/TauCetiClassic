@@ -645,3 +645,17 @@
 			bad = 1
 		if(!bad)
 			to_chat(user, "<span class='notice'>[H]'s skin is normal.</span>")
+
+/obj/item/weapon/grab/proc/can_capture_target()
+	if(affecting.dir != assailant.dir)
+		return FALSE
+	var/obj/item/weapon/weapon = assailant.is_in_hands(/obj/item/weapon)
+	if(!weapon)
+		return FALSE
+	if((!weapon.edge) && !istype(weapon, /obj/item/weapon/reagent_containers/food/snacks/grown/banana)))
+		return FALSE
+	return TRUE
+
+/
+	if(G.can_fire())
+			G.Fire(A, src)

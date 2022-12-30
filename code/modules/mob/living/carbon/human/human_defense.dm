@@ -516,3 +516,16 @@
 	if(BP)
 		return BP.is_usable()
 	return FALSE
+
+/mob/living/carbon/human/AltClickOn(atom/A)
+	var/obj/item/weapon/grab/grab = is_in_hands(/obj/item/weapon/grab)
+	if(ishuman(A) && grab && grab.affecting && grab.assailant)
+		if(grab.state < GRAB_AGGRESSIVE)
+			if(grab.can_capture_target())
+				put_weapon_to_throat()
+				return
+	return ..()
+
+/mob/living/carbon/human/proc/put_weapon_to_throat()
+	threatens_person = TRUE
+	visible_message()
