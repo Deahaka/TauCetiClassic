@@ -44,6 +44,10 @@
 #define HOLY_HUD			"holy"
 //Alien embryo hud
 #define ALIEN_EMBRYO_HUD	"alien_embryo"
+/// Nanites huds
+#define NANITE_HUD 			"nanite_hud"
+// Diagnostic Nanite Hud
+#define DIAG_NANITE_FULL_HUD "diag_nanite_full_hud"
 
 //by default everything in the hud_list of an atom is an image
 //a value in hud_list with one of these will change that behavior
