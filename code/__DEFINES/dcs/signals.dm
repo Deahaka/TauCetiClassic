@@ -272,6 +272,8 @@
 #define COMSIG_MOB_HUD_CREATED "mob_hud_created"
 ///from base of item/equipped(): (obj/item/I, slot)
 #define COMSIG_MOB_EQUIPPED "mob_equipped"
+//from base of obj/allowed(mob/M): (/obj) returns bool, if TRUE the mob has id access to the obj
+#define COMSIG_MOB_ALLOWED "mob_allowed"
 
 // living signals
 ///from base of mob/living/rejuvenate(): ()
@@ -315,6 +317,8 @@
 ///from base of mob/living/carbon/swap_hand(): (obj/item)
 #define COMSIG_MOB_SWAP_HANDS "mob_swap_hands"
 	#define COMPONENT_BLOCK_SWAP 1
+///sent by stuff like stunbatons and tasers: ()
+#define COMSIG_LIVING_MINOR_SHOCK "living_minor_shock"
 
 /// from /datum/action/changeling/transform/sting_action(): (mob/living/carbon/human/user)
 #define COMSIG_CHANGELING_TRANSFORM "changeling_transform"
@@ -358,3 +362,36 @@
 
 // send this signal to toggle zoom in /datum/component/zoom: (mob/user)
 #define COMSIG_ZOOM_TOGGLE "zoom_toggle"
+
+///Nanites
+//returns TRUE if nanites are found
+#define COMSIG_HAS_NANITES "has_nanites"
+//(list/nanite_programs) - makes the input list a copy the nanites' program list
+#define COMSIG_NANITE_GET_PROGRAMS	"nanite_get_programs"
+//(amount) Sets current nanite volume to the given amount
+#define COMSIG_NANITE_SET_VOLUME "nanite_set_volume"
+//(amount) Adjusts nanite volume by the given amount
+#define COMSIG_NANITE_ADJUST_VOLUME "nanite_adjust"
+//(amount) Sets maximum nanite volume to the given amount
+#define COMSIG_NANITE_SET_MAX_VOLUME "nanite_set_max_volume"
+//(amount(0-100)) Sets cloud ID to the given amount
+#define COMSIG_NANITE_SET_CLOUD "nanite_set_cloud"
+//(amount) Sets safety threshold to the given amount
+#define COMSIG_NANITE_SET_SAFETY "nanite_set_safety"
+//(amount) Sets regeneration rate to the given amount
+#define COMSIG_NANITE_SET_REGEN "nanite_set_regen"
+//(code(1-9999)) Called when sending a nanite signal to a mob.
+#define COMSIG_NANITE_SIGNAL "nanite_signal"
+//(mob/user, full_scan) - sends to chat a scan of the nanites to the user, returns TRUE if nanites are detected
+#define COMSIG_NANITE_SCAN "nanite_scan"
+//(list/data, scan_level) - adds nanite data to the given data list - made for ui_data procs
+#define COMSIG_NANITE_UI_DATA "nanite_ui_data"
+//(datum/nanite_program/new_program, datum/nanite_program/source_program) Called when adding a program to a nanite component
+#define COMSIG_NANITE_ADD_PROGRAM "nanite_add_program"
+	//Installation successful
+	#define COMPONENT_PROGRAM_INSTALLED	1
+	//Installation failed, but there are still nanites
+	#define COMPONENT_PROGRAM_NOT_INSTALLED	2
+//(datum/component/nanites, full_overwrite, copy_activation) Called to sync the target's nanites to a given nanite component
+#define COMSIG_NANITE_SYNC "nanite_sync"
+
