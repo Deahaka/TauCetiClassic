@@ -23,42 +23,62 @@
 	scan()
 
 	var/data[0]
-	var/turf/T = get_turf(src)
+	var/turf/monitor_turf = get_turf(src)
 	var/list/crewmembers = list()
-	for(var/obj/item/clothing/under/C in src.tracked)
+	for(var/atom/tracked_atom in src.tracked)
+		var/obj/item/clothing/under/C = tracked_atom
+		var/mob/living/carbon/human/H = null
 
-		var/turf/pos = get_turf(C)
+		var/turf/atom_position = null
+		var/tracking_sensor = 0
 
-		if((C) && (C.has_sensor) && (pos) && (T && pos.z == T.z) && (C.sensor_mode != SUIT_SENSOR_OFF))
-			if(ishuman(C.loc))
+		var/is_atom_cloth = istype(C)
+		if(is_atom_cloth)
+			atom_position = get_turf(C)
+			if(C.has_sensor && C.sensor_mode != SUIT_SENSOR_OFF && atom_position)
+				if(ishuman(C.loc))
+					var/mob/living/carbon/human/who_weared_suit = C.loc
+					if(who_weared_suit.w_uniform == C)
+						tracking_sensor = C.sensor_mode
+						H = who_weared_suit
 
-				var/mob/living/carbon/human/H = C.loc
-				if(H.w_uniform != C)
-					continue
+		if(!H)
+			H = tracked_atom
+			//it can be?
+			if(!istype(H))
+				continue
+		if(!atom_position)
+			atom_position = get_turf(H)
+			//nullspace? other z-level?
+			if(!(atom_position && (monitor_turf && atom_position.z == monitor_turf.z)))
+				continue
+		if(!tracking_sensor)
+			//nanites sensor
+			tracking_sensor = SUIT_SENSOR_TRACKING
 
-				var/list/crewmemberData = list("dead"=0, "oxy"=-1, "tox"=-1, "fire"=-1, "brute"=-1, "area"="", "x"=-1, "y"=-1)
+		var/list/crewmemberData = list("dead"=0, "oxy"=-1, "tox"=-1, "fire"=-1, "brute"=-1, "area"="", "x"=-1, "y"=-1)
 
-				crewmemberData["sensor_type"] = C.sensor_mode
-				crewmemberData["name"] = H.get_authentification_name(if_no_id="Unknown")
-				crewmemberData["rank"] = H.get_authentification_rank(if_no_id="Unknown", if_no_job="No Job")
-				crewmemberData["assignment"] = H.get_assignment(if_no_id="Unknown", if_no_job="No Job")
+		crewmemberData["sensor_type"] = tracking_sensor
+		crewmemberData["name"] = H.get_authentification_name(if_no_id="Unknown")
+		crewmemberData["rank"] = H.get_authentification_rank(if_no_id="Unknown", if_no_job="No Job")
+		crewmemberData["assignment"] = H.get_assignment(if_no_id="Unknown", if_no_job="No Job")
 
-				if(C.sensor_mode >= SUIT_SENSOR_BINARY)
-					crewmemberData["dead"] = H.stat > UNCONSCIOUS
+		if(tracking_sensor >= SUIT_SENSOR_BINARY)
+			crewmemberData["dead"] = H.stat > UNCONSCIOUS
 
-				if(C.sensor_mode >= SUIT_SENSOR_VITAL)
-					crewmemberData["oxy"] = round(H.getOxyLoss(), 1)
-					crewmemberData["tox"] = round(H.getToxLoss(), 1)
-					crewmemberData["fire"] = round(H.getFireLoss(), 1)
-					crewmemberData["brute"] = round(H.getBruteLoss(), 1)
+		if(tracking_sensor >= SUIT_SENSOR_VITAL)
+			crewmemberData["oxy"] = round(H.getOxyLoss(), 1)
+			crewmemberData["tox"] = round(H.getToxLoss(), 1)
+			crewmemberData["fire"] = round(H.getFireLoss(), 1)
+			crewmemberData["brute"] = round(H.getBruteLoss(), 1)
 
-				if(C.sensor_mode >= SUIT_SENSOR_TRACKING)
-					var/area/A = get_area(H)
-					crewmemberData["area"] = html_encode(A.name)
-					crewmemberData["x"] = pos.x
-					crewmemberData["y"] = pos.y
+		if(tracking_sensor >= SUIT_SENSOR_TRACKING)
+			var/area/A = get_area(H)
+			crewmemberData["area"] = html_encode(A.name)
+			crewmemberData["x"] = atom_position.x
+			crewmemberData["y"] = atom_position.y
 
-				crewmembers[++crewmembers.len] = crewmemberData
+		crewmembers[++crewmembers.len] = crewmemberData
 
 	crewmembers = sortByKey(crewmembers, "name")
 
@@ -85,4 +105,24 @@
 			var/obj/item/clothing/under/C = H.w_uniform
 			if (C.has_sensor)
 				tracked |= C
+		if(H in SSnanites.nanite_monitored_mobs)
+			tracked |= H
 	return 1
+/*
+for(var/mob/living/carbon/human/H in SSnanites.nanite_monitored_mobs)
+		var/area/A = get_area(H)
+		var/list/crewmemberData = list("dead"=0, "oxy"=-1, "tox"=-1, "fire"=-1, "brute"=-1, "area"="", "x"=-1, "y"=-1)
+		crewmemberData["sensor_type"] = SUIT_SENSOR_TRACKING
+		crewmemberData["name"] = H.get_authentification_name(if_no_id="Unknown")
+		crewmemberData["rank"] = H.get_authentification_rank(if_no_id="Unknown", if_no_job="No Job")
+		crewmemberData["assignment"] = H.get_assignment(if_no_id="Unknown", if_no_job="No Job")
+		crewmemberData["dead"] = H.stat > UNCONSCIOUS
+		crewmemberData["oxy"] = round(H.getOxyLoss(), 1)
+		crewmemberData["tox"] = round(H.getToxLoss(), 1)
+		crewmemberData["fire"] = round(H.getFireLoss(), 1)
+		crewmemberData["brute"] = round(H.getBruteLoss(), 1)
+		crewmemberData["area"] = html_encode(A.name)
+		crewmemberData["x"] = pos.x
+		crewmemberData["y"] = pos.y
+		crewmembers[++crewmembers.len] = crewmemberData
+*/
