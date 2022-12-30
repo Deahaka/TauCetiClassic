@@ -319,6 +319,7 @@
 
 	if(user.a_intent == INTENT_HARM)
 		do_electrocute(M, user, def_zone)
+		SEND_SIGNAL(H, COMSIG_LIVING_MINOR_SHOCK)
 	else
 		try_revive(M, user)
 
