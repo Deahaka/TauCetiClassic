@@ -732,3 +732,12 @@
 	name = "NT box"
 	desc = "It's a blue box with an 'N' on it. Glory to NanoTrasen!"
 	icon_state = "nanotrasen_box"
+
+/obj/item/storage/box/disks_nanite
+	name = "nanite program disks box"
+	icon_state = "disk_box"
+
+/obj/item/storage/box/disks_nanite/atom_init()
+	. = ..()
+	for(var/i in 1 to 7)
+		new /obj/item/disk/nanite_program(src)
