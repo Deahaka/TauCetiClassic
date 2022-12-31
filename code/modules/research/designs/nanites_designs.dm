@@ -28,3 +28,40 @@
 	build_path = /obj/item/disk/nanite_program
 	category = list("Electronics")
 
+//circuit boards
+
+/datum/design/board/nanite_chamber
+	name = "Nanite Chamber"
+	desc = "The circuit board for a Nanite Chamber."
+	id = "nanite_chamber"
+	build_type = IMPRINTER
+	build_path = /obj/item/circuitboard/machine/nanite_chamber
+	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	category = list("Machine")
+
+/datum/design/board/public_nanite_chamber
+	name = "Public Nanite Chamber Board"
+	desc = "The circuit board for a Public Nanite Chamber."
+	id = "public_nanite_chamber"
+	build_type = IMPRINTER
+	build_path = /obj/item/circuitboard/machine/public_nanite_chamber
+	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	category = list("Machine")
+
+/datum/design/board/nanite_programmer
+	name = "Nanite Programmer Board"
+	desc = "The circuit board for a Nanite Programmer."
+	id = "nanite_programmer"
+	build_type = IMPRINTER
+	build_path = /obj/item/circuitboard/machine/nanite_programmer
+	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	category = list("Machine")
+
+/datum/design/board/nanite_program_hub
+	name = "Nanite Program Hub Board"
+	desc = "The circuit board for a Nanite Program Hub."
+	id = "nanite_program_hub"
+	build_type = IMPRINTER
+	build_path = /obj/item/circuitboard/machine/nanite_program_hub
+	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	category = list("Machine")
