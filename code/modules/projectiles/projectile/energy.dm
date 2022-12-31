@@ -20,6 +20,11 @@
 	damage_type = HALLOSS
 	//Damage will be handled on the MOB side, to prevent window shattering.
 
+/obj/item/projectile/energy/electrode/on_hit(atom/target, def_zone = BP_CHEST, blocked = 0)
+	. = ..()
+	if(isliving(target))
+		SEND_SIGNAL(target, COMSIG_LIVING_MINOR_SHOCK)
+
 /obj/item/projectile/energy/declone
 	name = "declone"
 	icon_state = "declone"

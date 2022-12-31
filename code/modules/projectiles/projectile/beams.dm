@@ -181,6 +181,11 @@
 	. = ..()
 	proj_act_sound = null
 
+/obj/item/projectile/beam/stun/on_hit(atom/target, def_zone = BP_CHEST, blocked = 0)
+	. = ..()
+	if(isliving(target))
+		SEND_SIGNAL(target, COMSIG_LIVING_MINOR_SHOCK)
+
 /obj/item/projectile/beam/cult_laser
 	name = "beam"
 	icon_state = "emitter"
