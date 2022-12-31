@@ -1,4 +1,3 @@
-/*
 ///////////////////////////////////
 //////////Nanite Devices///////////
 ///////////////////////////////////
@@ -36,7 +35,7 @@
 	desc = "The circuit board for a Nanite Chamber."
 	id = "nanite_chamber"
 	build_type = IMPRINTER
-	build_path = /obj/item/circuitboard/nanite_chamber
+	build_path = /obj/item/weapon/circuitboard/nanite_chamber
 	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
 	category = list("Machine")
 
@@ -45,7 +44,7 @@
 	desc = "The circuit board for a Public Nanite Chamber."
 	id = "public_nanite_chamber"
 	build_type = IMPRINTER
-	build_path = /obj/item/circuitboard/public_nanite_chamber
+	build_path = /obj/item/weapon/circuitboard/public_nanite_chamber
 	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
 	category = list("Machine")
 
@@ -54,7 +53,7 @@
 	desc = "The circuit board for a Nanite Programmer."
 	id = "nanite_programmer"
 	build_type = IMPRINTER
-	build_path = /obj/item/circuitboard/nanite_programmer
+	build_path = /obj/item/weapon/circuitboard/nanite_programmer
 	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
 	category = list("Machine")
 
@@ -63,7 +62,7 @@
 	desc = "The circuit board for a Nanite Program Hub."
 	id = "nanite_program_hub"
 	build_type = IMPRINTER
-	build_path = /obj/item/circuitboard/nanite_program_hub
+	build_path = /obj/item/weapon/circuitboard/nanite_program_hub
 	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
 	category = list("Machine")
 
@@ -79,7 +78,7 @@
 	//research_icon = 'icons/obj/device.dmi'
 	//research_icon_state = "nanite_program"
 	var/program_type = /datum/nanite_program
-/*
+
 ////////////////////UTILITY NANITES//////////////////////////////////////
 
 /datum/design/nanites/metabolic_synthesis
@@ -546,4 +545,3 @@
 	id = "sensor_nanite_volume"
 	program_type = /datum/nanite_program/sensor/nanite_volume
 	category = list("Sensor Nanites")
-*/*/

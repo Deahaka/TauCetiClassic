@@ -782,7 +782,7 @@
 	density = TRUE
 
 	var/obj/item/disk/nanite_program/disk
-	var/datum/tech/linked_techweb
+	var/datum/research/linked_techweb
 	var/current_category = "Main"
 	var/detail_view = FALSE
 	var/categories = list(
@@ -796,7 +796,9 @@
 
 /obj/machinery/nanite_program_hub/atom_init()
 	. = ..()
-	//linked_techweb = SSresearch.science_tech
+	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
+		if(RD.id == 1)
+			linked_techweb = RD.files
 
 /obj/machinery/nanite_program_hub/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
@@ -841,8 +843,8 @@
 
 	if(current_category != "Main")
 		var/list/program_list = list()
-		for(var/i in linked_techweb.researched_designs)
-			var/datum/design/nanites/D = linked_techweb.researched_designs[i]
+		for(var/i in linked_techweb.researched_tech)
+			var/datum/design/nanites/D = linked_techweb.known_designs[i]
 			if(!istype(D))
 				continue
 			if(current_category in D.category)
@@ -867,7 +869,7 @@
 		if("download")
 			if(!disk)
 				return
-			var/datum/design/nanites/downloaded = linked_techweb.isDesignResearchedID(params["program_id"]) //check if it's a valid design
+			var/datum/design/nanites/downloaded = linked_techweb.IsResearched(params["program_id"]) //check if it's a valid design
 			if(!istype(downloaded))
 				return
 			if(disk.program)
