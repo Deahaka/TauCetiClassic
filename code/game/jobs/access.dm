@@ -106,6 +106,8 @@
 	if(IsAdminGhost(M))
 		//Access can't stop the abuse
 		return TRUE
+	if(istype(M && SEND_SIGNAL(M, COMSIG_MOB_ALLOWED, src)))
+		return TRUE
 	else if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		//if they are holding or wearing a card that has access, that works
