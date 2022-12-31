@@ -2197,6 +2197,7 @@
 #include "code\modules\research\research.dm"
 #include "code\modules\research\server.dm"
 #include "code\modules\research\designs\mechfabricator_designs.dm"
+#include "code\modules\research\designs\nanites_designs.dm"
 #include "code\modules\research\xenoarchaeology\areas.dm"
 #include "code\modules\research\xenoarchaeology\chemistry.dm"
 #include "code\modules\research\xenoarchaeology\geosample.dm"
