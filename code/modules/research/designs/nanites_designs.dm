@@ -284,14 +284,14 @@
 	id = "adrenaline_nanites"
 	program_type = /datum/nanite_program/triggered/adrenaline
 	category = list("Augmentation Nanites")
-
+/*
 /datum/design/nanites/mindshield
 	name = "Mental Barrier"
 	desc = "The nanites form a protective membrane around the host's brain, shielding them from abnormal influences while they're active."
 	id = "mindshield_nanites"
 	program_type = /datum/nanite_program/mindshield
 	category = list("Augmentation Nanites")
-
+*/
 ////////////////////DEFECTIVE NANITES//////////////////////////////////////
 
 /datum/design/nanites/glitch
@@ -478,7 +478,7 @@
 	name = "Mute"
 	desc = "The nanites suppress the host's speech, making them mute while they're active."
 	id = "mute_nanites"
-	program_type = /datum/nanite_program/mute
+	program_type = null //datum/nanite_program/mute
 	category = list("Suppression Nanites")
 
 /datum/design/nanites/voice
