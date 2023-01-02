@@ -282,25 +282,6 @@
 	. = ..()
 	find_chamber()
 
-/obj/machinery/computer/nanite_chamber_control/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/disk/nanite_program))
-		var/obj/item/disk/nanite_program/N = I
-		if(disk)
-			eject(user)
-		if(user.drop_from_inventory(N, src))
-			to_chat(user, "<span class='notice'>You insert [N] into [src]</span>")
-			//playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
-			disk = N
-	else
-		..()
-
-/obj/machinery/computer/nanite_chamber_control/proc/eject(mob/living/user)
-	if(!disk)
-		return
-	if(!istype(user) || !Adjacent(user) || !user.put_in_active_hand(disk))
-		disk.forceMove(loc)
-	disk = null
-
 /obj/machinery/computer/nanite_chamber_control/proc/find_chamber()
 	for(var/direction in global.cardinal)
 		var/C = locate(/obj/machinery/nanite_chamber, get_step(src, direction))
@@ -322,34 +303,6 @@
 
 /obj/machinery/computer/nanite_chamber_control/tgui_data(mob/user)
 	var/list/data = list()
-	if(disk)
-		data["has_disk"] = TRUE
-		var/list/disk_data = list()
-		var/datum/nanite_program/P = disk.program
-		if(P)
-			data["has_program"] = TRUE
-			disk_data["name"] = P.name
-			disk_data["desc"] = P.desc
-
-			disk_data["activated"] = P.activated
-			disk_data["activation_delay"] = P.activation_delay
-			disk_data["timer"] = P.timer
-			disk_data["activation_code"] = P.activation_code
-			disk_data["deactivation_code"] = P.deactivation_code
-			disk_data["kill_code"] = P.kill_code
-			disk_data["trigger_code"] = P.trigger_code
-			disk_data["timer_type"] = P.get_timer_type_text()
-
-			var/list/extra_settings = list()
-			for(var/X in P.extra_settings)
-				var/list/setting = list()
-				setting["name"] = X
-				setting["value"] = P.get_extra_setting(X)
-				extra_settings += list(setting)
-			disk_data["extra_settings"] = extra_settings
-			if(extra_settings.len)
-				disk_data["has_extra_settings"] = TRUE
-		data["disk"] = disk_data
 
 	if(!chamber)
 		data["status_msg"] = "No chamber detected."
@@ -385,9 +338,6 @@
 			chamber.locked = !chamber.locked
 			chamber.update_icon()
 			. = TRUE
-		if("eject")
-			eject(usr)
-			. = TRUE
 		if("set_safety")
 			var/threshold = input("Set safety threshold (0-500):", name, null) as null|num
 			if(!isnull(threshold))
@@ -406,22 +356,6 @@
 		if("nanite_injection")
 			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
 			chamber.inject_nanites()
-			. = TRUE
-		if("add_program")
-			if(!disk || !chamber || !chamber.occupant)
-				return
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
-			chamber.install_program(disk.program)
-			. = TRUE
-		if("remove_program")
-			if(!chamber || !chamber.occupant)
-				return
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
-			var/list/nanite_programs = list()
-			SEND_SIGNAL(chamber.occupant, COMSIG_NANITE_GET_PROGRAMS, nanite_programs)
-			if(nanite_programs.len)
-				var/datum/nanite_program/P = nanite_programs[text2num(params["program_id"])]
-				chamber.uninstall_program(P)
 			. = TRUE
 
 //Nanite Cloud Controller
@@ -514,6 +448,10 @@
 			disk_data["extra_settings"] = extra_settings
 			if(extra_settings.len)
 				disk_data["has_extra_settings"] = TRUE
+			if(istype(P, /datum/nanite_program/sensor))
+				var/datum/nanite_program/sensor/sensor = P
+				if(sensor.can_rule)
+					disk_data["can_rule"] = TRUE
 		data["disk"] = disk_data
 
 	data["current_view"] = current_view
@@ -541,6 +479,20 @@
 				cloud_program["deactivation_code"] = P.deactivation_code
 				cloud_program["kill_code"] = P.kill_code
 				cloud_program["trigger_code"] = P.trigger_code
+				var/list/rules = list()
+				var/rule_id = 1
+				for(var/X in P.rules)
+					var/datum/nanite_rule/nanite_rule = X
+					var/list/rule = list()
+					rule["display"] = nanite_rule.display()
+					rule["program_id"] = id
+					rule["id"] = rule_id
+					rules += list(rule)
+					rule_id++
+				cloud_program["rules"] = rules
+				if(rules.len)
+					cloud_program["has_rules"] = TRUE
+
 				var/list/extra_settings = list()
 				for(var/X in P.extra_settings)
 					var/list/setting = list()
@@ -601,6 +553,28 @@
 				var/datum/component/nanites/nanites = backup.nanites
 				var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
 				qdel(P)
+			. = TRUE
+		if("add_rule")
+			if(disk && disk.program && istype(disk.program, /datum/nanite_program/sensor))
+				var/datum/nanite_program/sensor/rule_template = disk.program
+				if(!rule_template.can_rule)
+					return
+				//for logs
+				//var/datum/nanite_cloud_backup/backup = get_backup(current_view)
+				//if(backup)
+					//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+					//var/datum/component/nanites/nanites = backup.nanites
+					//var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
+					//var/datum/nanite_rule/rule = rule_template.make_rule(P)
+			. = TRUE
+		if("remove_rule")
+			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
+			if(backup)
+				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+				var/datum/component/nanites/nanites = backup.nanites
+				var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
+				var/datum/nanite_rule/rule = P.rules[text2num(params["rule_id"])]
+				rule.remove()
 			. = TRUE
 
 /datum/nanite_cloud_backup
