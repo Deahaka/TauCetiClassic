@@ -167,13 +167,6 @@
 	program_type = /datum/nanite_program/mitosis
 	category = list("Utility Nanites")
 
-/datum/design/nanites/cloud_sync
-	name = "Cloud Sync"
-	desc = "The nanites can toggle cloud sync on and off."
-	id = "cloud_sync_nanites"
-	program_type = /datum/nanite_program/triggered/cloud_sync
-	category = list("Utility Nanites")
-
 ////////////////////MEDICAL NANITES//////////////////////////////////////
 /datum/design/nanites/regenerative
 	name = "Accelerated Regeneration"
@@ -551,13 +544,6 @@
 	desc = "The nanites receive a signal when the nanite supply is above/below a certain percentage."
 	id = "sensor_nanite_volume"
 	program_type = /datum/nanite_program/sensor/nanite_volume
-	category = list("Sensor Nanites")
-
-/datum/design/nanites/sensor_cloud_sync
-	name = "Cloud Sync Sensor"
-	desc = "The nanites receive a signal when the cloud sync is enabled or disabled."
-	id = "sensor_cloud_sync"
-	program_type = /datum/nanite_program/sensor/cloud_sync
 	category = list("Sensor Nanites")
 
 // Circuits

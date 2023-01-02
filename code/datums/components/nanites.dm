@@ -36,6 +36,7 @@
 
 /datum/component/nanites/RegisterWithParent()
 	RegisterSignal(parent, COMSIG_HAS_NANITES, .proc/confirm_nanites)
+	RegisterSignal(parent, COMSIG_NANITE_DELETE, .proc/delete_nanites)
 	RegisterSignal(parent, COMSIG_NANITE_IS_STEALTHY, .proc/check_stealth)
 	RegisterSignal(parent, COMSIG_NANITE_UI_DATA, .proc/nanite_ui_data)
 	RegisterSignal(parent, COMSIG_NANITE_GET_PROGRAMS, .proc/get_programs)
@@ -62,9 +63,9 @@
 
 /datum/component/nanites/UnregisterFromParent()
 	UnregisterSignal(parent, list(COMSIG_HAS_NANITES,
+								COMSIG_NANITE_DELETE,
 								COMSIG_NANITE_IS_STEALTHY,
 								COMSIG_NANITE_UI_DATA,
-								COMSIG_NANITE_DELETE,
 								COMSIG_NANITE_GET_PROGRAMS,
 								COMSIG_NANITE_SET_VOLUME,
 								COMSIG_NANITE_ADJUST_VOLUME,
@@ -110,6 +111,9 @@
 	if(cloud_id && cloud_active && world.time > next_sync)
 		cloud_sync()
 		next_sync = world.time + NANITE_SYNC_DELAY
+
+/datum/component/nanites/proc/delete_nanites()
+	qdel(src)
 
 //Syncs the nanite component to another, making it so programs are the same with the same programming (except activation status)
 /datum/component/nanites/proc/sync(datum/signal_source, datum/component/nanites/source, full_overwrite = TRUE, copy_activation = FALSE)
@@ -332,6 +336,19 @@
 			mob_program["deactivation_code"] = P.deactivation_code
 			mob_program["kill_code"] = P.kill_code
 			mob_program["trigger_code"] = P.trigger_code
+			var/list/rules = list()
+			var/rule_id = 1
+			for(var/Z in P.rules)
+				var/datum/nanite_rule/nanite_rule = Z
+				var/list/rule = list()
+				rule["display"] = nanite_rule.display()
+				rule["program_id"] = id
+				rule["id"] = rule_id
+				rules += list(rule)
+				rule_id++
+			mob_program["rules"] = rules
+			if(rules.len)
+				mob_program["has_rules"] = TRUE
 		id++
 		mob_programs += list(mob_program)
 	data["mob_programs"] = mob_programs
