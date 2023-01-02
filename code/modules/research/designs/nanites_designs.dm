@@ -485,21 +485,21 @@
 	name = "Skull Echo"
 	desc = "The nanites echo a synthesized message inside the host's skull."
 	id = "voice_nanites"
-	program_type = /datum/nanite_program/triggered/voice
+	program_type = /datum/nanite_program/triggered/comm/voice
 	category = list("Suppression Nanites")
 
 /datum/design/nanites/speech
 	name = "Forced Speech"
 	desc = "The nanites force the host to say a pre-programmed sentence when triggered."
 	id = "speech_nanites"
-	program_type = /datum/nanite_program/triggered/speech
+	program_type = /datum/nanite_program/triggered/comm/speech
 	category = list("Suppression Nanites")
 
 /datum/design/nanites/hallucination
 	name = "Hallucination"
 	desc = "The nanites make the host see and hear things that aren't real."
 	id = "hallucination_nanites"
-	program_type = /datum/nanite_program/triggered/hallucination
+	program_type = /datum/nanite_program/triggered/comm/hallucination
 	category = list("Suppression Nanites")
 
 ////////////////////SENSOR NANITES//////////////////////////////////////
@@ -565,3 +565,12 @@
 	build_path = /obj/item/weapon/circuitboard/nanite_cloud_controller
 	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
 	category = list("Computer")
+
+/datum/design/nanite_comm_remote
+	name = "Nanite Communication Remote"
+	desc = "Allows for the construction of a nanite communication remote."
+	id = "nanite_comm_remote"
+	build_type = PROTOLATHE
+	build_path = /obj/item/nanite_remote/comm
+	materials = list(MAT_GLASS = 500, MAT_METAL = 500)
+	category = list("Electronics")

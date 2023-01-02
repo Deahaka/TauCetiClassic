@@ -398,3 +398,5 @@
 #define COMSIG_NANITE_DELETE "nanite_delete"
 //(method) Modify cloud sync status. Method can be toggle, enable or disable
 #define COMSIG_NANITE_SET_CLOUD_SYNC "nanite_set_cloud_sync"
+//(comm_code(1-9999), comm_message) Called when sending a nanite comm signal to a mob.
+#define COMSIG_NANITE_COMM_SIGNAL "nanite_comm_signal"

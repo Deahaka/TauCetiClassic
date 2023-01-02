@@ -7,6 +7,7 @@
 	var/regen_rate = 0.5		//nanites generated per second
 	var/safety_threshold = 50	//how low nanites will get before they stop processing/triggering
 	var/cloud_id = 0 			//0 if not connected to the cloud, 1-100 to set a determined cloud backup to draw from
+	var/cloud_active = TRUE		//if false, won't sync to the cloud
 	var/next_sync = 0
 	var/list/datum/nanite_program/programs = list()
 	var/max_programs = NANITE_PROGRAM_LIMIT
@@ -30,7 +31,7 @@
 		host_mob.hud_set_nanite_indicator()
 		START_PROCESSING(SSnanites, src)
 
-		if(cloud_id)
+		if(cloud_id && cloud_active)
 			cloud_sync()
 
 /datum/component/nanites/RegisterWithParent()
@@ -46,6 +47,7 @@
 	RegisterSignal(parent, COMSIG_NANITE_ADD_PROGRAM, .proc/add_program)
 	RegisterSignal(parent, COMSIG_NANITE_SCAN, .proc/nanite_scan)
 	RegisterSignal(parent, COMSIG_NANITE_SYNC, .proc/sync)
+	RegisterSignal(parent, COMSIG_NANITE_COMM_SIGNAL, .proc/receive_comm_signal)
 
 	if(isliving(parent))
 		RegisterSignal(parent, COMSIG_ATOM_EMP_ACT, .proc/on_emp)
@@ -76,7 +78,8 @@
 								COMSIG_LIVING_MINOR_SHOCK,
 								COMSIG_MOVABLE_HEAR,
 								COMSIG_SPECIES_GAIN,
-								COMSIG_NANITE_SIGNAL))
+								COMSIG_NANITE_SIGNAL,
+								COMSIG_NANITE_COMM_SIGNAL))
 
 /datum/component/nanites/Destroy()
 	STOP_PROCESSING(SSnanites, src)
@@ -198,6 +201,12 @@
 	for(var/X in programs)
 		var/datum/nanite_program/NP = X
 		NP.receive_signal(code, source)
+
+/datum/component/nanites/proc/receive_comm_signal(datum/source, comm_code, comm_message, comm_source = "an unidentified source")
+	for(var/X in programs)
+		if(istype(X, /datum/nanite_program/triggered/comm))
+			var/datum/nanite_program/triggered/comm/NP = X
+			NP.receive_comm_signal(comm_code, comm_message, comm_source)
 
 /datum/component/nanites/proc/check_viable_biotype()
 	//if(!(MOB_ORGANIC in host_mob.mob_biotypes) && !(MOB_UNDEAD in host_mob.mob_biotypes))
