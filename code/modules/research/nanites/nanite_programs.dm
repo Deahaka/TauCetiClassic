@@ -81,10 +81,14 @@
 	target.deactivation_code = deactivation_code
 	target.kill_code = kill_code
 	target.trigger_code = trigger_code
+
 	target.rules = list()
 	for(var/R in rules)
 		var/datum/nanite_rule/rule = R
 		rule.copy_to(target)
+
+	if(istype(target,src))
+		copy_extra_settings_to(target)
 
 /datum/nanite_program/proc/set_extra_setting(user, setting)
 	return
