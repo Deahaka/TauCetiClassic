@@ -84,6 +84,11 @@
 		return
 	SEND_SIGNAL(occupant, COMSIG_NANITE_SET_CLOUD, cloud_id)
 
+/obj/machinery/nanite_chamber/proc/toggle_cloud()
+	if(!occupant)
+		return
+	SEND_SIGNAL(occupant, COMSIG_NANITE_SET_CLOUD_SYNC, NANITE_CLOUD_TOGGLE)
+
 /obj/machinery/nanite_chamber/proc/inject_nanites()
 	if(stat & (NOPOWER|BROKEN))
 		return
@@ -349,6 +354,10 @@
 			if(!isnull(cloud_id))
 				chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
 				//playsound(src, "terminal_type", 25, 0)
+			. = TRUE
+		if("toggle_cloud")
+			chamber.toggle_cloud()
+			//playsound(src, "terminal_type", 25, 0)
 			. = TRUE
 		if("connect_chamber")
 			find_chamber()

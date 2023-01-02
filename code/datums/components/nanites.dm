@@ -36,6 +36,7 @@
 
 /datum/component/nanites/RegisterWithParent()
 	RegisterSignal(parent, COMSIG_HAS_NANITES, .proc/confirm_nanites)
+	RegisterSignal(parent, COMSIG_NANITE_IS_STEALTHY, .proc/check_stealth)
 	RegisterSignal(parent, COMSIG_NANITE_UI_DATA, .proc/nanite_ui_data)
 	RegisterSignal(parent, COMSIG_NANITE_GET_PROGRAMS, .proc/get_programs)
 	RegisterSignal(parent, COMSIG_NANITE_SET_VOLUME, .proc/set_volume)
@@ -45,6 +46,7 @@
 	RegisterSignal(parent, COMSIG_NANITE_SET_SAFETY, .proc/set_safety)
 	RegisterSignal(parent, COMSIG_NANITE_SET_REGEN, .proc/set_regen)
 	RegisterSignal(parent, COMSIG_NANITE_ADD_PROGRAM, .proc/add_program)
+	RegisterSignal(parent, COMSIG_NANITE_SET_CLOUD_SYNC, .proc/set_cloud_sync)
 	RegisterSignal(parent, COMSIG_NANITE_SCAN, .proc/nanite_scan)
 	RegisterSignal(parent, COMSIG_NANITE_SYNC, .proc/sync)
 	RegisterSignal(parent, COMSIG_NANITE_COMM_SIGNAL, .proc/receive_comm_signal)
@@ -60,12 +62,15 @@
 
 /datum/component/nanites/UnregisterFromParent()
 	UnregisterSignal(parent, list(COMSIG_HAS_NANITES,
+								COMSIG_NANITE_IS_STEALTHY,
 								COMSIG_NANITE_UI_DATA,
+								COMSIG_NANITE_DELETE,
 								COMSIG_NANITE_GET_PROGRAMS,
 								COMSIG_NANITE_SET_VOLUME,
 								COMSIG_NANITE_ADJUST_VOLUME,
 								COMSIG_NANITE_SET_MAX_VOLUME,
 								COMSIG_NANITE_SET_CLOUD,
+								COMSIG_NANITE_SET_CLOUD_SYNC,
 								COMSIG_NANITE_SET_SAFETY,
 								COMSIG_NANITE_SET_REGEN,
 								COMSIG_NANITE_ADD_PROGRAM,
@@ -192,7 +197,10 @@
 		var/datum/nanite_program/NP = X
 		NP.on_minor_shock()
 
-/datum/component/nanites/proc/on_death(gibbed)
+/datum/component/nanites/proc/check_stealth(datum/source)
+	return stealth
+
+/datum/component/nanites/proc/on_death(datum/source, gibbed)
 	for(var/X in programs)
 		var/datum/nanite_program/NP = X
 		NP.on_death(gibbed)
@@ -229,6 +237,15 @@
 
 /datum/component/nanites/proc/set_cloud(amount)
 	cloud_id = clamp(amount, 0, 100)
+
+/datum/component/nanites/proc/set_cloud_sync(datum/source, method)
+	switch(method)
+		if(NANITE_CLOUD_TOGGLE)
+			cloud_active = !cloud_active
+		if(NANITE_CLOUD_DISABLE)
+			cloud_active = FALSE
+		if(NANITE_CLOUD_ENABLE)
+			cloud_active = TRUE
 
 /datum/component/nanites/proc/set_safety(amount)
 	safety_threshold = clamp(amount, 0, max_nanites)

@@ -366,6 +366,8 @@
 ///Nanites
 //returns TRUE if nanites are found
 #define COMSIG_HAS_NANITES "has_nanites"
+//() returns TRUE if nanites have stealth
+#define COMSIG_NANITE_IS_STEALTHY "nanite_is_stealthy"
 //(list/nanite_programs) - makes the input list a copy the nanites' program list
 #define COMSIG_NANITE_GET_PROGRAMS	"nanite_get_programs"
 //(amount) Sets current nanite volume to the given amount

@@ -167,6 +167,13 @@
 	program_type = /datum/nanite_program/mitosis
 	category = list("Utility Nanites")
 
+/datum/design/nanites/cloud_sync
+	name = "Cloud Sync"
+	desc = "The nanites can toggle cloud sync on and off."
+	id = "cloud_sync_nanites"
+	program_type = /datum/nanite_program/triggered/cloud_sync
+	category = list("Utility Nanites")
+
 ////////////////////MEDICAL NANITES//////////////////////////////////////
 /datum/design/nanites/regenerative
 	name = "Accelerated Regeneration"
@@ -420,7 +427,7 @@
 	name = "Mind Control"
 	desc = "The nanites imprint an absolute directive onto the host's brain while they're active."
 	id = "mindcontrol_nanites"
-	program_type = /datum/nanite_program/mind_control
+	program_type = /datum/nanite_program/triggered/comm/mind_control
 	category = list("Weaponized Nanites")
 
 ////////////////////SUPPRESSION NANITES//////////////////////////////////////
@@ -539,11 +546,18 @@
 	program_type = /datum/nanite_program/sensor/voice
 	category = list("Sensor Nanites")
 
-/datum/design/nanites/sensor__nanite_volume
+/datum/design/nanites/sensor_nanite_volume
 	name = "Nanite Volume Sensor"
 	desc = "The nanites receive a signal when the nanite supply is above/below a certain percentage."
 	id = "sensor_nanite_volume"
 	program_type = /datum/nanite_program/sensor/nanite_volume
+	category = list("Sensor Nanites")
+
+/datum/design/nanites/sensor_cloud_sync
+	name = "Cloud Sync Sensor"
+	desc = "The nanites receive a signal when the cloud sync is enabled or disabled."
+	id = "sensor_cloud_sync"
+	program_type = /datum/nanite_program/sensor/cloud_sync
 	category = list("Sensor Nanites")
 
 // Circuits
@@ -574,3 +588,17 @@
 	build_path = /obj/item/nanite_remote/comm
 	materials = list(MAT_GLASS = 500, MAT_METAL = 500)
 	category = list("Electronics")
+
+/datum/design/nanites/good_mood
+	name = "Happiness Enhancer"
+	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
+	id = "good_mood_nanites"
+	program_type = /datum/nanite_program/good_mood
+	category = list("Suppression Nanites")
+
+/datum/design/nanites/bad_mood
+	name = "Happiness Suppressor"
+	desc = "The nanites suppress the production of serotonin inside the host's brain, creating an artificial state of depression."
+	id = "bad_mood_nanites"
+	program_type = /datum/nanite_program/bad_mood
+	category = list("Suppression Nanites")
