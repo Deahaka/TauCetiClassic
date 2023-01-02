@@ -45,6 +45,10 @@
 	//Copying these values is handled by copy_extra_settings_to()
 	var/list/extra_settings = list()
 
+	//Rules
+	//Rules that automatically manage if the program's active without requiring separate sensor programs
+	var/list/datum/nanite_rule/rules = list()
+
 /datum/nanite_program/triggered
 	use_rate = 0
 	trigger_cost = 5
@@ -57,6 +61,7 @@
 			deactivate()
 		if(passive_enabled)
 			disable_passive_effect()
+		on_mob_remove()
 	if(nanites)
 		nanites.programs -= src
 	return ..()
@@ -64,15 +69,7 @@
 /datum/nanite_program/proc/copy()
 	var/datum/nanite_program/new_program = new type()
 
-	new_program.activated = activated
-	new_program.activation_delay = activation_delay
-	new_program.timer = timer
-	new_program.timer_type = timer_type
-	new_program.activation_code = activation_code
-	new_program.deactivation_code = deactivation_code
-	new_program.kill_code = kill_code
-	new_program.trigger_code = trigger_code
-	copy_extra_settings_to(new_program)
+	copy_programming(new_program, TRUE)
 
 	return new_program
 
@@ -87,6 +84,11 @@
 	target.kill_code = kill_code
 	target.trigger_code = trigger_code
 	copy_extra_settings_to(target)
+
+	target.rules = list()
+	for(var/R in rules)
+		var/datum/nanite_rule/rule = R
+		rule.copy_to(target)
 
 /datum/nanite_program/proc/set_extra_setting(user, setting)
 	return
@@ -106,6 +108,9 @@
 	host_mob = nanites.host_mob
 	if(activated) //apply activation effects if it starts active
 		activate()
+
+/datum/nanite_program/proc/on_mob_remove()
+	return
 
 /datum/nanite_program/proc/toggle()
 	if(!activated)
@@ -199,9 +204,6 @@
 			software_error()
 
 /datum/nanite_program/proc/on_death()
-	return
-
-/datum/nanite_program/proc/on_hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, message_mode)
 	return
 
 /datum/nanite_program/proc/software_error(type)

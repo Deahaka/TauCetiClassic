@@ -2210,6 +2210,7 @@
 #include "code\modules\research\nanites\nanite_remote.dm"
 #include "code\modules\research\nanites\nanites_machinery.dm"
 #include "code\modules\research\nanites\program_disks.dm"
+#include "code\modules\research\nanites\rules.dm"
 #include "code\modules\research\xenoarchaeology\areas.dm"
 #include "code\modules\research\xenoarchaeology\chemistry.dm"
 #include "code\modules\research\xenoarchaeology\geosample.dm"
