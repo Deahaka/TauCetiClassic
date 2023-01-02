@@ -588,3 +588,10 @@
 	id = "bad_mood_nanites"
 	program_type = /datum/nanite_program/bad_mood
 	category = list("Suppression Nanites")
+
+/datum/design/nanites/nanite_sting
+	name = "Nanite Sting"
+	desc = "When triggered, projects a nearly invisible spike of nanites that attempts to infect a nearby non-host with a copy of the host's nanites cluster."
+	id = "nanite_sting_nanites"
+	program_type = /datum/nanite_program/triggered/nanite_sting
+	category = list("Utility Nanites")

@@ -1781,7 +1781,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_harmonic")
 	cost = 7500
 
-	unlocks_designs = list("explosive_nanites","pyro_nanites","meltdown_nanites","viral_nanites")
+	unlocks_designs = list("explosive_nanites", "pyro_nanites", "meltdown_nanites", "viral_nanites", "nanite_sting_nanites")
 
 /datum/technology/nanite_hazard
 	name = "Hazard Nanite Programs"
