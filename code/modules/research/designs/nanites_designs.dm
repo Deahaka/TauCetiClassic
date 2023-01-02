@@ -603,3 +603,10 @@
 	id = "nanite_sting_nanites"
 	program_type = /datum/nanite_program/triggered/nanite_sting
 	category = list("Utility Nanites")
+
+/datum/design/nanites/sensor_race
+	name = "Race Sensor"
+	desc = "When triggered, the nanites scan the host to determine their race and output a signal depending on the conditions set in the settings."
+	id = "sensor_race_nanites"
+	program_type = /datum/nanite_program/sensor/race
+	category = list("Sensor Nanites")

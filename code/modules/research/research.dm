@@ -1725,7 +1725,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	cost = 2500
 
 	unlocks_designs = list("regenerative_nanites", "bloodheal_nanites", "coagulating_nanites","poison_nanites","flesheating_nanites",\
-					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites")
+					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites", "sensor_race_nanites")
 
 /datum/technology/nanite_neural
 	name = "Neural Nanite Programming"
