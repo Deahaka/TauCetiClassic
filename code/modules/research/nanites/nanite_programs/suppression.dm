@@ -137,27 +137,27 @@
 	trigger_cooldown = 20
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
 
-	extra_settings = list("Sentence","Comm Code")
+	extra_settings = list(NES_SENTENCE, NES_COMM_CODE)
 	var/sentence = ""
 
 /datum/nanite_program/triggered/comm/speech/set_extra_setting(user, setting)
-	if(setting == "Sentence")
-		var/new_sentence = input(user, "Choose the sentence that the host will be forced to say.", "Sentence", sentence, MAX_MESSAGE_LEN)
+	if(setting == NES_SENTENCE)
+		var/new_sentence = input(user, "Choose the sentence that the host will be forced to say.", NES_SENTENCE, sentence, MAX_MESSAGE_LEN)
 		if(!new_sentence)
 			return
 		if(copytext(new_sentence, 1, 2) == "*") //emotes are abusable, like surrender
 			return
 		sentence = new_sentence
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		var/new_code = input(user, "Set the communication code (1-9999) or set to 0 to disable external signals.", name, null) as null|num
 		if(isnull(new_code))
 			return
 		comm_code = clamp(round(new_code, 1), 0, 9999)
 
 /datum/nanite_program/triggered/comm/speech/get_extra_setting(setting)
-	if(setting == "Sentence")
+	if(setting == NES_SENTENCE)
 		return sentence
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		return comm_code
 
 /datum/nanite_program/triggered/comm/speech/copy_extra_settings_to(datum/nanite_program/triggered/comm/speech/target)
@@ -183,25 +183,25 @@
 	trigger_cooldown = 20
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
 
-	extra_settings = list("Message", "Comm Code")
+	extra_settings = list(NES_MESSAGE, NES_COMM_CODE)
 	var/message = ""
 
 /datum/nanite_program/triggered/comm/voice/set_extra_setting(user, setting)
-	if(setting == "Message")
-		var/new_message = input(user, "Choose the message sent to the host.", "Message", message, MAX_MESSAGE_LEN)
+	if(setting == NES_MESSAGE)
+		var/new_message = input(user, "Choose the message sent to the host.", NES_MESSAGE, message, MAX_MESSAGE_LEN)
 		if(!new_message)
 			return
 		message = new_message
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		var/new_code = input(user, "Set the communication code (1-9999) or set to 0 to disable external signals.", name, null) as null|num
 		if(isnull(new_code))
 			return
 		comm_code = clamp(round(new_code, 1), 0, 9999)
 
 /datum/nanite_program/triggered/comm/voice/get_extra_setting(setting)
-	if(setting == "Message")
+	if(setting == NES_MESSAGE)
 		return message
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		return comm_code
 
 /datum/nanite_program/triggered/comm/voice/copy_extra_settings_to(datum/nanite_program/triggered/comm/voice/target)
@@ -225,7 +225,7 @@
 	trigger_cooldown = 80
 	unique = FALSE
 	rogue_types = list(/datum/nanite_program/brain_misfire)
-	extra_settings = list("Hallucination Type", "Comm Code")
+	extra_settings = list(NES_HALLUCINATION_TYPE, NES_COMM_CODE)
 	var/hal_type = ""
 	var/hal_details = ""
 
@@ -233,7 +233,7 @@
 	if(!..())
 		return
 /*
-	if(comm_message && (hal_type != "Message")) //Triggered via comm remote, but not set to a message hallucination
+	if(comm_message && (hal_type != NES_MESSAGE)) //Triggered via comm remote, but not set to a message hallucination
 		return
 	var/sent_message = comm_message //Comm remotes can send custom hallucination messages for the chat hallucination
 	if(!sent_message)
@@ -245,7 +245,7 @@
 		C.hallucination += 15
 	else
 		switch(hal_type)
-			if("Message")
+			if(NES_MESSAGE)
 				new /datum/hallucination/chat(C, TRUE, null, sent_message)
 			if("Battle")
 				new /datum/hallucination/battle(C, TRUE, hal_details)
@@ -268,13 +268,13 @@
 	*/
 /datum/nanite_program/triggered/comm/hallucination/set_extra_setting(user, setting)
 	/*
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		var/new_code = input(user, "(Only for Message) Set the communication code (1-9999) or set to 0 to disable external signals.", name, null) as null|num
 		if(isnull(new_code))
 			return
 		comm_code = clamp(round(new_code, 1), 0, 9999)
-	if(setting == "Hallucination Type")
-		var/list/possible_hallucinations = list("Random","Message","Battle","Sound","Weird Sound","Station Message","Health","Alert","Fire","Shock","Plasma Flood")
+	if(setting == NES_HALLUCINATION_TYPE)
+		var/list/possible_hallucinations = list("Random",NES_MESSAGE,"Battle","Sound","Weird Sound","Station Message","Health","Alert","Fire","Shock","Plasma Flood")
 		var/hal_type_choice = input("Choose the hallucination type", name) as null|anything in possible_hallucinations
 		if(!hal_type_choice)
 			return
@@ -282,9 +282,9 @@
 			if("Random")
 				hal_type = null
 				hal_details = null
-			if("Message")
-				hal_type = "Message"
-				var/hal_chat = input(user, "Choose the message the host will hear, or leave empty for random messages.", "Message", hal_details, MAX_MESSAGE_LEN)
+			if(NES_MESSAGE)
+				hal_type = NES_MESSAGE
+				var/hal_chat = input(user, "Choose the message the host will hear, or leave empty for random messages.", NES_MESSAGE, hal_details, MAX_MESSAGE_LEN)
 				if(hal_chat)
 					hal_details = hal_chat
 			if("Battle")
@@ -349,12 +349,12 @@
 				hal_type = "Plasma Flood"
 	*/
 /datum/nanite_program/triggered/comm/hallucination/get_extra_setting(setting)
-/*	if(setting == "Hallucination Type")
+/*	if(setting == NES_HALLUCINATION_TYPE)
 		if(!hal_type)
 			return "Random"
 		else
 			return hal_type
-	if(setting == "Comm Code")
+	if(setting == NES_COMM_CODE)
 		return comm_code
 */
 /datum/nanite_program/triggered/comm/hallucination/copy_extra_settings_to(datum/nanite_program/triggered/comm/hallucination/target)
@@ -370,18 +370,18 @@
 	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
 	use_rate = 0.1
 	rogue_types = list(/datum/nanite_program/brain_decay)
-	extra_settings = list("Mood Message")
+	extra_settings = list(NES_MOOD_MESSAGE)
 	var/message = "HAPPINESS ENHANCEMENT"
 
 /datum/nanite_program/good_mood/set_extra_setting(user, setting)
-	if(setting == "Mood Message")
-		var/new_message = input(user, "Choose the message visible on the mood effect.", "Message", message, MAX_NAME_LEN)
+	if(setting == NES_MOOD_MESSAGE)
+		var/new_message = input(user, "Choose the message visible on the mood effect.", NES_MESSAGE, message, MAX_NAME_LEN)
 		if(!new_message)
 			return
 		message = new_message
 
 /datum/nanite_program/good_mood/get_extra_setting(setting)
-	if(setting == "Mood Message")
+	if(setting == NES_MOOD_MESSAGE)
 		return message
 
 /datum/nanite_program/good_mood/copy_extra_settings_to(datum/nanite_program/good_mood/target)
@@ -400,18 +400,18 @@
 	desc = "The nanites suppress the production of serotonin inside the host's brain, creating an artificial state of depression."
 	use_rate = 0.1
 	rogue_types = list(/datum/nanite_program/brain_decay)
-	extra_settings = list("Mood Message")
+	extra_settings = list(NES_MOOD_MESSAGE)
 	var/message = "HAPPINESS SUPPRESSION"
 
 /datum/nanite_program/bad_mood/set_extra_setting(user, setting)
-	if(setting == "Mood Message")
-		var/new_message = input(user, "Choose the message visible on the mood effect.", "Message", message, MAX_NAME_LEN)
+	if(setting == NES_MOOD_MESSAGE)
+		var/new_message = input(user, "Choose the message visible on the mood effect.", NES_MESSAGE, message, MAX_NAME_LEN)
 		if(!new_message)
 			return
 		message = new_message
 
 /datum/nanite_program/bad_mood/get_extra_setting(setting)
-	if(setting == "Mood Message")
+	if(setting == NES_MOOD_MESSAGE)
 		return message
 
 /datum/nanite_program/bad_mood/copy_extra_settings_to(datum/nanite_program/bad_mood/target)
