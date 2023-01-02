@@ -411,13 +411,14 @@
 			disk_data["trigger_cooldown"] = P.trigger_cooldown / 10
 
 			disk_data["activated"] = P.activated
-			disk_data["activation_delay"] = P.activation_delay
-			disk_data["timer"] = P.timer
 			disk_data["activation_code"] = P.activation_code
 			disk_data["deactivation_code"] = P.deactivation_code
 			disk_data["kill_code"] = P.kill_code
 			disk_data["trigger_code"] = P.trigger_code
-			disk_data["timer_type"] = P.get_timer_type_text()
+			disk_data["timer_restart"] = P.timer_restart / 10
+			disk_data["timer_shutdown"] = P.timer_shutdown / 10
+			disk_data["timer_trigger"] = P.timer_trigger / 10
+			disk_data["timer_trigger_delay"] = P.timer_trigger_delay / 10
 
 			var/list/extra_settings = list()
 			for(var/X in P.extra_settings)
@@ -452,9 +453,11 @@
 				cloud_program["trigger_cost"] = P.trigger_cost
 				cloud_program["trigger_cooldown"] = P.trigger_cooldown / 10
 				cloud_program["activated"] = P.activated
-				cloud_program["activation_delay"] = P.activation_delay
-				cloud_program["timer"] = P.timer
-				cloud_program["timer_type"] = P.get_timer_type_text()
+				cloud_program["timer_restart"] = P.timer_restart / 10
+				cloud_program["timer_shutdown"] = P.timer_shutdown / 10
+				cloud_program["timer_trigger"] = P.timer_trigger / 10
+				cloud_program["timer_trigger_delay"] = P.timer_trigger_delay / 10
+
 				cloud_program["activation_code"] = P.activation_code
 				cloud_program["deactivation_code"] = P.deactivation_code
 				cloud_program["kill_code"] = P.kill_code
@@ -572,7 +575,7 @@
 	SSnanites.cloud_backups -= src
 	return ..()
 
-//Nanite Hijacker
+/*/Nanite Hijacker REMOVED WHY?
 /obj/item/nanite_hijacker
 	name = "nanite remote control" //fake name
 	desc = "A device that can load nanite programming disks, edit them at will, and imprint them to nanites remotely."
@@ -724,7 +727,7 @@
 					if("Reset Activation Timer")
 						program.timer_type = NANITE_TIMER_RESET
 			. = TRUE
-
+*/
 //Nanite Program Hub
 /obj/machinery/nanite_program_hub
 	name = "nanite program hub"
@@ -898,13 +901,14 @@
 		data["trigger_cooldown"] = program.trigger_cooldown / 10
 
 		data["activated"] = program.activated
-		data["activation_delay"] = program.activation_delay
-		data["timer"] = program.timer
 		data["activation_code"] = program.activation_code
 		data["deactivation_code"] = program.deactivation_code
 		data["kill_code"] = program.kill_code
 		data["trigger_code"] = program.trigger_code
-		data["timer_type"] = program.get_timer_type_text()
+		data["timer_restart"] = program.timer_restart / 10
+		data["timer_shutdown"] = program.timer_shutdown / 10
+		data["timer_trigger"] = program.timer_trigger / 10
+		data["timer_trigger_delay"] = program.timer_trigger_delay / 10
 
 		var/list/extra_settings = list()
 		for(var/X in program.extra_settings)
@@ -928,8 +932,6 @@
 		if("toggle_active")
 			playsound(src, "terminal_type", 25, 0)
 			program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
-			if(program.activated)
-				program.activation_delay = 0
 			. = TRUE
 		if("set_code")
 			var/new_code = input("Set code (0000-9999):", name, null) as null|num
@@ -955,36 +957,37 @@
 			program.set_extra_setting(usr, params["target_setting"])
 			playsound(src, "terminal_type", 25, 0)
 			. = TRUE
-		if("set_activation_delay")
-			var/delay = input("Set activation delay in seconds (0-1800):", name, program.activation_delay) as null|num
-			if(!isnull(delay))
-				playsound(src, "terminal_type", 25, 0)
-				delay = clamp(round(delay, 1),0,1800)
-				program.activation_delay = delay
-				if(delay)
-					program.activated = FALSE
-			. = TRUE
-		if("set_timer")
-			var/timer = input("Set timer in seconds (10-3600):", name, program.timer) as null|num
+		if("set_restart_timer")
+			var/timer = input("Set restart timer in seconds (0-3600):", name, program.timer_restart / 10) as null|num
 			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, 0)
-				if(!timer == 0)
-					timer = clamp(round(timer, 1),10,3600)
-				program.timer = timer
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				program.timer_restart = timer
 			. = TRUE
-		if("set_timer_type")
-			var/new_type = input("Choose the timer effect","Timer Effect") as null|anything in list("Deactivate","Self-Delete","Trigger","Reset Activation Timer")
-			if(new_type)
+		if("set_shutdown_timer")
+			var/timer = input("Set shutdown timer in seconds (0-3600):", name, program.timer_shutdown / 10) as null|num
+			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, 0)
-				switch(new_type)
-					if("Deactivate")
-						program.timer_type = NANITE_TIMER_DEACTIVATE
-					if("Self-Delete")
-						program.timer_type = NANITE_TIMER_SELFDELETE
-					if("Trigger")
-						program.timer_type = NANITE_TIMER_TRIGGER
-					if("Reset Activation Timer")
-						program.timer_type = NANITE_TIMER_RESET
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				program.timer_shutdown = timer
+			. = TRUE
+		if("set_trigger_timer")
+			var/timer = input("Set trigger repeat timer in seconds (0-3600):", name, program.timer_trigger / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, FALSE)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				program.timer_trigger = timer
+			. = TRUE
+		if("set_timer_trigger_delay")
+			var/timer = input("Set trigger delay in seconds (0-3600):", name, program.timer_trigger_delay / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, FALSE)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				program.timer_trigger_delay = timer
 			. = TRUE
 
 //Public Chamber

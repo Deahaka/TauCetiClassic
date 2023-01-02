@@ -201,16 +201,14 @@
 		var/mob/living/carbon/C = host_mob
 		C.cure_trauma_type(resilience = TRAUMA_RESILIENCE_LOBOTOMY)
 	*/
-/datum/nanite_program/triggered/defib
+/datum/nanite_program/defib
 	name = "Defibrillation"
 	desc = "The nanites shock the host's heart when triggered, bringing them back to life if the body can sustain it."
 	trigger_cost = 25
 	trigger_cooldown = 120
-	rogue_types = list(/datum/nanite_program/triggered/shocking)
+	rogue_types = list(/datum/nanite_program/shocking)
 
-/datum/nanite_program/triggered/defib/trigger()
-	if(!..())
-		return
+/datum/nanite_program/defib/on_trigger(comm_message)
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
 		if(check_revivable())
@@ -218,7 +216,7 @@
 	playsound(host_mob, 'sound/machines/defib_zap.ogg', 75, 1, -1)
 	addtimer(CALLBACK(src, .proc/zap), 30)
 
-/datum/nanite_program/triggered/defib/proc/check_revivable()
+/datum/nanite_program/defib/proc/check_revivable()
 	if(!iscarbon(host_mob)) //nonstandard biology
 		return FALSE
 	var/mob/living/carbon/human/H = host_mob
@@ -237,7 +235,7 @@
 		return FALSE
 	return TRUE
 
-/datum/nanite_program/triggered/defib/proc/zap()
+/datum/nanite_program/defib/proc/zap()
 	if(check_revivable())
 		var/mob/living/carbon/human/H = host_mob
 		//playsound(C, 'sound/machines/defib_success.ogg', 50, 0)
