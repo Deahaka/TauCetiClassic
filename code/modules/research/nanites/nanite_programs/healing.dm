@@ -104,7 +104,7 @@
 /datum/nanite_program/repairing
 	name = "Mechanical Repair"
 	desc = "The nanites fix damage in the host's mechanical limbs."
-	use_rate = 0.5 //much more efficient than organic healing
+	use_rate = 0.5
 	rogue_types = list(/datum/nanite_program/necrotic)
 
 /datum/nanite_program/repairing/check_conditions()
