@@ -394,4 +394,7 @@
 	#define COMPONENT_PROGRAM_NOT_INSTALLED	2
 //(datum/component/nanites, full_overwrite, copy_activation) Called to sync the target's nanites to a given nanite component
 #define COMSIG_NANITE_SYNC "nanite_sync"
-
+//() deletes the nanite component
+#define COMSIG_NANITE_DELETE "nanite_delete"
+//(method) Modify cloud sync status. Method can be toggle, enable or disable
+#define COMSIG_NANITE_SET_CLOUD_SYNC "nanite_set_cloud_sync"
