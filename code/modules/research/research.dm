@@ -1710,7 +1710,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_base")
 	cost = 2500
 
-	unlocks_designs = list("hardening_nanites", "refractive_nanites", "cryo_nanites", "conductive_nanites", "shock_nanites", "emp_nanites", "temperature_nanites")
+	unlocks_designs = list("hardening_nanites", "dermal_button_nanites", "refractive_nanites", "cryo_nanites", "conductive_nanites", "shock_nanites", "emp_nanites", "temperature_nanites")
 
 /datum/technology/nanite_bio
 	name = "Biological Nanite Programming"
