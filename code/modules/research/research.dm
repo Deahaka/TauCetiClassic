@@ -1666,3 +1666,124 @@ The tech datums are the actual "tech trees" that you improve through researching
 	cost = 5000
 
 	unlocks_designs = list("borg_syndicate_module")
+
+/////////////////////////Nanites/////////////////////////
+/datum/technology/nanite_base
+	name = "Basic Nanite Programming"
+	desc = "The basics of nanite construction and programming."
+	id = "nanite_base"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("datatheory","robotics")
+	cost = 2500
+
+	unlocks_designs = list("nanite_disk","nanite_remote","nanite_scanner",\
+						"nanite_chamber","public_nanite_chamber","nanite_chamber_control","nanite_programmer","nanite_program_hub","nanite_cloud_control",\
+						"relay_nanites", "monitoring_nanites", "access_nanites", "repairing_nanites","sensor_nanite_volume", "repeater_nanites", "relay_repeater_nanites")
+
+/datum/technology/nanite_smart
+	name = "Smart Nanite Programming"
+	desc = "Nanite programs that require nanites to perform complex actions, act independently, roam or seek targets."
+	id = "nanite_smart"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_base","adv_robotics")
+	cost = 2000
+
+	unlocks_designs = list("purging_nanites", "metabolic_nanites", "stealth_nanites", "memleak_nanites","sensor_voice_nanites", "voice_nanites")
+
+/datum/technology/nanite_mesh
+	name = "Mesh Nanite Programming"
+	desc = "Nanite programs that require static structures and membranes."
+	id = "nanite_mesh"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_base","engineering")
+	cost = 2500
+
+	unlocks_designs = list("hardening_nanites", "refractive_nanites", "cryo_nanites", "conductive_nanites", "shock_nanites", "emp_nanites", "temperature_nanites")
+
+/datum/technology/nanite_bio
+	name = "Biological Nanite Programming"
+	desc = "Nanite programs that require complex biological interaction."
+	id = "nanite_bio"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_base","biotech")
+	cost = 2500
+
+	unlocks_designs = list("regenerative_nanites", "bloodheal_nanites", "coagulating_nanites","poison_nanites","flesheating_nanites",\
+					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites")
+
+/datum/technology/nanite_neural
+	name = "Neural Nanite Programming"
+	desc = "Nanite programs affecting nerves and brain matter."
+	id = "nanite_neural"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_bio")
+	cost = 2500
+
+	unlocks_designs = list("nervous_nanites", "brainheal_nanites", "paralyzing_nanites", "stun_nanites", "selfscan_nanites")
+
+/datum/technology/nanite_synaptic
+	name = "Synaptic Nanite Programming"
+	desc = "Nanite programs affecting mind and thoughts."
+	id = "nanite_synaptic"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_neural","neural_programming")
+	cost = 2500
+
+	unlocks_designs = list("mindshield_nanites", "pacifying_nanites", "blinding_nanites", "sleep_nanites", "mute_nanites", "speech_nanites","hallucination_nanites")
+
+/datum/technology/nanite_harmonic
+	name = "Harmonic Nanite Programming"
+	desc = "Nanite programs that require seamless integration between nanites and biology."
+	id = "nanite_harmonic"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_bio","nanite_smart","nanite_mesh")
+	cost = 4000
+
+	unlocks_designs = list("fakedeath_nanites","aggressive_nanites","defib_nanites","regenerative_plus_nanites","brainheal_plus_nanites","purging_plus_nanites","adrenaline_nanites")
+
+/datum/technology/nanite_combat
+	name = "Military Nanite Programming"
+	desc = "Nanite programs that perform military-grade functions."
+	id = "nanite_military"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_harmonic", "syndicate_basic")
+	cost = 7500
+
+	unlocks_designs = list("explosive_nanites","pyro_nanites","meltdown_nanites","viral_nanites")
+
+/datum/technology/nanite_hazard
+	name = "Hazard Nanite Programs"
+	desc = "Extremely advanced Nanite programs with the potential of being extremely dangerous."
+	id = "nanite_hazard"
+	tech_type = RESEARCH_ROBOTICS
+
+	icon = "gygaxultra"
+
+	required_technologies = list("nanite_harmonic", "alientech")
+	cost = 10000
+
+	unlocks_designs = list("spreading_nanites","mindcontrol_nanites","mitosis_nanites")
