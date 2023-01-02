@@ -604,10 +604,10 @@
 	program_type = /datum/nanite_program/triggered/nanite_sting
 	category = list("Utility Nanites")
 
-/datum/design/nanites/sensor_race
-	name = "Race Sensor"
-	desc = "When triggered, the nanites scan the host to determine their race and output a signal depending on the conditions set in the settings."
-	id = "sensor_race_nanites"
+/datum/design/nanites/sensor_species
+	name = "Species Sensor"
+	desc = "When triggered, the nanites scan the host to determine their species and output a signal depending on the conditions set in the settings."
+	id = "sensor_species_nanites"
 	program_type = /datum/nanite_program/sensor/race
 	category = list("Sensor Nanites")
 
@@ -616,4 +616,18 @@
 	desc = "Displays a button on the host's skin, which can be used to send a signal to the nanites."
 	id = "dermal_button_nanites"
 	program_type = /datum/nanite_program/dermal_button
+	category = list("Utility Nanites")
+
+/datum/design/nanites/research
+	name = "Distributed Computing"
+	desc = "The nanites aid the research servers by performing a portion of its calculations, increasing research point generation."
+	id = "research_nanites"
+	program_type = /datum/nanite_program/research
+	category = list("Utility Nanites")
+
+/datum/design/nanites/researchplus
+	name = "Neural Network"
+	desc = "The nanites link the host's brains together forming a neural research network, that becomes more efficient with the amount of total hosts. Can be overloaded to increase research output."
+	id = "researchplus_nanites"
+	program_type = /datum/nanite_program/researchplus
 	category = list("Utility Nanites")

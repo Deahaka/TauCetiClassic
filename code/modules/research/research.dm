@@ -1696,7 +1696,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_base")
 	cost = 2000
 
-	unlocks_designs = list("purging_nanites", "metabolic_nanites", "stealth_nanites", "memleak_nanites","sensor_voice_nanites", "voice_nanites")
+	unlocks_designs = list("purging_nanites", "research_nanites", "metabolic_nanites", "stealth_nanites", "memleak_nanites","sensor_voice_nanites", "voice_nanites")
 
 /datum/technology/nanite_mesh
 	name = "Mesh Nanite Programming"
@@ -1725,7 +1725,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	cost = 2500
 
 	unlocks_designs = list("regenerative_nanites", "bloodheal_nanites", "coagulating_nanites","poison_nanites","flesheating_nanites",\
-					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites", "sensor_race_nanites")
+					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites", "sensor_species_nanites")
 
 /datum/technology/nanite_neural
 	name = "Neural Nanite Programming"
@@ -1764,10 +1764,10 @@ The tech datums are the actual "tech trees" that you improve through researching
 	icon = "gps"
 	x = 0.6
 
-	required_technologies = list("nanite_bio","nanite_smart","nanite_mesh")
+	required_technologies = list("nanite_bio", "nanite_smart", "nanite_mesh")
 	cost = 4000
 
-	unlocks_designs = list("fakedeath_nanites","aggressive_nanites","defib_nanites","regenerative_plus_nanites","brainheal_plus_nanites","purging_plus_nanites","adrenaline_nanites")
+	unlocks_designs = list("fakedeath_nanites", "researchplus_nanites", "aggressive_nanites", "defib_nanites", "regenerative_plus_nanites", "brainheal_plus_nanites", "purging_plus_nanites", "adrenaline_nanites")
 
 /datum/technology/nanite_combat
 	name = "Military Nanite Programming"
