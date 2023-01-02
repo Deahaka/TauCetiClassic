@@ -608,7 +608,7 @@
 	name = "Species Sensor"
 	desc = "When triggered, the nanites scan the host to determine their species and output a signal depending on the conditions set in the settings."
 	id = "sensor_species_nanites"
-	program_type = /datum/nanite_program/sensor/race
+	program_type = /datum/nanite_program/sensor/species
 	category = list("Sensor Nanites")
 
 /datum/design/nanites/dermal_button
