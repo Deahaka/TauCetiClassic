@@ -6,7 +6,7 @@
 	desc = "Allows for the construction of a nanite remote."
 	id = "nanite_remote"
 	build_type = PROTOLATHE
-	materials = list(MAT_GLASS = 1500, MAT_METAL = 1500, MAT_DIAMOND = 500)
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
 	build_path = /obj/item/nanite_remote
 	category = list("Tools")
 
@@ -15,7 +15,7 @@
 	desc = "Allows for the construction of a nanite scanner."
 	id = "nanite_scanner"
 	build_type = PROTOLATHE
-	materials = list(MAT_GLASS = 1500, MAT_METAL = 1500, MAT_SILVER = 1500)
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_SILVER = 1500)
 	build_path = /obj/item/device/nanite_scanner
 	category = list("Tools")
 
@@ -24,7 +24,7 @@
 	desc = "Stores nanite programs."
 	id = "nanite_disk"
 	build_type = PROTOLATHE
-	materials = list(MAT_METAL = 100, MAT_GLASS = 100)
+	materials = list(MAT_GOLD = 100, MAT_GLASS = 100)
 	build_path = /obj/item/disk/nanite_program
 	category = list("Electronics")
 
@@ -36,7 +36,7 @@
 	id = "nanite_chamber"
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_chamber
-	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
 	category = list("Machine")
 
 /datum/design/public_nanite_chamber
@@ -45,7 +45,7 @@
 	id = "public_nanite_chamber"
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/public_nanite_chamber
-	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
 	category = list("Machine")
 
 /datum/design/nanite_programmer
@@ -54,7 +54,7 @@
 	id = "nanite_programmer"
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_programmer
-	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
 	category = list("Machine")
 
 /datum/design/nanite_program_hub
@@ -63,7 +63,7 @@
 	id = "nanite_program_hub"
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_program_hub
-	materials = list(MAT_METAL = 1500, MAT_GLASS = 3000, MAT_SILVER = 150, "sacid" = 20)
+	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
 	category = list("Machine")
 
 //Nanites designs
@@ -284,14 +284,14 @@
 	id = "adrenaline_nanites"
 	program_type = /datum/nanite_program/triggered/adrenaline
 	category = list("Augmentation Nanites")
-/*
+
 /datum/design/nanites/mindshield
 	name = "Mental Barrier"
 	desc = "The nanites form a protective membrane around the host's brain, shielding them from abnormal influences while they're active."
 	id = "mindshield_nanites"
 	program_type = /datum/nanite_program/mindshield
 	category = list("Augmentation Nanites")
-*/
+
 ////////////////////DEFECTIVE NANITES//////////////////////////////////////
 
 /datum/design/nanites/glitch
@@ -545,3 +545,23 @@
 	id = "sensor_nanite_volume"
 	program_type = /datum/nanite_program/sensor/nanite_volume
 	category = list("Sensor Nanites")
+
+// Circuits
+
+/datum/design/board/nanite_chamber_control
+	name = "Nanite Chamber Control"
+	desc = "Allows for the construction of circuit boards used to build a new nanite chamber control console."
+	id = "nanite_chamber_control"
+	build_type = IMPRINTER
+	build_path = /obj/item/weapon/circuitboard/nanite_chamber_control
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
+	category = list("Computer")
+
+/datum/design/board/nanite_cloud_control
+	name = "Nanite Cloud Control"
+	desc = "Allows for the construction of circuit boards used to build a new nanite cloud control console."
+	id = "nanite_cloud_control"
+	build_type = IMPRINTER
+	build_path = /obj/item/weapon/circuitboard/nanite_cloud_controller
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
+	category = list("Computer")
