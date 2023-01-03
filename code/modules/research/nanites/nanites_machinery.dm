@@ -272,7 +272,7 @@
 	..()
 
 /obj/machinery/computer/nanite_chamber_control/tgui_interact(mob/user, datum/tgui/ui)
-	SStgui.try_update_ui(user, src, ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "nanite_chamber_control", name) //, 550, 800, master_ui, state)
 		ui.open()
@@ -298,6 +298,7 @@
 		data["status_msg"] = chamber.busy_message
 		return data
 
+	data["status_msg"] = null
 	data["scan_level"] = chamber.scan_level
 	data["locked"] = chamber.locked
 	data["occupant_name"] = chamber.occupant.name
@@ -315,13 +316,13 @@
 			chamber.update_icon()
 			. = TRUE
 		if("set_safety")
-			var/threshold = input("Set safety threshold (0-500):", name, null) as null|num
+			var/threshold = text2num(params["value"])
 			if(!isnull(threshold))
 				chamber.set_safety(clamp(round(threshold, 1),0,500))
 				playsound(src, "terminal_type", 25, 0)
 			. = TRUE
 		if("set_cloud")
-			var/cloud_id = input("Set cloud ID (1-100, 0 to disable):", name, null) as null|num
+			var/cloud_id = text2num(params["value"])
 			if(!isnull(cloud_id))
 				chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
 				//playsound(src, "terminal_type", 25, 0)
@@ -348,6 +349,7 @@
 	var/obj/item/disk/nanite_program/disk
 	var/list/datum/nanite_cloud_backup/cloud_backups = list()
 	var/current_view = 0 //0 is the main menu, any other number is the page of the backup with that ID
+	var/new_backup_id = 1
 
 /obj/machinery/computer/nanite_cloud_controller/Destroy()
 	QDEL_LIST(cloud_backups) //rip backups
@@ -390,13 +392,14 @@
 	backup.nanites = cloud_copy
 
 /obj/machinery/computer/nanite_cloud_controller/tgui_interact(mob/user, datum/tgui/ui)
-	SStgui.try_update_ui(user, src, ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "nanite_cloud_control", name) //, 600, 800, master_ui, state)
 		ui.open()
 
 /obj/machinery/computer/nanite_cloud_controller/tgui_data(mob/user)
 	var/list/data = list()
+
 	if(disk)
 		data["has_disk"] = TRUE
 		var/list/disk_data = list()
@@ -420,12 +423,7 @@
 			disk_data["timer_trigger"] = P.timer_trigger / 10
 			disk_data["timer_trigger_delay"] = P.timer_trigger_delay / 10
 
-			var/list/extra_settings = list()
-			for(var/X in P.extra_settings)
-				var/list/setting = list()
-				setting["name"] = X
-				setting["value"] = P.get_extra_setting(X)
-				extra_settings += list(setting)
+			var/list/extra_settings = P.get_extra_settings_frontend()
 			disk_data["extra_settings"] = extra_settings
 			if(extra_settings.len)
 				disk_data["has_extra_settings"] = TRUE
@@ -434,6 +432,10 @@
 				if(sensor.can_rule)
 					disk_data["can_rule"] = TRUE
 		data["disk"] = disk_data
+	else
+		data["has_disk"] = FALSE
+
+	data["new_backup_id"] = new_backup_id
 
 	data["current_view"] = current_view
 	if(current_view)
@@ -476,12 +478,7 @@
 				if(rules.len)
 					cloud_program["has_rules"] = TRUE
 
-				var/list/extra_settings = list()
-				for(var/X in P.extra_settings)
-					var/list/setting = list()
-					setting["name"] = X
-					setting["value"] = P.get_extra_setting(X)
-					extra_settings += list(setting)
+				var/list/extra_settings = P.get_extra_settings_frontend()
 				cloud_program["extra_settings"] = extra_settings
 				if(extra_settings.len)
 					cloud_program["has_extra_settings"] = TRUE
@@ -508,8 +505,11 @@
 		if("set_view")
 			current_view = text2num(params["view"])
 			. = TRUE
+		if("update_new_backup_value")
+			var/backup_value = text2num(params["value"])
+			new_backup_id = backup_value
 		if("create_backup")
-			var/cloud_id = input("Choose a cloud ID (1-100):", name, null) as null|num
+			var/cloud_id = new_backup_id
 			if(!isnull(cloud_id))
 				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				cloud_id = clamp(round(cloud_id, 1),1,100)
@@ -628,7 +628,7 @@
 
 //Same UI as the nanite programmer, as it pretty much does the same
 /obj/item/nanite_hijacker/tgui_interact(mob/user, datum/tgui/ui)
-	SStgui.try_update_ui(user, src, ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "nanite_programmer", "Internal Nanite Programmer") //, 420, 800, master_ui, state)
 		ui.open()
@@ -741,7 +741,7 @@
 	var/obj/item/disk/nanite_program/disk
 	var/datum/research/linked_techweb
 	var/current_category = "Main"
-	var/detail_view = FALSE
+	var/detail_view = TRUE
 	var/categories = list(
 						list(name = "Utility Nanites"),
 						list(name = "Medical Nanites"),
@@ -777,10 +777,9 @@
 	disk = null
 
 /obj/machinery/nanite_program_hub/tgui_interact(mob/user, datum/tgui/ui)
-	SStgui.try_update_ui(user, src, ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "nanite_program_hub", name) //, 500, 700, master_ui, state)
-		ui.set_autoupdate(FALSE) //to avoid making the whole program list every second
 		ui.open()
 
 /obj/machinery/nanite_program_hub/tgui_data(mob/user)
@@ -794,26 +793,31 @@
 			disk_data["name"] = P.name
 			disk_data["desc"] = P.desc
 		data["disk"] = disk_data
+	else
+		data["has_disk"] = FALSE
 
 	data["detail_view"] = detail_view
-	data["category"] = current_category
 
-	if(current_category != "Main")
-		var/list/program_list = list()
-		for(var/i in linked_techweb.researched_tech)
-			var/datum/design/nanites/D = linked_techweb.known_designs[i]
-			if(!istype(D))
-				continue
-			if(current_category in D.category)
-				var/list/program_design = list()
-				program_design["id"] = D.id
-				program_design["name"] = D.name
-				program_design["desc"] = D.desc
-				program_list += list(program_design)
-		data["program_list"] = program_list
-	else
-		data["categories"] = categories
+	return data
 
+/obj/machinery/nanite_program_hub/tgui_static_data(mob/user)
+	var/list/data = list()
+	data["programs"] = list()
+	for(var/i in linked_techweb.known_designs)
+		var/datum/design/nanites/D = linked_techweb.design_by_id[i]
+		if(!istype(D))
+			continue
+		var/cat_name = D.category[1] //just put them in the first category fuck it
+		if(isnull(data["programs"][cat_name]))
+			data["programs"][cat_name] = list()
+		var/list/program_design = list()
+		program_design["id"] = D.id
+		program_design["name"] = D.name
+		program_design["desc"] = D.desc
+		data["programs"][cat_name] += list(program_design)
+
+	if(!length(data["programs"]))
+		data["programs"] = null
 	return data
 
 /obj/machinery/nanite_program_hub/tgui_act(action, list/params)
@@ -835,10 +839,8 @@
 			disk.name = "[initial(disk.name)] \[[disk.program.name]\]"
 			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
 			. = TRUE
-		if("set_category")
-			var/new_category = params["category"]
-			current_category = new_category
-			. = TRUE
+		if("refresh")
+			update_static_data(usr)
 		if("toggle_details")
 			detail_view = !detail_view
 			. = TRUE
@@ -883,7 +885,7 @@
 	program = null
 
 /obj/machinery/nanite_programmer/tgui_interact(mob/user, datum/tgui/ui)
-	SStgui.try_update_ui(user, src, ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "nanite_programmer", name) //, 600, 800, master_ui, state)
 		ui.open()
@@ -910,12 +912,7 @@
 		data["timer_trigger"] = program.timer_trigger / 10
 		data["timer_trigger_delay"] = program.timer_trigger_delay / 10
 
-		var/list/extra_settings = list()
-		for(var/X in program.extra_settings)
-			var/list/setting = list()
-			setting["name"] = X
-			setting["value"] = program.get_extra_setting(X)
-			extra_settings += list(setting)
+		var/list/extra_settings = program.get_extra_settings_frontend()
 		data["extra_settings"] = extra_settings
 		if(extra_settings.len)
 			data["has_extra_settings"] = TRUE
@@ -934,13 +931,7 @@
 			program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
 			. = TRUE
 		if("set_code")
-			var/new_code = input("Set code (0000-9999):", name, null) as null|num
-			if(!isnull(new_code))
-				playsound(src, "terminal_type", 25, 0)
-				new_code = clamp(round(new_code, 1),0,9999)
-			else
-				return
-
+			var/new_code = text2num(params["code"])
 			playsound(src, "terminal_type", 25, 0)
 			var/target_code = params["target_code"]
 			switch(target_code)
@@ -954,11 +945,11 @@
 					program.trigger_code = clamp(round(new_code, 1),0,9999)
 			. = TRUE
 		if("set_extra_setting")
-			program.set_extra_setting(usr, params["target_setting"])
+			program.set_extra_setting(params["target_setting"], params["value"])
 			playsound(src, "terminal_type", 25, 0)
 			. = TRUE
 		if("set_restart_timer")
-			var/timer = input("Set restart timer in seconds (0-3600):", name, program.timer_restart / 10) as null|num
+			var/timer = text2num(params["delay"])
 			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, 0)
 				timer = clamp(round(timer, 1), 0, 3600)
@@ -966,7 +957,7 @@
 				program.timer_restart = timer
 			. = TRUE
 		if("set_shutdown_timer")
-			var/timer = input("Set shutdown timer in seconds (0-3600):", name, program.timer_shutdown / 10) as null|num
+			var/timer = text2num(params["delay"])
 			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, 0)
 				timer = clamp(round(timer, 1), 0, 3600)
@@ -974,7 +965,7 @@
 				program.timer_shutdown = timer
 			. = TRUE
 		if("set_trigger_timer")
-			var/timer = input("Set trigger repeat timer in seconds (0-3600):", name, program.timer_trigger / 10) as null|num
+			var/timer = text2num(params["delay"])
 			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, FALSE)
 				timer = clamp(round(timer, 1), 0, 3600)
@@ -982,7 +973,7 @@
 				program.timer_trigger = timer
 			. = TRUE
 		if("set_timer_trigger_delay")
-			var/timer = input("Set trigger delay in seconds (0-3600):", name, program.timer_trigger_delay / 10) as null|num
+			var/timer = text2num(params["delay"])
 			if(!isnull(timer))
 				playsound(src, "terminal_type", 25, FALSE)
 				timer = clamp(round(timer, 1), 0, 3600)
