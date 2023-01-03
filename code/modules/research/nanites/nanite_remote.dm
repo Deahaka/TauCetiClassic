@@ -82,10 +82,13 @@
 		var/datum/nanite_program/relay/N = X
 		N.relay_signal(code, relay_code, source)
 
+/obj/item/nanite_remote/tgui_state(mob/user)
+	return global.hands_state
+
 /obj/item/nanite_remote/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_remote", name)	//, 420, 800, master_ui, state)
+		ui = new(user, src, "NaniteRemote", name)
 		ui.open()
 
 /obj/item/nanite_remote/tgui_data(mob/user)

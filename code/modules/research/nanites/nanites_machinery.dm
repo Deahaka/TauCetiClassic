@@ -271,10 +271,14 @@
 		find_chamber()
 	..()
 
+/obj/machinery/computer/nanite_chamber_control/attack_hand(mob/user)
+	add_fingerprint(user)
+	tgui_interact(user)
+
 /obj/machinery/computer/nanite_chamber_control/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_chamber_control", name) //, 550, 800, master_ui, state)
+		ui = new(user, src, "NaniteChamberControl", name)
 		ui.open()
 
 /obj/machinery/computer/nanite_chamber_control/tgui_data(mob/user)
@@ -391,10 +395,14 @@
 	backup.cloud_id = cloud_id
 	backup.nanites = cloud_copy
 
+/obj/machinery/computer/nanite_cloud_controller/attack_hand(mob/user)
+	add_fingerprint(user)
+	tgui_interact(user)
+
 /obj/machinery/computer/nanite_cloud_controller/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_cloud_control", name) //, 600, 800, master_ui, state)
+		ui = new(user, src, "NaniteCloudControl", name)
 		ui.open()
 
 /obj/machinery/computer/nanite_cloud_controller/tgui_data(mob/user)
@@ -630,7 +638,7 @@
 /obj/item/nanite_hijacker/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_programmer", "Internal Nanite Programmer") //, 420, 800, master_ui, state)
+		ui = new(user, src, "NaniteProgrammer", "Internal Nanite Programmer")
 		ui.open()
 
 /obj/item/nanite_hijacker/tgui_data(mob/user)
@@ -776,10 +784,14 @@
 		disk.forceMove(loc)
 	disk = null
 
+/obj/machinery/nanite_program_hub/attack_hand(mob/user)
+	add_fingerprint(user)
+	tgui_interact(user)
+
 /obj/machinery/nanite_program_hub/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_program_hub", name) //, 500, 700, master_ui, state)
+		ui = new(user, src, "NaniteProgramHub", name)
 		ui.open()
 
 /obj/machinery/nanite_program_hub/tgui_data(mob/user)
@@ -884,10 +896,14 @@
 	disk = null
 	program = null
 
+/obj/machinery/nanite_programmer/attack_hand(mob/user)
+	add_fingerprint(user)
+	tgui_interact(user)
+
 /obj/machinery/nanite_programmer/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "nanite_programmer", name) //, 600, 800, master_ui, state)
+		ui = new(user, src, "NaniteProgrammer", name)
 		ui.open()
 
 /obj/machinery/nanite_programmer/tgui_data(mob/user)
