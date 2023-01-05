@@ -14,8 +14,6 @@
 	flags = NOBLUDGEON
 	var/locked = FALSE //Can be locked, so it can be given to users with a set code and mode
 	var/mode = REMOTE_MODE_OFF
-	var/list/saved_settings = list()
-	var/last_id = 0
 	var/code = 0
 	var/relay_code = 0
 	var/emagged = FALSE
@@ -24,19 +22,7 @@
 /obj/item/nanite_remote/examine(mob/user)
 	. = ..()
 	if(locked)
-		to_chat(user, "<span class='notice'>Alt-click to unlock.</span>")
-
-/obj/item/nanite_remote/AltClick(mob/user)
-	. = ..()
-	if(!CanUseTopic(user))
-		return
-	if(locked)
-		if(allowed(user))
-			to_chat(user, "<span class='notice'>You unlock [src].</span>")
-			locked = FALSE
-			update_icon()
-		else
-			to_chat(user, "<span class='warning'>Access denied.</span>")
+		to_chat(user, "<span class='notice'>It is locked.</span>")
 
 /obj/item/nanite_remote/emag_act(mob/user)
 	if(emagged)
@@ -50,12 +36,11 @@
 /obj/item/nanite_remote/update_icon()
 	. = ..()
 	cut_overlays()
-	if(emagged)
-		add_overlay("nanite_remote_emagged")
 	if(locked)
 		add_overlay("nanite_remote_locked")
 
-/obj/item/nanite_remote/afterattack(atom/target, mob/user, etc)
+/obj/item/nanite_remote/afterattack(atom/target, mob/user)
+	user.SetNextMove(CLICK_CD_MELEE)
 	switch(mode)
 		if(REMOTE_MODE_OFF)
 			return
@@ -82,93 +67,65 @@
 		var/datum/nanite_program/relay/N = X
 		N.relay_signal(code, relay_code, source)
 
-/obj/item/nanite_remote/tgui_state(mob/user)
-	return global.hands_state
+/obj/item/nanite_remote/proc/unlock_act(mob/user)
+	if(allowed(user))
+		to_chat(user, "<span class='notice'>You unlock [src].</span>")
+		locked = FALSE
+		update_icon()
+	else
+		to_chat(user, "<span class='warning'>Access denied.</span>")
 
-/obj/item/nanite_remote/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteRemote", name)
-		ui.open()
-
-/obj/item/nanite_remote/tgui_data(mob/user)
-	var/list/data = list()
-	data["code"] = code
-	data["relay_code"] = relay_code
-	data["mode"] = mode
-	data["locked"] = locked
-	data["saved_settings"] = saved_settings
-	data["program_name"] = current_program_name
-
+/obj/item/nanite_remote/proc/get_data()
+	var/data = ""
+	data += "Lock: [locked ? "Engaged" : "Disengaged"] [locked ? "<A href='?src=\ref[src];unlock=1'>Unlock</A>" : "<A href='?src=\ref[src];lock=1'>Lock</A>"]<br>\n"
+	if(!locked)
+		data += "Code: <A href='?src=\ref[src];set_code=1'>[code]</A><br>\n"
+		data += "Relay Code: <A href='?src=\ref[src];set_relay_code=1'>[relay_code]</A><br>\n"
+		data += "Selected Mode: <A href='?src=\ref[src];select_mode=1'>[mode]</A><br>\n"
+		data += "Name: <A href='?src=\ref[src];update_name=1'>[current_program_name]</A><br>\n"
 	return data
 
-/obj/item/nanite_remote/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("set_code")
-			if(locked)
-				return
-			var/new_code = text2num(params["code"])
+/obj/item/nanite_remote/ui_interact(mob/user)
+	var/data = get_data()
+	popup(user, data, name)
+	user.set_machine(src)
+
+/obj/item/nanite_remote/Topic(href, href_list)
+	..()
+	if(!locked)
+		if(href_list["set_code"])
+			var/new_code = input("Set code (0000-9999):", name, code) as null|num
 			if(!isnull(new_code))
 				new_code = clamp(round(new_code, 1),0,9999)
 				code = new_code
-			. = TRUE
-		if("set_relay_code")
-			if(locked)
-				return
-			var/new_code = text2num(params["code"])
+			updateSelfDialog()
+		if(href_list["set_relay_code"])
+			var/new_code = input("Set relay code (0000-9999):", name, code) as null|num
 			if(!isnull(new_code))
 				new_code = clamp(round(new_code, 1),0,9999)
 				relay_code = new_code
-			. = TRUE
-		if("update_name")
-			current_program_name = params["name"]
-			. = TRUE
-		if("save")
-			if(locked)
-				return
-			var/new_save = list()
-			new_save["id"] = last_id + 1
-			last_id++
-			new_save["name"] = current_program_name
-			new_save["code"] = code
-			new_save["mode"] = mode
-			new_save["relay_code"] = relay_code
-
-			saved_settings += list(new_save)
-			. = TRUE
-		if("load")
-			var/code_id = params["save_id"]
-			var/list/setting
-			for(var/list/X in saved_settings)
-				if(X["id"] == text2num(code_id))
-					setting = X
-					break
-			if(setting)
-				code = setting["code"]
-				mode = setting["mode"]
-				relay_code = setting["relay_code"]
-			. = TRUE
-		if("remove_save")
-			if(locked)
-				return
-			var/code_id = params["save_id"]
-			for(var/list/setting in saved_settings)
-				if(setting["id"] == text2num(code_id))
-					saved_settings -= list(setting)
-					break
-			. = TRUE
-		if("select_mode")
-			if(locked)
-				return
-			mode = params["mode"]
-			. = TRUE
-		if("lock")
+			updateSelfDialog()
+		if(href_list["update_name"])
+			var/user_input = sanitize_safe(input("Enter a name for program", "Program Name", input_default(current_program_name)) as text)
+			if(!isnull(user_input))
+				current_program_name = user_input
+			updateSelfDialog()
+		if(href_list["select_mode"])
+			var/changing_mode = tgui_alert(usr, "Select New Mode", "Set New Mode", list(REMOTE_MODE_OFF, REMOTE_MODE_SELF, REMOTE_MODE_TARGET, REMOTE_MODE_AOE, REMOTE_MODE_RELAY))
+			if(changing_mode && changing_mode != mode)
+				mode = changing_mode
+			updateSelfDialog()
+		if(href_list["lock"])
 			if(!emagged)
 				locked = TRUE
-				update_icon()
-			. = TRUE
+			update_icon()
+			updateSelfDialog()
+	if(href_list["unlock"])
+		unlock_act(usr)
+		updateSelfDialog()
+
+/obj/item/nanite_remote/attack_self(mob/user)
+	ui_interact(user)
 
 /obj/item/nanite_remote/comm
 	name = "nanite communication remote"
@@ -176,7 +133,7 @@
 	icon_state = "nanite_comm_remote"
 	var/comm_message = ""
 
-/obj/item/nanite_remote/comm/afterattack(atom/target, mob/user, etc)
+/obj/item/nanite_remote/comm/afterattack(atom/target, mob/user)
 	switch(mode)
 		if(REMOTE_MODE_OFF)
 			return
@@ -203,31 +160,19 @@
 		var/datum/nanite_program/relay/N = X
 		N.relay_comm_signal(code, relay_code, comm_message)
 
-/obj/item/nanite_remote/comm/tgui_data(mob/user)
-	var/list/data = list()
-	data["comms"] = TRUE
-	data["code"] = code
-	data["relay_code"] = relay_code
-	data["message"] = comm_message
-	data["mode"] = mode
-	data["locked"] = locked
-	data["saved_settings"] = saved_settings
-	data["program_name"] = current_program_name
-
+/obj/item/nanite_remote/comm/get_data()
+	var/data = ..()
+	data += "Message is <A href='?src=\ref[src];set_message=1'>[comm_message ? comm_message : "None"]</A><br>\n"
 	return data
 
-/obj/item/nanite_remote/comm/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("set_message")
-			if(locked)
-				return
-			var/new_message = html_encode(params["value"])
-			if(!new_message)
-				return
-			comm_message = new_message
-			. = TRUE
+/obj/item/nanite_remote/comm/Topic(href, href_list)
+	..()
+	if(!locked)
+		if(href_list["set_message"])
+			var/new_message = input("Enter new message", "Message", "") as text|null
+			if(new_message)
+				comm_message = new_message
+			updateSelfDialog()
 
 #undef REMOTE_MODE_OFF
 #undef REMOTE_MODE_SELF
