@@ -271,6 +271,7 @@
 		find_chamber()
 	..()
 
+//TODO: show programs
 /obj/machinery/computer/nanite_chamber_control/proc/get_data()
 	var/data = ""
 	if(!chamber)
