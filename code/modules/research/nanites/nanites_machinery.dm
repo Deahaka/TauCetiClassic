@@ -387,18 +387,8 @@
 	var/datum/component/nanites/cloud_copy = new(backup)
 	backup.cloud_id = cloud_id
 	backup.nanites = cloud_copy
-
-/obj/machinery/computer/nanite_cloud_controller/attack_hand(mob/user)
-	add_fingerprint(user)
-	tgui_interact(user)
-
-/obj/machinery/computer/nanite_cloud_controller/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteCloudControl", name)
-		ui.open()
-
-/obj/machinery/computer/nanite_cloud_controller/tgui_data(mob/user)
+/*
+/obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user)
 	var/list/data = list()
 
 	if(disk)
@@ -495,14 +485,57 @@
 			backup_list += list(cloud_backup)
 		data["cloud_backups"] = backup_list
 	return data
+*/
+/obj/machinery/computer/nanite_cloud_controller/proc/get_data()
+	var/data = ""
+	var/has_disk = !isnull(disk)
+	if(has_disk)
+		//var/list/disk_data = list()
+		var/datum/nanite_program/P = disk.program
+		if(P)
+			var/is_can_be_triggered = P.can_trigger
+			data += "Program disk: <A href='?src=\ref[src];eject=1'>Eject</A><hr>"
+			data += "[P.name] [P.activated ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br><hr>"
+			data += "[P.desc]<br>"
+			data += "Use_rate: [P.use_rate]<br>"
+			if(is_can_be_triggered)
+				data += "Trigger Cost: [P.trigger_cost]<br>"
+				data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
+			data += "<hr>"
+			data += "Activation Code: [P.activation_code]<br>"
+			data += "Deactivation Code: [P.deactivation_code]<br>"
+			data += "Kill Code: [P.kill_code]<br>"
+			data += "<hr>"
+			data += "Restart: [P.timer_restart / 10]<br>"
+			data += "Shutdown: [P.timer_shutdown / 10]<br>"
+			if(is_can_be_triggered)
+				data += "Trigger Code: [P.trigger_code]<br>"
+				data += "Timer Trugger: [P.timer_trigger / 10]<br>"
+				data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
+			/*
+			var/list/extra_settings = P.get_extra_settings_frontend()
+			disk_data["extra_settings"] = extra_settings
+			if(extra_settings.len)
+				disk_data["has_extra_settings"] = TRUE
+			if(istype(P, /datum/nanite_program/sensor))
+				var/datum/nanite_program/sensor/sensor = P
+				if(sensor.can_rule)
+					disk_data["can_rule"] = TRUE */
+		//data["disk"] = disk_data
+	//else
+		//data["has_disk"] = FALSE
 
-/obj/machinery/computer/nanite_cloud_controller/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("eject")
-			eject(usr)
-			. = TRUE
+	return data
+
+/obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user)
+	var/data = get_data()
+	popup(user, data, name)
+
+/obj/machinery/computer/nanite_cloud_controller/Topic(href, href_list)
+	..()
+	if(href_list["eject"])
+		eject(usr)
+		/*
 		if("set_view")
 			current_view = text2num(params["view"])
 			. = TRUE
@@ -560,6 +593,8 @@
 				var/datum/nanite_rule/rule = P.rules[text2num(params["rule_id"])]
 				rule.remove()
 			. = TRUE
+		*/
+	updateUsrDialog()
 
 /datum/nanite_cloud_backup
 	var/cloud_id = 0
@@ -776,16 +811,6 @@
 	if(!istype(user) || !Adjacent(user) || !user.put_in_active_hand(disk))
 		disk.forceMove(loc)
 	disk = null
-
-/obj/machinery/nanite_program_hub/attack_hand(mob/user)
-	add_fingerprint(user)
-	tgui_interact(user)
-
-/obj/machinery/nanite_program_hub/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteProgramHub", name)
-		ui.open()
 
 /obj/machinery/nanite_program_hub/tgui_data(mob/user)
 	var/list/data = list()
