@@ -4,6 +4,8 @@
 /obj/item/disk/nanite_program
 	name = "nanite program disk"
 	desc = "A disk capable of storing nanite programs. Can be customized using a Nanite Programming Console."
+	icon = 'icons/obj/device.dmi'
+	icon_state = "quantum_disk"
 	var/program_type
 	var/datum/nanite_program/program
 
