@@ -57,7 +57,7 @@
 	var/obj/machinery/computer/nanite_chamber_control/console
 	var/locked = FALSE
 	var/breakout_time = 1200
-	var/scan_level
+	var/scan_level = 0
 	var/busy = FALSE
 	var/busy_icon_state
 	var/busy_message
@@ -271,77 +271,69 @@
 		find_chamber()
 	..()
 
-/obj/machinery/computer/nanite_chamber_control/attack_hand(mob/user)
-	add_fingerprint(user)
-	tgui_interact(user)
-
-/obj/machinery/computer/nanite_chamber_control/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteChamberControl", name)
-		ui.open()
-
-/obj/machinery/computer/nanite_chamber_control/tgui_data(mob/user)
-	var/list/data = list()
-
+/obj/machinery/computer/nanite_chamber_control/proc/get_data()
+	var/data = ""
 	if(!chamber)
-		data["status_msg"] = "No chamber detected."
+		data += "No chamber detected"
+		data += "<A href='?src=\ref[src];connect_chamber=1'>Try Connect Chamber</A><br>"
 		return data
-
 	if(!chamber.occupant)
-		data["status_msg"] = "No occupant detected."
+		data += "No occupant detected"
 		return data
-
-	var/mob/living/L = chamber.occupant
-
-	/*if(!(MOB_ORGANIC in L.mob_biotypes) && !(MOB_UNDEAD in L.mob_biotypes))
-		data["status_msg"] = "Occupant not compatible with nanites."
-		return data*/
-
 	if(chamber.busy)
-		data["status_msg"] = chamber.busy_message
+		data += "[chamber.busy_message]"
 		return data
-
-	data["status_msg"] = null
-	data["scan_level"] = chamber.scan_level
-	data["locked"] = chamber.locked
-	data["occupant_name"] = chamber.occupant.name
-
-	SEND_SIGNAL(L, COMSIG_NANITE_UI_DATA, data, chamber.scan_level)
+	var/mob/living/occupant = chamber.occupant
+	var/datum/component/nanites/data_handler = occupant?.GetComponent(/datum/component/nanites)
+	var/has_nanites = !isnull(data_handler)
+	data += "Scan Level: [chamber.scan_level]<br>"
+	data += "Chamber: [occupant ? "<A href='?src=\ref[src];eject_occupant=1'>[occupant.name]</A>" : ""]<br>"
+	data += "Lock: [chamber.locked ? "Engaged" : "Disengaged"]. <A href='?src=\ref[src];toggle_lock=1'>[chamber.locked ? "Unlock" : "Lock"]</A><br>"
+	data += "<hr>"
+	if(has_nanites)
+		data += "Nanite Volume: [data_handler.nanite_volume]<br>"
+		data += "Grown Rate: [data_handler.regen_rate]<br>"
+		data += "Current Safety Treshold: [data_handler.safety_threshold] <A href='?src=\ref[src];set_safety=1'>Set Safety Threshold</A><br>"
+		data += "Cloud ID: [data_handler.cloud_id] <A href='?src=\ref[src];set_cloud=1'>Set cloud ID</A><br>"
+		data += "Synchronization: [data_handler.cloud_active ? "Actived" : "Deactivated"]"
+		data += "<hr><A href='?src=\ref[src];remove_nanites=1'><span class='red'>Destroy Nanites</span></A><br>"
+	else
+		data += "No nanites detected.<br>"
+		data += "<hr><A href='?src=\ref[src];inject_nanites=1'><span class='green'>Inject Nanites</span></A>"
 
 	return data
 
-/obj/machinery/computer/nanite_chamber_control/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("toggle_lock")
-			chamber.locked = !chamber.locked
-			chamber.update_icon()
-			. = TRUE
-		if("set_safety")
-			var/threshold = text2num(params["value"])
-			if(!isnull(threshold))
-				chamber.set_safety(clamp(round(threshold, 1),0,500))
-				playsound(src, "terminal_type", 25, 0)
-			. = TRUE
-		if("set_cloud")
-			var/cloud_id = text2num(params["value"])
-			if(!isnull(cloud_id))
-				chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
-				//playsound(src, "terminal_type", 25, 0)
-			. = TRUE
-		if("connect_chamber")
-			find_chamber()
-			. = TRUE
-		if("remove_nanites")
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, FALSE)
-			chamber.remove_nanites()
-			. = TRUE
-		if("nanite_injection")
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
-			chamber.inject_nanites()
-			. = TRUE
+/obj/machinery/computer/nanite_chamber_control/ui_interact(mob/user)
+	var/data = get_data()
+	popup(user, data, name)
+
+//TODO: Updating
+/obj/machinery/computer/nanite_chamber_control/Topic(href, href_list)
+	..()
+	if(href_list["toggle_lock"])
+		chamber.locked = !chamber.locked
+		chamber.update_icon()
+	if(href_list["set_safety"])
+		var/threshold = input("Set safety threshold (0-500):", name, null) as null|num
+		if(!isnull(threshold))
+			chamber.set_safety(clamp(round(threshold, 1),0,500))
+			playsound(src, "terminal_type", 25, 0)
+	if(href_list["set_cloud"])
+		var/cloud_id = input("Set cloud ID (1-100, 0 to disable):", name, null) as null|num
+		if(!isnull(cloud_id))
+			chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
+			playsound(src, "terminal_type", 25, 0)
+	if(href_list["connect_chamber"])
+		find_chamber()
+	if(href_list["remove_nanites"])
+		//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, FALSE)
+		chamber.remove_nanites()
+	if(href_list["nanite_injection"])
+		//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
+		chamber.inject_nanites()
+	if(href_list["eject_occupant"])
+		chamber.toggle_open()
+	updateUsrDialog()
 
 //Nanite Cloud Controller
 /obj/machinery/computer/nanite_cloud_controller
