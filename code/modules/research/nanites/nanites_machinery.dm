@@ -777,14 +777,12 @@
 	var/obj/item/disk/nanite_program/disk
 	var/datum/research/linked_techweb
 	var/current_category = "Main"
-	var/detail_view = TRUE
-	var/categories = list(
-						list(name = "Utility Nanites"),
-						list(name = "Medical Nanites"),
-						list(name = "Sensor Nanites"),
-						list(name = "Augmentation Nanites"),
-						list(name = "Suppression Nanites"),
-						list(name = "Weaponized Nanites")
+	var/categories = list("Utility Nanites",
+						"Medical Nanites",
+						"Sensor Nanites",
+						"Augmentation Nanites",
+						"Suppression Nanites",
+						"Weaponized Nanites"
 						)
 
 /obj/machinery/nanite_program_hub/atom_init()
@@ -812,55 +810,57 @@
 		disk.forceMove(loc)
 	disk = null
 
-/obj/machinery/nanite_program_hub/tgui_data(mob/user)
-	var/list/data = list()
+/obj/machinery/nanite_program_hub/proc/get_data()
+	var/data = ""
 	if(disk)
-		data["has_disk"] = TRUE
-		var/list/disk_data = list()
-		var/datum/nanite_program/P = disk.program
-		if(P)
-			data["has_program"] = TRUE
-			disk_data["name"] = P.name
-			disk_data["desc"] = P.desc
-		data["disk"] = disk_data
+		data += "Program Disk: <A href='?src=\ref[src];eject=1'>Eject</A><br>"
+		if(disk.program)
+			var/datum/nanite_program/program = disk.program
+			data += "Program Name: [program.name]<br>"
+			data += "Description: [program.desc]<br>"
+			data += "<A href='?src=\ref[src];clear=1'>Delete Program</A><br>"
+		else
+			data += "No Program Installed<br>"
 	else
-		data["has_disk"] = FALSE
-
-	data["detail_view"] = detail_view
-
+		data += "Insert Disk<br>"
+	data += "<hr>"
+	data += "Programs Hub<br>"
+	data += "<hr>"
+	data += "<A href='?src=\ref[src];category=1'>[current_category]</A><br>"
+	if(current_category != "Main")
+		var/list/program_list = list()
+		for(var/datum/design/nanites/D in linked_techweb.known_designs)
+			if(!istype(D))
+				continue
+			if(current_category in D.category)
+				program_list[D.name] = D
+		for(var/program_name in program_list)
+			data += "[program_name]<br>"
+		data += "<hr>"
+		if(program_list.len)
+			data += "<A href='?src=\ref[src];download=1'>Download Program</A><br>"
 	return data
 
-/obj/machinery/nanite_program_hub/tgui_static_data(mob/user)
-	var/list/data = list()
-	data["programs"] = list()
-	for(var/i in linked_techweb.known_designs)
-		var/datum/design/nanites/D = linked_techweb.design_by_id[i]
-		if(!istype(D))
-			continue
-		var/cat_name = D.category[1] //just put them in the first category fuck it
-		if(isnull(data["programs"][cat_name]))
-			data["programs"][cat_name] = list()
-		var/list/program_design = list()
-		program_design["id"] = D.id
-		program_design["name"] = D.name
-		program_design["desc"] = D.desc
-		data["programs"][cat_name] += list(program_design)
+/obj/machinery/nanite_program_hub/ui_interact(mob/user)
+	var/data = get_data()
+	popup(user, data, name)
 
-	if(!length(data["programs"]))
-		data["programs"] = null
-	return data
-
-/obj/machinery/nanite_program_hub/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("eject")
-			eject(usr)
-			. = TRUE
-		if("download")
-			if(!disk)
-				return
-			var/datum/design/nanites/downloaded = linked_techweb.IsResearched(params["program_id"]) //check if it's a valid design
+/obj/machinery/nanite_program_hub/Topic(href, href_list)
+	..()
+	if(href_list["eject"])
+		eject(usr)
+	if(href_list["download"])
+		if(!disk)
+			return
+		var/list/program_list = list()
+		for(var/datum/design/nanites/D in linked_techweb.known_designs)
+			if(!istype(D))
+				continue
+			if(current_category in D.category)
+				program_list[D.name] = D
+		var/new_prog = input(usr, "Choose program for download", "Program Hub") as null|anything in program_list + "Cancel"
+		if(new_prog && new_prog != "Cancel")
+			var/datum/design/nanites/downloaded = program_list[new_prog]
 			if(!istype(downloaded))
 				return
 			if(disk.program)
@@ -868,18 +868,17 @@
 			disk.program = new downloaded.program_type
 			disk.name = "[initial(disk.name)] \[[disk.program.name]\]"
 			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
-			. = TRUE
-		if("refresh")
-			update_static_data(usr)
-		if("toggle_details")
-			detail_view = !detail_view
-			. = TRUE
-		if("clear")
-			if(disk && disk.program)
-				qdel(disk.program)
-				disk.program = null
-				disk.name = initial(disk.name)
-			. = TRUE
+	if(href_list["category"])
+		var/new_category = input(usr, "Choose category of program", "Select Type") as null|anything in categories + "Cancel"
+		if(new_category == "Cancel")
+			new_category = "Main"
+		current_category = new_category
+	if(href_list["clear"])
+		if(disk && disk.program)
+			qdel(disk.program)
+			disk.program = null
+			disk.name = initial(disk.name)
+	updateUsrDialog()
 
 //Nanite Programmer
 /obj/machinery/nanite_programmer
