@@ -776,7 +776,7 @@
 
 	var/obj/item/disk/nanite_program/disk
 	var/datum/research/linked_techweb
-	var/current_category = "Main"
+	var/current_category = ""
 	var/categories = list("Utility Nanites",
 						"Medical Nanites",
 						"Sensor Nanites",
@@ -787,6 +787,7 @@
 
 /obj/machinery/nanite_program_hub/atom_init()
 	. = ..()
+	//TODO: isstationlevel????
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
 		if(RD.id == 1)
 			linked_techweb = RD.files
@@ -826,8 +827,8 @@
 	data += "<hr>"
 	data += "Programs Hub<br>"
 	data += "<hr>"
-	data += "<A href='?src=\ref[src];category=1'>[current_category]</A><br>"
-	if(current_category != "Main")
+	data += "<A href='?src=\ref[src];category=1'>[current_category ? current_category : "Main Menu"]</A><br>"
+	if(current_category != null)
 		var/list/program_list = list()
 		for(var/datum/design/nanites/D in linked_techweb.known_designs)
 			if(!istype(D))
@@ -902,8 +903,8 @@
 			//playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
 			disk = N
 			program = N.program
-	else
-		..()
+		return
+	return ..()
 
 /obj/machinery/nanite_programmer/proc/eject(mob/living/user)
 	if(!disk)
@@ -913,61 +914,67 @@
 	disk = null
 	program = null
 
-/obj/machinery/nanite_programmer/attack_hand(mob/user)
-	add_fingerprint(user)
-	tgui_interact(user)
+/obj/machinery/nanite_programmer/proc/get_data()
+	var/data = ""
 
-/obj/machinery/nanite_programmer/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteProgrammer", name)
-		ui.open()
+	if(!istype(disk))
+		data += "Insert a nanite program disk"
+		return data
+	if(!istype(program))
+		data += "Blank Disk. Insert disk with downloaded program<br><hr>"
+		data += "<A href='?src=\ref[src];eject=1'>Eject</A>"
+		return data
 
-/obj/machinery/nanite_programmer/tgui_data(mob/user)
-	var/list/data = list()
-	data["has_disk"] = istype(disk)
-	data["has_program"] = istype(program)
-	if(program)
-		data["name"] = program.name
-		data["desc"] = program.desc
-		data["use_rate"] = program.use_rate
-		data["can_trigger"] = program.can_trigger
-		data["trigger_cost"] = program.trigger_cost
-		data["trigger_cooldown"] = program.trigger_cooldown / 10
+	data += "[program.name] <A href='?src=\ref[src];eject=1'>Eject</A><br><hr>"
+	data += "Info:<br><hr>"
+	data += "[program.desc]<br>"
+	data += "Use Rate: [program.use_rate]<br>"
+	var/is_can_be_triggered = program.can_trigger
+	if(is_can_be_triggered)
+		data += "Trigger Cost: [program.trigger_cost]<br>"
+		data += "Trigger Cooldown: [program.trigger_cooldown / 10]<br>"
+	data += "<hr>"
+	data += "Settings <A href='?src=\ref[src];toggle_active=1'>[program.activated ? "<span class='green'>Active</span>" : "<span class='red'>Inactive</span>"]</A><br><hr>"
+	data += "Activation: <A href='?src=\ref[src];set_code=activation'>[program.activation_code]</A><br>"
+	data += "Deactivation: <A href='?src=\ref[src];set_code=deactivation'>[program.deactivation_code]</A><br>"
+	data += "Kill: <A href='?src=\ref[src];set_code=kill'>[program.kill_code]</A><br>"
+	data += "Restart timer: <A href='?src=\ref[src];set_restart_timer=1'>[program.timer_restart / 10]</A><br>"
+	data += "Shutdown timer: <A href='?src=\ref[src];set_shutdown_timer=1'>[program.timer_shutdown / 10]</A><br>"
+	if(is_can_be_triggered)
+		data += "Trigger: <A href='?src=\ref[src];set_code=trigger'>[program.trigger_code]</A><br>"
+		data += "Trigger Repeat Timer: <A href='?src=\ref[src];set_trigger_timer=1'>[program.timer_trigger / 10]</A><br>"
+		data += "Trigger Delay: <A href='?src=\ref[src];set_timer_trigger_delay=1'>[program.timer_trigger_delay / 10]</A><br>"
 
-		data["activated"] = program.activated
-		data["activation_code"] = program.activation_code
-		data["deactivation_code"] = program.deactivation_code
-		data["kill_code"] = program.kill_code
-		data["trigger_code"] = program.trigger_code
-		data["timer_restart"] = program.timer_restart / 10
-		data["timer_shutdown"] = program.timer_shutdown / 10
-		data["timer_trigger"] = program.timer_trigger / 10
-		data["timer_trigger_delay"] = program.timer_trigger_delay / 10
-
-		var/list/extra_settings = program.get_extra_settings_frontend()
-		data["extra_settings"] = extra_settings
-		if(extra_settings.len)
-			data["has_extra_settings"] = TRUE
-
+	var/list/extra_settings = program.get_extra_settings_frontend()
+	for(var/setting in extra_settings)
+		switch(setting["type"])
+			if(NESTYPE_TEXT)
+				data += "Rule Text: <A href='?src=\ref[src];set_extra_setting=text'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+			if(NESTYPE_NUMBER)
+				data += "Rule Number: <A href='?src=\ref[src];set_extra_setting=number'>[setting["value"] ? setting["value"] : 1]</A> [setting["unit"] ? setting["unit"] : ""]<br>"
+			if(NESTYPE_BOOLEAN)
+				data += "Rule Clause: <A href='?src=\ref[src];set_extra_setting=bool'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
+			if(NESTYPE_TYPE)
+				data += "Rule Type: <A href='?src=\ref[src];set_extra_setting=type'>[setting["value"] ? setting["value"] : "None"]</A><br>"
 	return data
 
-/obj/machinery/nanite_programmer/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("eject")
-			eject(usr)
-			. = TRUE
-		if("toggle_active")
-			playsound(src, "terminal_type", 25, 0)
-			program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
-			. = TRUE
-		if("set_code")
-			var/new_code = text2num(params["code"])
-			playsound(src, "terminal_type", 25, 0)
-			var/target_code = params["target_code"]
-			switch(target_code)
+/obj/machinery/nanite_programmer/ui_interact(mob/user)
+	var/data = get_data()
+	popup(user, data, name)
+
+/obj/machinery/nanite_programmer/Topic(href, href_list)
+	..()
+	if(href_list["eject"])
+		eject(usr)
+	if(href_list["toggle_active"])
+		playsound(src, "terminal_type", 25, 0)
+		program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
+	if(href_list["set_code"])
+		var/new_code = input("Set code (0000-9999):", name, null) as null|num
+		if(!isnull(new_code))
+			playsound(src, "terminal_type", 25, FALSE)
+			new_code = clamp(round(new_code, 1),0,9999)
+			switch(href_list["set_code"])
 				if("activation")
 					program.activation_code = clamp(round(new_code, 1),0,9999)
 				if("deactivation")
@@ -976,43 +983,63 @@
 					program.kill_code = clamp(round(new_code, 1),0,9999)
 				if("trigger")
 					program.trigger_code = clamp(round(new_code, 1),0,9999)
-			. = TRUE
-		if("set_extra_setting")
-			program.set_extra_setting(params["target_setting"], params["value"])
+	if(href_list["set_extra_setting"])
+		switch(href_list["set_extra_setting"])
+			if("text")
+				var/list/extra_settings = program.get_extra_settings_frontend()
+				for(var/setting in extra_settings)
+					if(setting["type"] == NESTYPE_TEXT)
+						var/input_text = input(usr, "Set extra setting's text:", name, null) as anything
+						program.set_extra_setting(setting["name"], input_text)
+			if("number")
+				var/list/extra_settings = program.get_extra_settings_frontend()
+				for(var/setting in extra_settings)
+					if(setting["type"] == NESTYPE_NUMBER)
+						var/number = input(usr, "Set number in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
+						var/clamp_number = clamp(number, setting["min"], setting["max"])
+						program.set_extra_setting(setting["name"], clamp_number)
+			if("bool")
+				var/list/extra_settings = program.get_extra_settings_frontend()
+				for(var/setting in extra_settings)
+					if(setting["type"] == NESTYPE_BOOLEAN)
+						program.set_extra_setting(setting["name"], !setting["value"])
+			if("type")
+				var/list/extra_settings = program.get_extra_settings_frontend()
+				for(var/setting in extra_settings)
+					if(setting["type"] == NESTYPE_TYPE)
+						var/new_type = input(usr, "Choose new type", "Select Type") as null|anything in setting["types"] + "Cancel"
+						if(new_type && new_type != "Cancel")
+							program.set_extra_setting(setting["name"], new_type)
+		playsound(src, "terminal_type", 25, 0)
+	if(href_list["set_restart_timer"])
+		var/timer = input("Set restart timer in seconds (0-3600):", name, program.timer_restart / 10) as null|num
+		if(!isnull(timer))
 			playsound(src, "terminal_type", 25, 0)
-			. = TRUE
-		if("set_restart_timer")
-			var/timer = text2num(params["delay"])
-			if(!isnull(timer))
-				playsound(src, "terminal_type", 25, 0)
-				timer = clamp(round(timer, 1), 0, 3600)
-				timer *= 10 //convert to deciseconds
-				program.timer_restart = timer
-			. = TRUE
-		if("set_shutdown_timer")
-			var/timer = text2num(params["delay"])
-			if(!isnull(timer))
-				playsound(src, "terminal_type", 25, 0)
-				timer = clamp(round(timer, 1), 0, 3600)
-				timer *= 10 //convert to deciseconds
-				program.timer_shutdown = timer
-			. = TRUE
-		if("set_trigger_timer")
-			var/timer = text2num(params["delay"])
-			if(!isnull(timer))
-				playsound(src, "terminal_type", 25, FALSE)
-				timer = clamp(round(timer, 1), 0, 3600)
-				timer *= 10 //convert to deciseconds
-				program.timer_trigger = timer
-			. = TRUE
-		if("set_timer_trigger_delay")
-			var/timer = text2num(params["delay"])
-			if(!isnull(timer))
-				playsound(src, "terminal_type", 25, FALSE)
-				timer = clamp(round(timer, 1), 0, 3600)
-				timer *= 10 //convert to deciseconds
-				program.timer_trigger_delay = timer
-			. = TRUE
+			timer = clamp(round(timer, 1), 0, 3600)
+			timer *= 10 //convert to deciseconds
+			program.timer_restart = timer
+	if(href_list["set_shutdown_timer"])
+		var/timer = input("Set shutdown timer in seconds (0-3600):", name, program.timer_shutdown / 10) as null|num
+		if(!isnull(timer))
+			playsound(src, "terminal_type", 25, 0)
+			timer = clamp(round(timer, 1), 0, 3600)
+			timer *= 10 //convert to deciseconds
+			program.timer_shutdown = timer
+	if(href_list["set_trigger_timer"])
+		var/timer = input("Set trigger repeat timer in seconds (0-3600):", name, program.timer_trigger / 10) as null|num
+		if(!isnull(timer))
+			playsound(src, "terminal_type", 25, FALSE)
+			timer = clamp(round(timer, 1), 0, 3600)
+			timer *= 10 //convert to deciseconds
+			program.timer_trigger = timer
+	if(href_list["set_timer_trigger_delay"])
+		var/timer = input("Set trigger delay in seconds (0-3600):", name, program.timer_trigger_delay / 10) as null|num
+		if(!isnull(timer))
+			playsound(src, "terminal_type", 25, FALSE)
+			timer = clamp(round(timer, 1), 0, 3600)
+			timer *= 10 //convert to deciseconds
+			program.timer_trigger_delay = timer
+	updateUsrDialog()
 
 //Public Chamber
 /obj/machinery/public_nanite_chamber
