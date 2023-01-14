@@ -790,7 +790,9 @@
 	//TODO: isstationlevel????
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
 		if(RD.id == 1)
-			linked_techweb = RD.files
+			//Derelict have RDconsole with id = 1
+			if(is_station_level(RD.z))
+				linked_techweb = RD.files
 
 /obj/machinery/nanite_program_hub/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
@@ -949,13 +951,13 @@
 	for(var/setting in extra_settings)
 		switch(setting["type"])
 			if(NESTYPE_TEXT)
-				data += "Rule Text: <A href='?src=\ref[src];set_extra_setting=text'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=text'>[setting["value"] ? setting["value"] : "None"]</A><br>"
 			if(NESTYPE_NUMBER)
-				data += "Rule Number: <A href='?src=\ref[src];set_extra_setting=number'>[setting["value"] ? setting["value"] : 1]</A> [setting["unit"] ? setting["unit"] : ""]<br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=number'>[setting["value"] ? setting["value"] : 1]</A> [setting["unit"] ? setting["unit"] : ""]<br>"
 			if(NESTYPE_BOOLEAN)
-				data += "Rule Clause: <A href='?src=\ref[src];set_extra_setting=bool'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=bool'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
 			if(NESTYPE_TYPE)
-				data += "Rule Type: <A href='?src=\ref[src];set_extra_setting=type'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=type'>[setting["value"] ? setting["value"] : "None"]</A><br>"
 	return data
 
 /obj/machinery/nanite_programmer/ui_interact(mob/user)
