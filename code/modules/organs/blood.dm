@@ -206,6 +206,9 @@ var/global/const/BLOOD_VOLUME_SURVIVE = 122
 					blood_remove(bleed_amount)
 				playsound(src, 'sound/effects/ArterialBleed.ogg', VOL_EFFECTS_MASTER)
 
+		if(HAS_TRAIT_FROM(BP, TRAIT_HEMOCOAGULATION, NANITE_TRAIT))
+			blood_max /= 2
+
 	if(blood_max == 0) // so... there is no blood loss, lets stop right here.
 		return
 

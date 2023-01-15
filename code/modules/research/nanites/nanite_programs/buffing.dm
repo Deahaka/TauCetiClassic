@@ -8,18 +8,15 @@
 
 /datum/nanite_program/nervous/enable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.stun_mod *= 0.5*/
+		ADD_TRAIT(H, TRAIT_IRON_NERVES, NANITE_TRAIT)
 
 /datum/nanite_program/nervous/disable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.stun_mod *= 2
-		*/
+		REMOVE_TRAIT(H, TRAIT_STEEL_NERVES, NANITE_TRAIT)
 
 /datum/nanite_program/adrenaline
 	name = "Adrenaline Burst"
@@ -30,12 +27,12 @@
 
 /datum/nanite_program/adrenaline/on_trigger()
 	to_chat(host_mob, "<span class='notice'>You feel a sudden surge of energy!</span>")
-	host_mob.SetStunned(0)
-	host_mob.SetWeakened(0)
-	host_mob.SetParalysis(0)
-	host_mob.setHalLoss(0)
+	host_mob.AdjustStunned(-10)
+	host_mob.AdjustWeakened(-10)
+	host_mob.AdjustParalysis(-10)
+	host_mob.AdjustHalLoss(-25)
+	host_mob.reagents.add_reagent("stimulants", 5)
 	host_mob.update_canmove()
-	host_mob.reagents.add_reagent("stimulants", 1.5)
 
 /datum/nanite_program/hardening
 	name = "Dermal Hardening"
@@ -95,17 +92,18 @@
 
 /datum/nanite_program/coagulating/enable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.bleed_mod *= 0.1
+		for(var/obj/item/organ/external/BP in H.bodyparts)
+			ADD_TRAIT(BP, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
 
 /datum/nanite_program/coagulating/disable_passive_effect()
 	. = ..()
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.bleed_mod *= 10
-	*/
+		for(var/obj/item/organ/external/BP in H.bodyparts)
+			REMOVE_TRAIT(BP, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
+
 /datum/nanite_program/conductive
 	name = "Electric Conduction"
 	desc = "The nanites act as a grounding rod for electric shocks, protecting the host. Shocks can still damage the nanites themselves."

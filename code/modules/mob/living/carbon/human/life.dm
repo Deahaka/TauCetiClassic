@@ -774,11 +774,13 @@ var/global/list/tourette_bad_words = list("ГОВНО","ЖОПА","ЕБАЛ","Б
 				//src << "<span class='notice'>You're in too much pain to keep going...</span>"
 				//for(var/mob/O in oviewers(src, null))
 				//	O.show_messageold("<B>[src]</B> slumps to the ground, too weak to continue fighting.", 1)
-				if(prob(3))
-					Paralyse(10)
-				else
-					Stun(5)
-					Weaken(10)
+				// Trait Steel Nerves preventing long stunning from pain
+				if(!HAS_TRAIT_FROM(src, TRAIT_STEEL_NERVES, NANITE_TRAIT))
+					if(prob(3))
+						Paralyse(10)
+					else
+						Stun(5)
+						Weaken(10)
 				setHalLoss(99)
 
 		if(paralysis)
@@ -792,10 +794,14 @@ var/global/list/tourette_bad_words = list("ГОВНО","ЖОПА","ЕБАЛ","Б
 		else
 			stat = CONSCIOUS
 			if(halloss > 0)
+				var/take_of_halloss = 0
+				if(HAS_TRAIT_FROM(src, TRAIT_STEEL_NERVES, NANITE_TRAIT))
+					take_of_halloss += 3
 				if((crawling) || (buckled))
-					adjustHalLoss(-3)
+					take_of_halloss += 3
 				else
-					adjustHalLoss(-1)
+					take_of_halloss += 1
+				adjustHalLoss(-take_of_halloss)
 
 		if(stat == UNCONSCIOUS)
 			if(client)
