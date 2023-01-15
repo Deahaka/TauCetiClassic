@@ -373,10 +373,11 @@
 	disk = null
 
 /obj/machinery/computer/nanite_cloud_controller/proc/get_backup(cloud_id)
-	for(var/I in cloud_backups)
-		var/datum/nanite_cloud_backup/backup = I
-		if(backup.cloud_id == cloud_id)
-			return backup
+	var/ID_cloud = text2num(cloud_id)
+	for(var/datum/nanite_cloud_backup/backup in cloud_backups)
+		if(backup.cloud_id != ID_cloud)
+			continue
+		return backup
 
 /obj/machinery/computer/nanite_cloud_controller/proc/generate_backup(cloud_id, mob/user)
 	if(SSnanites.get_cloud_backup(cloud_id, TRUE))
@@ -387,53 +388,52 @@
 	var/datum/component/nanites/cloud_copy = new(backup)
 	backup.cloud_id = cloud_id
 	backup.nanites = cloud_copy
-/*
-/obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user)
-	var/list/data = list()
 
-	if(disk)
-		data["has_disk"] = TRUE
-		var/list/disk_data = list()
-		var/datum/nanite_program/P = disk.program
-		if(P)
-			data["has_program"] = TRUE
-			disk_data["name"] = P.name
-			disk_data["desc"] = P.desc
-			disk_data["use_rate"] = P.use_rate
-			disk_data["can_trigger"] = P.can_trigger
-			disk_data["trigger_cost"] = P.trigger_cost
-			disk_data["trigger_cooldown"] = P.trigger_cooldown / 10
-
-			disk_data["activated"] = P.activated
-			disk_data["activation_code"] = P.activation_code
-			disk_data["deactivation_code"] = P.deactivation_code
-			disk_data["kill_code"] = P.kill_code
-			disk_data["trigger_code"] = P.trigger_code
-			disk_data["timer_restart"] = P.timer_restart / 10
-			disk_data["timer_shutdown"] = P.timer_shutdown / 10
-			disk_data["timer_trigger"] = P.timer_trigger / 10
-			disk_data["timer_trigger_delay"] = P.timer_trigger_delay / 10
-
-			var/list/extra_settings = P.get_extra_settings_frontend()
-			disk_data["extra_settings"] = extra_settings
-			if(extra_settings.len)
-				disk_data["has_extra_settings"] = TRUE
-			if(istype(P, /datum/nanite_program/sensor))
-				var/datum/nanite_program/sensor/sensor = P
-				if(sensor.can_rule)
-					disk_data["can_rule"] = TRUE
-		data["disk"] = disk_data
+/obj/machinery/computer/nanite_cloud_controller/proc/get_data()
+	var/data = ""
+	var/has_disk = !isnull(disk)
+	var/has_program = FALSE
+	var/can_rule = FALSE
+	if(has_disk)
+		data += "Program disk: <A href='?src=\ref[src];eject=1'>Eject</A><hr>"
+		if(disk.program)
+			var/datum/nanite_program/disk_program = disk.program
+			has_program = TRUE
+			var/is_can_be_triggered = disk_program.can_trigger
+			data += "[disk_program.name] [disk_program.activated ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br><hr>"
+			data += "[disk_program.desc]<br>"
+			data += "Use_rate: [disk_program.use_rate]<br>"
+			if(is_can_be_triggered)
+				data += "Trigger Cost: [disk_program.trigger_cost]<br>"
+				data += "Trigger Cooldown: [disk_program.trigger_cooldown / 10]<br>"
+			data += "<hr>"
+			data += "Activation Code: [disk_program.activation_code]<br>"
+			data += "Deactivation Code: [disk_program.deactivation_code]<br>"
+			data += "Kill Code: [disk_program.kill_code]<br>"
+			data += "<hr>"
+			data += "Restart: [disk_program.timer_restart / 10]<br>"
+			data += "Shutdown: [disk_program.timer_shutdown / 10]<br>"
+			if(is_can_be_triggered)
+				data += "Trigger Code: [disk_program.trigger_code]<br>"
+				data += "Timer Trugger: [disk_program.timer_trigger / 10]<br>"
+				data += "Timer Trigger Delay: [disk_program.timer_trigger_delay / 10]<br>"
+			var/list/list_of_extra_settings = disk_program.get_extra_settings_frontend()
+			if(list_of_extra_settings.len)
+				if(istype(disk_program, /datum/nanite_program/sensor))
+					var/datum/nanite_program/sensor/sensor = disk_program
+					if(sensor.can_rule)
+						can_rule = TRUE
+		else
+			data += "Inserted disk has no program<br>"
+	//cant early return because there is 3 more buttons in menu
 	else
-		data["has_disk"] = FALSE
-
-	data["new_backup_id"] = new_backup_id
-
-	data["current_view"] = current_view
+		data += "No disk inserted<br>"
+	var/has_rules = FALSE
 	if(current_view)
+		data += "<A href='?src=\ref[src];return_view=1'>Return</A><br>"
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
 			var/datum/component/nanites/nanites = backup.nanites
-			data["cloud_backup"] = TRUE
 			var/list/cloud_programs = list()
 			var/id = 1
 			for(var/datum/nanite_program/P in nanites.programs)
@@ -457,74 +457,76 @@
 				cloud_program["trigger_code"] = P.trigger_code
 				var/list/rules = list()
 				var/rule_id = 1
-				for(var/X in P.rules)
-					var/datum/nanite_rule/nanite_rule = X
+				for(var/datum/nanite_rule/nanite_rule in P.rules)
 					var/list/rule = list()
 					rule["display"] = nanite_rule.display()
 					rule["program_id"] = id
 					rule["id"] = rule_id
-					rules += list(rule)
+					rules += rule
 					rule_id++
 				cloud_program["rules"] = rules
 				if(rules.len)
-					cloud_program["has_rules"] = TRUE
-
+					has_rules = TRUE
 				var/list/extra_settings = P.get_extra_settings_frontend()
 				cloud_program["extra_settings"] = extra_settings
 				if(extra_settings.len)
 					cloud_program["has_extra_settings"] = TRUE
 				id++
-				cloud_programs += list(cloud_program)
-			data["cloud_programs"] = cloud_programs
+				cloud_programs += cloud_program
+			if(cloud_programs.len)
+				data += "Backup # [current_view]<br>"
+				data += "[cloud_programs["name"]] <A href='?src=\ref[src];remove_program=[cloud_programs["name"]]'>Remove</A><br>"
+				if(has_rules && can_rule)
+					//not tested
+					var/list/rules_list = cloud_programs["rules"]
+					if(rules_list.len)
+						data += "Rules:<br>"
+						for(var/cloud_program in cloud_programs)
+							data += "<A href='?src=\ref[src];add_rule=[cloud_program["id"]]'>Add Rule from Disk</A><br>"
+							if(has_rules)
+								for(var/nanite_rules in rules_list)
+									data += "<A href='?src=\ref[src];remove_rule=[cloud_program["id"]];rule_id=[nanite_rules["id"]]'>Remove Rule Display:[nanite_rules["display"]]</A><br>"
+							else
+								data += "No Active Rules<br>"
+
+				/*old code not worked
+				for(var/programs in cloud_programs)
+					to_chat(world, "programs is [programs]")
+					for(var/x in programs)
+						to_chat(world, "x is [x]")
+						to_chat(world, "xrules is [x["rules"]]")*/
+					/*var/list/rules_list = list()
+					rules_list += programs["rules"]
+					if(can_rule && has_rules && rules_list.len)
+						data += "Rules:<br>"
+						for(var/cloud_program in programs)
+							data += "<A href='?src=\ref[src];add_rule=[cloud_program["id"]]'>Add Rule from Disk</A><br>"
+							if(has_rules)
+								for(var/nanite_rules in rules_list)
+									data += "<A href='?src=\ref[src];remove_rule=[cloud_program["id"]];rule_id=[nanite_rules["id"]]'>Remove Rule Display:[nanite_rules["display"]]</A><br>"
+							else
+								data += "No Active Rules<br>"*/
+			else
+				data += "No cloud programs<br>"
+			if(has_program)
+				data += "<A href='?src=\ref[src];upload_program=1'>Upload From Disk</A><br>"
+		else
+			data += "ERROR: Backup not found<br>"
 	else
+		data += "<hr>Create Backup<br>"
+		data += "Backup ID: <A href='?src=\ref[src];update_new_backup_value=1'>[new_backup_id]</A><br>"
+		data += "<A href='?src=\ref[src];create_backup=1'>Create</A><br><hr>"
 		var/list/backup_list = list()
 		for(var/X in cloud_backups)
 			var/datum/nanite_cloud_backup/backup = X
 			var/list/cloud_backup = list()
 			cloud_backup["cloud_id"] = backup.cloud_id
 			backup_list += list(cloud_backup)
-		data["cloud_backups"] = backup_list
-	return data
-*/
-/obj/machinery/computer/nanite_cloud_controller/proc/get_data()
-	var/data = ""
-	var/has_disk = !isnull(disk)
-	if(has_disk)
-		//var/list/disk_data = list()
-		var/datum/nanite_program/P = disk.program
-		if(P)
-			var/is_can_be_triggered = P.can_trigger
-			data += "Program disk: <A href='?src=\ref[src];eject=1'>Eject</A><hr>"
-			data += "[P.name] [P.activated ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br><hr>"
-			data += "[P.desc]<br>"
-			data += "Use_rate: [P.use_rate]<br>"
-			if(is_can_be_triggered)
-				data += "Trigger Cost: [P.trigger_cost]<br>"
-				data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
-			data += "<hr>"
-			data += "Activation Code: [P.activation_code]<br>"
-			data += "Deactivation Code: [P.deactivation_code]<br>"
-			data += "Kill Code: [P.kill_code]<br>"
-			data += "<hr>"
-			data += "Restart: [P.timer_restart / 10]<br>"
-			data += "Shutdown: [P.timer_shutdown / 10]<br>"
-			if(is_can_be_triggered)
-				data += "Trigger Code: [P.trigger_code]<br>"
-				data += "Timer Trugger: [P.timer_trigger / 10]<br>"
-				data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
-			/*
-			var/list/extra_settings = P.get_extra_settings_frontend()
-			disk_data["extra_settings"] = extra_settings
-			if(extra_settings.len)
-				disk_data["has_extra_settings"] = TRUE
-			if(istype(P, /datum/nanite_program/sensor))
-				var/datum/nanite_program/sensor/sensor = P
-				if(sensor.can_rule)
-					disk_data["can_rule"] = TRUE */
-		//data["disk"] = disk_data
-	//else
-		//data["has_disk"] = FALSE
-
+		if(backup_list.len)
+			for(var/backups in backup_list)
+				data += "Backup # <A href='?src=\ref[src];set_view=[backups["cloud_id"]]'>[backups["cloud_id"]]</A><br>"
+		else
+			data += "No backups<br>"
 	return data
 
 /obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user)
@@ -535,65 +537,62 @@
 	..()
 	if(href_list["eject"])
 		eject(usr)
-		/*
-		if("set_view")
-			current_view = text2num(params["view"])
-			. = TRUE
-		if("update_new_backup_value")
-			var/backup_value = text2num(params["value"])
-			new_backup_id = backup_value
-		if("create_backup")
-			var/cloud_id = new_backup_id
-			if(!isnull(cloud_id))
-				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
-				cloud_id = clamp(round(cloud_id, 1),1,100)
-				generate_backup(cloud_id, usr)
-			. = TRUE
-		if("delete_backup")
-			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
-			if(backup)
-				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
-				qdel(backup)
-			. = TRUE
-		if("upload_program")
-			if(disk && disk.program)
-				var/datum/nanite_cloud_backup/backup = get_backup(current_view)
-				if(backup)
-					//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
-					var/datum/component/nanites/nanites = backup.nanites
-					nanites.add_program(disk.program.copy())
-			. = TRUE
-		if("remove_program")
+	if(href_list["set_view"])
+		current_view = href_list["set_view"]
+	//set_view=0 its ^^^ href_list["set_view"] = 0 and clause not working
+	if(href_list["return_view"])
+		current_view = 0
+	if(href_list["update_new_backup_value"])
+		var/backup_value = input("Set new ID for backup", name, null) as null|num
+		new_backup_id = backup_value
+	if(href_list["create_backup"])
+		var/cloud_id = new_backup_id
+		if(!isnull(cloud_id))
+			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+			cloud_id = clamp(round(cloud_id, 1),1,100)
+			generate_backup(cloud_id, usr)
+	if(href_list["delete_backup"])
+		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
+		if(backup)
+			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+			qdel(backup)
+	if(href_list["upload_program"])
+		if(disk && disk.program)
 			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 			if(backup)
 				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				var/datum/component/nanites/nanites = backup.nanites
-				var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
-				qdel(P)
-			. = TRUE
-		if("add_rule")
-			if(disk && disk.program && istype(disk.program, /datum/nanite_program/sensor))
-				var/datum/nanite_program/sensor/rule_template = disk.program
-				if(!rule_template.can_rule)
-					return
-				//for logs
-				//var/datum/nanite_cloud_backup/backup = get_backup(current_view)
-				//if(backup)
-					//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
-					//var/datum/component/nanites/nanites = backup.nanites
-					//var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
-					//var/datum/nanite_rule/rule = rule_template.make_rule(P)
-			. = TRUE
-		if("remove_rule")
+				nanites.add_program(null, disk.program.copy())
+	if(href_list["remove_program"])
+		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
+		if(backup)
+			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+			var/nanite_program_name = href_list["remove_program"]
+			var/datum/component/nanites/nanites = backup.nanites
+			for(var/datum/nanite_program/program in nanites.programs)
+				if(program.name == nanite_program_name)
+					qdel(program)
+			//var/datum/nanite_program/P = nanites.programs[nanite_program_id]
+			//qdel(P)
+	if(href_list["add_rule"])
+		if(disk && disk.program && istype(disk.program, /datum/nanite_program/sensor))
+			var/datum/nanite_program/sensor/rule_template = disk.program
+			if(!rule_template.can_rule)
+				return
 			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 			if(backup)
 				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				var/datum/component/nanites/nanites = backup.nanites
-				var/datum/nanite_program/P = nanites.programs[text2num(params["program_id"])]
-				var/datum/nanite_rule/rule = P.rules[text2num(params["rule_id"])]
-				rule.remove()
-			. = TRUE
-		*/
+				var/datum/nanite_program/P = nanites.programs[href_list["add_rule"]]
+				rule_template.make_rule(P)
+	if(href_list["remove_rule"])
+		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
+		if(backup)
+			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
+			var/datum/component/nanites/nanites = backup.nanites
+			var/datum/nanite_program/P = nanites.programs[href_list["remove_rule"]]
+			var/datum/nanite_rule/rule = P.rules[href_list["rule_id"]]
+			rule.remove()
 	updateUsrDialog()
 
 /datum/nanite_cloud_backup
