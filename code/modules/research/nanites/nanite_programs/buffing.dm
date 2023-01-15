@@ -10,7 +10,7 @@
 	. = ..()
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		ADD_TRAIT(H, TRAIT_IRON_NERVES, NANITE_TRAIT)
+		ADD_TRAIT(H, TRAIT_STEEL_NERVES, NANITE_TRAIT)
 
 /datum/nanite_program/nervous/disable_passive_effect()
 	. = ..()
@@ -30,7 +30,7 @@
 	host_mob.AdjustStunned(-10)
 	host_mob.AdjustWeakened(-10)
 	host_mob.AdjustParalysis(-10)
-	host_mob.AdjustHalLoss(-25)
+	host_mob.adjustHalLoss(-25)
 	host_mob.reagents.add_reagent("stimulants", 5)
 	host_mob.update_canmove()
 

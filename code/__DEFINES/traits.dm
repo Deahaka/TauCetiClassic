@@ -206,4 +206,4 @@
 #define LIFE_ASSIST_MACHINES_TRAIT            "life_assist_machines"
 #define FEAR_TRAIT         "fear"
 // nanite source
-#define NANITE_TRAIT
+#define NANITE_TRAIT "nanite"

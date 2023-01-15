@@ -773,9 +773,10 @@ var/global/list/tourette_bad_words = list("ГОВНО","ЖОПА","ЕБАЛ","Б
 			if(halloss > 100)
 				//src << "<span class='notice'>You're in too much pain to keep going...</span>"
 				//for(var/mob/O in oviewers(src, null))
-				//	O.show_messageold("<B>[src]</B> slumps to the ground, too weak to continue fighting.", 1)
+				//O.show_messageold("<B>[src]</B> slumps to the ground, too weak to continue fighting.", 1)
 				// Trait Steel Nerves preventing long stunning from pain
-				if(!HAS_TRAIT_FROM(src, TRAIT_STEEL_NERVES, NANITE_TRAIT))
+				var/long_shock_allowed = !HAS_TRAIT_FROM(src, TRAIT_STEEL_NERVES, NANITE_TRAIT)
+				if(long_shock_allowed)
 					if(prob(3))
 						Paralyse(10)
 					else
