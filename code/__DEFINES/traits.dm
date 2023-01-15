@@ -167,6 +167,7 @@
 #define TRAIT_CULT_EYES           "cult_eyes"
 #define TRAIT_CULT_HALO           "cult_halo"
 #define TRAIT_HEALS_FROM_PYLONS   "heals_from_pylons"
+#define TRAIT_STEEL_NERVES        "steel_nerves"
 
 /*
  * Used for movables that need to be updated, via COMSIG_ENTER_AREA and COMSIG_EXIT_AREA, when transitioning areas.
@@ -181,6 +182,12 @@
 
 // item trait
 #define TRAIT_NO_SACRIFICE "religion_no_sacrifice"
+
+// organ trait
+#define TRAIT_HEMOCOAGULATION "hemocoagulation"
+
+// atom traits
+#define TRAIT_XENO_FUR "xeno_fur"
 
 // idk why this exists on TG
 #define GENERIC_TRAIT "generic"
@@ -198,6 +205,5 @@
 #define OBESITY_TRAIT      "obesity"
 #define LIFE_ASSIST_MACHINES_TRAIT            "life_assist_machines"
 #define FEAR_TRAIT         "fear"
-
-// atom traits
-#define TRAIT_XENO_FUR "xeno_fur"
+// nanite source
+#define NANITE_TRAIT
