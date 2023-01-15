@@ -122,19 +122,17 @@
 	shockimmune.deactivate(host_mob)
 
 /datum/nanite_program/mindshield
-	name = "Mental Barrier"
-	desc = "The nanites form a protective membrane around the host's brain, shielding them from abnormal influences while they're active."
+	name = "Imitation Mental Barrier"
+	desc = "The nanites form a imitation of protective membrane around the host's brain."
 	use_rate = 0.40
 	rogue_types = list(/datum/nanite_program/brain_decay, /datum/nanite_program/brain_misfire)
-/*
+
 /datum/nanite_program/mindshield/enable_passive_effect()
 	. = ..()
-	if(!host_mob.mind.has_antag_datum(/datum/antagonist/rev)) //won't work if on a rev, to avoid having implanted revs
-		host_mob.add_trait(TRAIT_MINDSHIELD, "nanites")
-		host_mob.sec_hud_set_implants()
+	ADD_TRAIT(host_mob, TRAIT_MINDSHIELD, NANITE_TRAIT)
+	host_mob.sec_hud_set_implants()
 
 /datum/nanite_program/mindshield/disable_passive_effect()
 	. = ..()
-	host_mob.remove_trait(TRAIT_MINDSHIELD, "nanites")
+	REMOVE_TRAIT(host_mob, TRAIT_MINDSHIELD, NANITE_TRAIT)
 	host_mob.sec_hud_set_implants()
-*/

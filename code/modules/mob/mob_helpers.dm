@@ -25,9 +25,12 @@
 /proc/hsl2rgb(h, s, l)
 	return
 
-/mob/proc/ismindshielded() //Checks to see if the person contains a mindshield implant, then checks that the implant is actually inside of them
+/mob/proc/ismindshielded(check_real_status = FALSE) //Checks to see if the person contains a mindshield implant, then checks that the implant is actually inside of them
 	for(var/obj/item/weapon/implant/mind_protect/mindshield/L in src)
 		if(L.implanted)
+			return TRUE
+	if(!check_real_status)
+		if(HAS_TRAIT_FROM(src, TRAIT_MINDSHIELD, NANITE_TRAIT))
 			return TRUE
 	return FALSE
 

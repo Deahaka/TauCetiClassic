@@ -168,6 +168,7 @@
 #define TRAIT_CULT_HALO           "cult_halo"
 #define TRAIT_HEALS_FROM_PYLONS   "heals_from_pylons"
 #define TRAIT_STEEL_NERVES        "steel_nerves"
+#define TRAIT_MINDSHIELD          "mindshield"
 
 /*
  * Used for movables that need to be updated, via COMSIG_ENTER_AREA and COMSIG_EXIT_AREA, when transitioning areas.
