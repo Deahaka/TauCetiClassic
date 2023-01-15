@@ -79,10 +79,7 @@
 
 /datum/nanite_program/brain_heal/active_effect()
 	host_mob.adjustBrainLoss(-1, TRUE)
-	/*if(iscarbon(host_mob) && prob(10))
-		var/mob/living/carbon/C = host_mob
-		C.cure_trauma_type(resilience = TRAUMA_RESILIENCE_BASIC)
-	*/
+
 /datum/nanite_program/blood_restoring
 	name = "Blood Regeneration"
 	desc = "The nanites stimulate and boost blood cell production in the host."
@@ -196,11 +193,8 @@
 	return ..()
 
 /datum/nanite_program/brain_heal_advanced/active_effect()
-	host_mob.adjustBrainLoss(-2)
-	/*if(iscarbon(host_mob) && prob(10))
-		var/mob/living/carbon/C = host_mob
-		C.cure_trauma_type(resilience = TRAUMA_RESILIENCE_LOBOTOMY)
-	*/
+	host_mob.adjustBrainLoss(-3)
+
 /datum/nanite_program/defib
 	name = "Defibrillation"
 	desc = "The nanites shock the host's heart when triggered, bringing them back to life if the body can sustain it."
