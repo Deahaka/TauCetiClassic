@@ -44,8 +44,8 @@
 	rogue_types = list(/datum/nanite_program/glitch)
 
 /datum/nanite_program/suffocating/active_effect()
-	host_mob.adjustOxyLoss(3, 0)
-	if(prob(1))
+	host_mob.adjustOxyLoss(3)
+	if(prob(25))
 		to_chat(host_mob, "<span class='warning'>You feel short of breath.</span>")
 
 //Generic brain-affecting programs will decay into this
@@ -73,9 +73,9 @@
 	if(prob(10))
 		switch(rand(1,4))
 			if(1)
-				host_mob.hallucination += 15
+				host_mob.hallucination += max(host_mob.hallucination, 10)
 			if(2)
-				host_mob.confused  += 10
+				host_mob.AdjustConfused(5)
 			if(3)
 				host_mob.drowsyness += 10
 			if(4)
