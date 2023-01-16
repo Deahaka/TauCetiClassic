@@ -14,9 +14,7 @@
 
 /obj/item/device/nanite_scanner/attack(mob/living/M, mob/living/carbon/human/user)
 	user.visible_message("<span class='notice'>[user] has analyzed [M]'s nanites.</span>")
-
 	add_fingerprint(user)
 
-	var/response = SEND_SIGNAL(M, COMSIG_NANITE_SCAN, user, TRUE)
-	if(!response)
+	if(!(SEND_SIGNAL(M, COMSIG_NANITE_SCAN, user, TRUE) & COMPONENT_NANITES_DETECTED))
 		to_chat(user, "<span class='info'>No nanites detected in the subject.</span>")
