@@ -303,37 +303,37 @@
 			data += "<hr><A href='?src=\ref[src];det_view=1'>Details</A><br>"
 		if(details_view)
 			for(var/datum/nanite_program/P in data_handler.programs)
-			data += "Program name: [P.name] Status: [P.activated ? "Activated" : "Deactivated"]<br>"
-			data += "Use Rate: [P.use_rate]<br>"
-			if(P.can_trigger)
-				data += "Trigger Cost: [P.trigger_cost]<br>"
-				data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
-			if(scan_lvl >= 3)
-				data += "Timer Restart: [P.timer_restart / 10]<br>"
-				data += "Timer Shutdown: [P.timer_shutdown / 10]<br>"
-				data += "Timer Trigger: [P.timer_trigger / 10]<br>"
-				data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
-				var/list/extra_settings = P.get_extra_settings_frontend()
-				if(extra_settings.len)
-					data += "<hr>Special Settings:<br>"
-					for(var/settin in extra_settings)
-						data += "[settin["name"]]: [settin["value"]]<br>"
-			if(scan_lvl >= 4)
-				data += "Activation Code: [P.activation_code]<br>"
-				data += "Deactivation Code: [P.deactivation_code]<br>"
-				data += "Kill Code: [P.kill_code]<br>"
+				data += "Program name: [P.name] Status: [P.activated ? "Activated" : "Deactivated"]<br>"
+				data += "Use Rate: [P.use_rate]<br>"
 				if(P.can_trigger)
-					data += "Trigger Code: [P.trigger_code]<br>"
-				if(P.rules.len)
-					data += "<hr>Rules:<br>"
-					var/rule_id = 1
-					for(var/datum/nanite_rule/nanite_rule in P.rules)
-						data += "[rule_id] - [nanite_rule.display()]"
-						rule_id++
+					data += "Trigger Cost: [P.trigger_cost]<br>"
+					data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
+				if(scan_lvl >= 3)
+					data += "Timer Restart: [P.timer_restart / 10]<br>"
+					data += "Timer Shutdown: [P.timer_shutdown / 10]<br>"
+					data += "Timer Trigger: [P.timer_trigger / 10]<br>"
+					data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
+					var/list/extra_settings = P.get_extra_settings_frontend()
+					if(extra_settings.len)
+						data += "<hr>Special Settings:<br>"
+						for(var/settin in extra_settings)
+							data += "[settin["name"]]: [settin["value"]]<br>"
+				if(scan_lvl >= 4)
+					data += "Activation Code: [P.activation_code]<br>"
+					data += "Deactivation Code: [P.deactivation_code]<br>"
+					data += "Kill Code: [P.kill_code]<br>"
+					if(P.can_trigger)
+						data += "Trigger Code: [P.trigger_code]<br>"
+					if(P.rules.len)
+						data += "<hr>Rules:<br>"
+						var/rule_id = 1
+						for(var/datum/nanite_rule/nanite_rule in P.rules)
+							data += "[rule_id] - [nanite_rule.display()]"
+							rule_id++
 		data += "<hr><A href='?src=\ref[src];remove_nanites=1'><span class='red'>Destroy Nanites</span></A><br>"
 	else
 		data += "No nanites detected.<br>"
-		data += "<hr><A href='?src=\ref[src];inject_nanites=1'><span class='green'>Inject Nanites</span></A>"
+		data += "<hr><A href='?src=\ref[src];nanite_injection=1'><span class='green'>Inject Nanites</span></A>"
 
 	return data
 
@@ -345,28 +345,32 @@
 /obj/machinery/computer/nanite_chamber_control/Topic(href, href_list)
 	..()
 	if(href_list["toggle_lock"])
-		chamber.locked = !chamber.locked
-		chamber.update_icon()
+		if(chamber.occupant && !chamber.state_open)
+			chamber.locked = !chamber.locked
+			chamber.update_icon()
 	if(href_list["set_safety"])
-		var/threshold = input("Set safety threshold (0-500):", name, null) as null|num
-		if(!isnull(threshold))
-			chamber.set_safety(clamp(round(threshold, 1),0,500))
-			playsound(src, "terminal_type", 25, 0)
+		if(chamber.occupant && !chamber.state_open)
+			var/threshold = input("Set safety threshold (0-500):", name, null) as null|num
+			if(!isnull(threshold))
+				chamber.set_safety(clamp(round(threshold, 1),0,500))
+				playsound(src, "terminal_type", 25, 0)
 	if(href_list["set_cloud"])
-		var/cloud_id = input("Set cloud ID (1-100, 0 to disable):", name, null) as null|num
-		if(!isnull(cloud_id))
-			chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
-			playsound(src, "terminal_type", 25, 0)
+		if(chamber.occupant && !chamber.state_open)
+			var/cloud_id = input("Set cloud ID (1-100, 0 to disable):", name, null) as null|num
+			if(!isnull(cloud_id))
+				chamber.set_cloud(clamp(round(cloud_id, 1),0,100))
+				playsound(src, "terminal_type", 25, 0)
 	if(href_list["connect_chamber"])
 		find_chamber()
 	if(href_list["remove_nanites"])
-		//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, FALSE)
-		chamber.remove_nanites()
+		if(chamber.occupant && !chamber.state_open)
+			chamber.remove_nanites()
 	if(href_list["nanite_injection"])
-		//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
-		chamber.inject_nanites()
+		if(chamber.occupant && !chamber.state_open)
+			chamber.inject_nanites()
 	if(href_list["eject_occupant"])
-		chamber.toggle_open()
+		if(chamber.occupant && !chamber.locked && !chamber.state_open)
+			chamber.toggle_open()
 	if(href_list["det_view"])
 		details_view = !details_view
 	updateUsrDialog()
@@ -510,6 +514,7 @@
 				cloud_programs += cloud_program
 			if(cloud_programs.len)
 				data += "Backup # [current_view]<br>"
+				//I dont understand how i can throw all programs in backup -_-
 				data += "[cloud_programs["name"]] <A href='?src=\ref[src];remove_program=[cloud_programs["name"]]'>Remove</A><br>"
 				if(has_rules && can_rule)
 					//not tested
@@ -859,7 +864,8 @@
 		else
 			data += "No Program Installed<br>"
 	else
-		data += "Insert Disk<br>"
+		data += "Insert a nanite program disk<br>"
+		return data
 	data += "<hr>"
 	data += "Programs Hub<br>"
 	data += "<hr>"
@@ -907,8 +913,8 @@
 			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
 	if(href_list["category"])
 		var/new_category = input(usr, "Choose category of program", "Select Type") as null|anything in categories + "Cancel"
-		if(new_category == "Cancel")
-			new_category = "Main"
+		if(!new_category || new_category == "Cancel")
+			new_category = "Main Menu"
 		current_category = new_category
 	if(href_list["clear"])
 		if(disk && disk.program)
