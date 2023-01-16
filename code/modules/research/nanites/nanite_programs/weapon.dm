@@ -10,9 +10,9 @@
 /datum/nanite_program/flesh_eating/active_effect()
 	if(iscarbon(host_mob))
 		var/mob/living/carbon/C = host_mob
-		C.take_bodypart_damage(1, 0, 0)
+		C.take_bodypart_damage(1, 0)
 	else
-		host_mob.adjustBruteLoss(1, TRUE)
+		host_mob.adjustBruteLoss(1)
 	if(prob(3))
 		to_chat(host_mob, "<span class='warning'>You feel a stab of pain from somewhere inside you.</span>")
 
@@ -25,10 +25,9 @@
 /datum/nanite_program/poison/active_effect()
 	host_mob.adjustToxLoss(1)
 	if(prob(2))
-		to_chat(host_mob, "<span class='warning'>You feel nauseous.</span>")
 		if(iscarbon(host_mob))
 			var/mob/living/carbon/C = host_mob
-			C.vomit(20)
+			C.vomit()
 
 /datum/nanite_program/memory_leak
 	name = "Memory Leak"
@@ -52,7 +51,7 @@
 /datum/nanite_program/aggressive_replication/active_effect()
 	var/extra_regen = round(nanites.nanite_volume / 200, 0.1)
 	nanites.adjust_nanites(extra_regen)
-	host_mob.adjustBruteLoss(extra_regen / 2, TRUE)
+	host_mob.adjustBruteLoss(extra_regen / 2)
 
 /datum/nanite_program/meltdown
 	name = "Meltdown"
@@ -62,7 +61,7 @@
 	rogue_types = list(/datum/nanite_program/glitch)
 
 /datum/nanite_program/meltdown/active_effect()
-	host_mob.adjustFireLoss(3.5)
+	host_mob.adjustFireLoss(4)
 
 /datum/nanite_program/meltdown/enable_passive_effect()
 	. = ..()
@@ -93,7 +92,7 @@
 	explosion(host_mob, dev_range, heavy_range, light_range)
 	qdel(nanites)
 
-//TODO make it defuse if triggered again
+//TG comment - TODO make it defuse if triggered again
 
 /datum/nanite_program/heart_stop
 	name = "Heart-Stopper"
@@ -121,10 +120,6 @@
 
 /datum/nanite_program/emp/on_trigger(comm_message)
 	empulse(host_mob, 1, 2)
-
-/datum/nanite_program/pyro/active_effect()
-	host_mob.fire_stacks += 1
-	host_mob.IgniteMob()
 
 /datum/nanite_program/pyro
 	name = "Sub-Dermal Combustion"
@@ -154,35 +149,3 @@
 
 /datum/nanite_program/cryo/active_effect()
 	host_mob.adjust_bodytemperature(-rand(15,25), 50)
-
-/datum/nanite_program/comm/mind_control
-	name = "Mind Control"
-	desc = "The nanites imprint an absolute directive onto the host's brain for one minute when triggered."
-	trigger_cost = 30
-	trigger_cooldown = 1800
-	rogue_types = list(/datum/nanite_program/brain_decay, /datum/nanite_program/brain_misfire)
-
-/datum/nanite_program/comm/mind_control/register_extra_settings()
-	. = ..()
-	extra_settings[NES_DIRECTIVE] = new /datum/nanite_extra_setting/text("...")
-/*
-/datum/nanite_program/comm/mind_control/on_trigger(comm_message)
-	if(host_mob.stat == DEAD)
-		return
-	var/sent_directive = comm_message
-	if(!comm_message)
-		var/datum/nanite_extra_setting/ES = extra_settings[NES_DIRECTIVE]
-		sent_directive = ES.get_value()
-	brainwash(host_mob, sent_directive)
-	log_game("A mind control nanite program brainwashed [key_name(host_mob)] with the objective '[sent_directive]'.")
-	addtimer(CALLBACK(src, .proc/end_brainwashing), 600)
-
-/datum/nanite_program/comm/mind_control/proc/end_brainwashing()
-	if(host_mob.mind && host_mob.mind.has_antag_datum(/datum/antagonist/brainwashed))
-		host_mob.mind.remove_antag_datum(/datum/antagonist/brainwashed)
-	log_game("[key_name(host_mob)] is no longer brainwashed by nanites.")
-
-/datum/nanite_program/comm/mind_control/disable_passive_effect()
-	. = ..()
-	end_brainwashing()
-*/

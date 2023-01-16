@@ -1795,4 +1795,4 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_harmonic")
 	cost = 10000
 
-	unlocks_designs = list("spreading_nanites","mindcontrol_nanites","mitosis_nanites")
+	unlocks_designs = list("spreading_nanites","mitosis_nanites")

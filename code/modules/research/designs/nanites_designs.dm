@@ -424,13 +424,6 @@
 	program_type = /datum/nanite_program/explosive
 	category = list("Weaponized Nanites")
 
-/datum/design/nanites/mind_control
-	name = "Mind Control"
-	desc = "The nanites imprint an absolute directive onto the host's brain while they're active."
-	id = "mindcontrol_nanites"
-	program_type = /datum/nanite_program/comm/mind_control
-	category = list("Weaponized Nanites")
-
 ////////////////////SUPPRESSION NANITES//////////////////////////////////////
 
 /datum/design/nanites/shock
