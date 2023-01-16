@@ -68,21 +68,15 @@
 
 /datum/nanite_program/refractive/enable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.armor.laser += 50
-		H.physiology.armor.energy += 35
-		*/
+		ADD_TRAIT(H, TRAIT_REFLECT_SKIN, NANITE_TRAIT)
 
 /datum/nanite_program/refractive/disable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.armor.laser -= 50
-		H.physiology.armor.energy -= 35
-		*/
+		REMOVE_TRAIT(H, TRAIT_REFLECT_SKIN, NANITE_TRAIT)
 
 /datum/nanite_program/coagulating
 	name = "Rapid Coagulation"

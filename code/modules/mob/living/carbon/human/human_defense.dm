@@ -146,6 +146,8 @@
 		V.attack_reaction(src, REACTION_HIT_BY_BULLET)
 
 /mob/living/carbon/human/proc/check_reflect(def_zone, hol_dir, hit_dir) //Reflection checks for anything in your l_hand, r_hand, or wear_suit based on the reflection chance of the object
+	if(IsSkinReflect())
+		return TRUE
 	if(head && head.IsReflect(def_zone, hol_dir, hit_dir))
 		return TRUE
 	if(wear_suit && wear_suit.IsReflect(def_zone, hol_dir, hit_dir))
@@ -516,3 +518,8 @@
 	if(BP)
 		return BP.is_usable()
 	return FALSE
+
+/mob/living/carbon/human/proc/IsSkinReflect()
+	if(HAS_TRAIT_FROM(src, TRAIT_REFLECT_SKIN, NANITE_TRAIT))
+		if(prob(60))
+			return TRUE

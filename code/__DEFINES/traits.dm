@@ -169,6 +169,7 @@
 #define TRAIT_HEALS_FROM_PYLONS   "heals_from_pylons"
 #define TRAIT_STEEL_NERVES        "steel_nerves"
 #define TRAIT_MINDSHIELD          "mindshield"
+#define TRAIT_REFLECT_SKIN        "reflect_skin"
 
 /*
  * Used for movables that need to be updated, via COMSIG_ENTER_AREA and COMSIG_EXIT_AREA, when transitioning areas.
