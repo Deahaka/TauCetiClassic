@@ -8,9 +8,9 @@
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
 
 /datum/nanite_program/sleepy/on_trigger(comm_message)
-
 	to_chat(host_mob, "<span class='warning'>You start to feel very sleepy...</span>")
-	host_mob.drowsyness += 20
+	host_mob.blurEyes(10)
+	host_mob.drowsyness += min(host_mob.drowsyness, 20)
 	addtimer(CALLBACK(host_mob, /mob/living.proc/Sleeping, 200), rand(60,200))
 
 /datum/nanite_program/paralyzing
@@ -39,7 +39,7 @@
 	rogue_types = list(/datum/nanite_program/toxic)
 
 /datum/nanite_program/shocking/on_trigger(comm_message)
-	host_mob.electrocute_act(rand(5,10), "shock nanites", TRUE, TRUE)
+	host_mob.electrocute_act(rand(5,30), src)
 
 /datum/nanite_program/stun
 	name = "Neural Shock"
@@ -49,8 +49,8 @@
 	rogue_types = list(/datum/nanite_program/shocking, /datum/nanite_program/nerve_decay)
 
 /datum/nanite_program/stun/on_trigger(comm_message)
-	playsound(host_mob, "sparks", 75, 1, -1)
-	host_mob.AdjustWeakened(40)
+	playsound(host_mob, pick(SOUNDIN_SPARKS), VOL_EFFECTS_MASTER)
+	host_mob.AdjustWeakened(20)
 
 /datum/nanite_program/pacifying
 	name = "Pacification"
@@ -65,7 +65,6 @@
 /datum/nanite_program/pacifying/disable_passive_effect()
 	. = ..()
 	//host_mob.remove_trait(TRAIT_PACIFISM, "nanites")
-
 
 /datum/nanite_program/blinding
 	name = "Blindness"
