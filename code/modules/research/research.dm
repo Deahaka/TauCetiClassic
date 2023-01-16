@@ -1739,7 +1739,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_bio")
 	cost = 2500
 
-	unlocks_designs = list("nervous_nanites", "brainheal_nanites", "paralyzing_nanites", "stun_nanites", "selfscan_nanites","good_mood_nanites","bad_mood_nanites")
+	unlocks_designs = list("nervous_nanites", "brainheal_nanites", "paralyzing_nanites", "stun_nanites", "selfscan_nanites")
 
 /datum/technology/nanite_synaptic
 	name = "Synaptic Nanite Programming"
@@ -1753,7 +1753,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_neural")
 	cost = 2500
 
-	unlocks_designs = list("mindshield_nanites", "pacifying_nanites", "blinding_nanites", "sleep_nanites", "mute_nanites", "speech_nanites","hallucination_nanites")
+	unlocks_designs = list("mindshield_nanites", "pacifying_nanites", "blinding_nanites", "sleep_nanites", "mute_nanites", "speech_nanites")
 
 /datum/technology/nanite_harmonic
 	name = "Harmonic Nanite Programming"

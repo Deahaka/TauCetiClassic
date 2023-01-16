@@ -503,13 +503,15 @@
 	program_type = /datum/nanite_program/comm/speech
 	category = list("Suppression Nanites")
 
+/*
+// See nanite_programs/suppression.dm
 /datum/design/nanites/hallucination
 	name = "Hallucination"
 	desc = "The nanites make the host see and hear things that aren't real."
 	id = "hallucination_nanites"
 	program_type = /datum/nanite_program/comm/hallucination
 	category = list("Suppression Nanites")
-
+*/
 ////////////////////SENSOR NANITES//////////////////////////////////////
 
 /datum/design/nanites/sensor_health
@@ -583,6 +585,8 @@
 	materials = list(MAT_GLASS = 500, MAT_METAL = 500)
 	category = list("Electronics")
 
+/*
+// See nanite_programs/suppression.dm
 /datum/design/nanites/good_mood
 	name = "Happiness Enhancer"
 	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
@@ -596,6 +600,7 @@
 	id = "bad_mood_nanites"
 	program_type = /datum/nanite_program/bad_mood
 	category = list("Suppression Nanites")
+*/
 
 /datum/design/nanites/nanite_sting
 	name = "Nanite Sting"

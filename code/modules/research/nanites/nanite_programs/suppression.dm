@@ -71,10 +71,10 @@
 	desc = "The nanites suppress the host's ocular nerves, blinding them while they're active."
 	use_rate = 1.5
 	rogue_types = list(/datum/nanite_program/nerve_decay)
-/*
+/* TODO AFTER https://github.com/TauCetiStation/TauCetiClassic/pull/10556
 /datum/nanite_program/blinding/enable_passive_effect()
 	. = ..()
-	host_mob.eye_blind = 20
+	host_mob.eye_blind += max(host_mob.eye_blind, 2)
 	host_mob.blurEyes(40)
 
 /datum/nanite_program/blinding/disable_passive_effect()
@@ -87,15 +87,15 @@
 	desc = "The nanites suppress the host's speech, making them mute while they're active."
 	use_rate = 0.75
 	rogue_types = list(/datum/nanite_program/brain_decay, /datum/nanite_program/brain_misfire)
-/*
+
 /datum/nanite_program/mute/enable_passive_effect()
 	. = ..()
-	host_mob.add_trait(TRAIT_MUTE, "nanites")
+	ADD_TRAIT(host_mob, TRAIT_MUTE, NANITE_TRAIT)
 
 /datum/nanite_program/mute/disable_passive_effect()
 	. = ..()
-	host_mob.remove_trait(TRAIT_MUTE, "nanites")
-*/
+	REMOVE_TRAIT(host_mob, TRAIT_MUTE, NANITE_TRAIT)
+
 /datum/nanite_program/fake_death
 	name = "Death Simulation"
 	desc = "The nanites induce a death-like coma into the host, able to fool most medical scans."
@@ -133,10 +133,7 @@
 	trigger_cost = 3
 	trigger_cooldown = 20
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
-	var/static/list/blacklist = list(
-		"*surrender",
-		"*collapse"	// AHAAHHAHAHHAHHAHA
-	)
+	var/static/list/blacklist = list("*collapse") //<= May i return that? XD
 
 /datum/nanite_program/comm/speech/register_extra_settings()
 	. = ..()
@@ -179,6 +176,8 @@
 		return
 	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> \"<span class='robot'>[sent_message]</span>\"")
 
+/*
+//Removed because of hardcode in Hallucination.dm
 /datum/nanite_program/hallucination
 	name = "Hallucination"
 	desc = "The nanites make the host hallucinate something when triggered."
@@ -186,96 +185,9 @@
 	trigger_cooldown = 80
 	unique = FALSE
 	rogue_types = list(/datum/nanite_program/brain_misfire)
-
-/datum/nanite_program/comm/hallucination/register_extra_settings()
-	. = ..()
-	var/list/options = list(
-		"Message",
-		"Battle",
-		"Sound",
-		"Weird Sound",
-		"Station Message",
-		"Health",
-		"Alert",
-		"Fire",
-		"Shock",
-		"Plasma Flood",
-		"Random"
-	)
-	extra_settings[NES_HALLUCINATION_TYPE] = new /datum/nanite_extra_setting/type("Message", options)
-	extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/text("")
-
-/datum/nanite_program/comm/hallucination/on_trigger(comm_message)
-/*
-	var/datum/nanite_extra_setting/hal_setting = extra_settings[NES_HALLUCINATION_TYPE]
-	var/hal_type = hal_setting.get_value()
-	var/datum/nanite_extra_setting/hal_detail_setting = extra_settings[NES_HALLUCINATION_DETAIL]
-	var/hal_details = hal_detail_setting.get_value()
-	if(comm_message && (hal_type != "Message")) //Triggered via comm remote, but not set to a message hallucination
-		return
-	var/sent_message = comm_message //Comm remotes can send custom hallucination messages for the chat hallucination
-	if(!sent_message)
-		sent_message = hal_details
-	if(!iscarbon(host_mob))
-		return
-	var/mob/living/carbon/C = host_mob
-	if(hal_details == "random")
-		hal_details = null
-	if(hal_type == "Random")
-		C.hallucination += 15
-	else
-		switch(hal_type)
-			if("Message")
-				new /datum/hallucination/chat(C, TRUE, null, sent_message)
-			if("Battle")
-				new /datum/hallucination/battle(C, TRUE, hal_details)
-			if("Sound")
-				new /datum/hallucination/sounds(C, TRUE, hal_details)
-			if("Weird Sound")
-				new /datum/hallucination/weird_sounds(C, TRUE, hal_details)
-			if("Station Message")
-				new /datum/hallucination/stationmessage(C, TRUE, hal_details)
-			if("Health")
-				switch(hal_details)
-					if("critical")
-						hal_details = SCREWYHUD_CRIT
-					if("dead")
-						hal_details = SCREWYHUD_DEAD
-					if("healthy")
-						hal_details = SCREWYHUD_HEALTHY
-				new /datum/hallucination/hudscrew(C, TRUE, hal_details)
-			if("Alert")
-				new /datum/hallucination/fake_alert(C, TRUE, hal_details)
-			if("Fire")
-				new /datum/hallucination/fire(C, TRUE)
-			if("Shock")
-				new /datum/hallucination/shock(C, TRUE)
-			if("Plasma Flood")
-				new /datum/hallucination/fake_flood(C, TRUE)
-	*/
-/datum/nanite_program/comm/hallucination/set_extra_setting(setting, value)
-	. = ..()
-	/*
-	if(setting == NES_HALLUCINATION_TYPE)
-		switch(value)
-			if("Message")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/text("")
-			if("Battle")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","laser","disabler","esword","gun","stunprod","harmbaton","bomb"))
-			if("Sound")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","airlock","airlock pry","console","explosion","far explosion","mech","glass","alarm","beepsky","mech","wall decon","door hack"))
-			if("Weird Sound")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","phone","hallelujah","highlander","laughter","hyperspace","game over","creepy","tesla"))
-			if("Station Message")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","ratvar","shuttle dock","blob alert","malf ai","meteors","supermatter"))
-			if("Health")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","critical","dead","healthy"))
-			if("Alert")
-				extra_settings[NES_HALLUCINATION_DETAIL] = new /datum/nanite_extra_setting/type("random", list("random","not_enough_oxy","not_enough_tox","not_enough_co2","too_much_oxy","too_much_co2","too_much_tox","newlaw","nutrition","charge","gravity","fire","locked","hacked","temphot","tempcold","pressure"))
-			else
-				extra_settings.Remove(NES_HALLUCINATION_DETAIL)
 */
-
+/*
+//Removed because mood used with a specific assignment that nanites should not deal with
 /datum/nanite_program/good_mood
 	name = "Happiness Enhancer"
 	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
@@ -284,28 +196,6 @@
 	extra_settings = list(NES_MOOD_MESSAGE)
 	var/message = "HAPPINESS ENHANCEMENT"
 
-/datum/nanite_program/good_mood/set_extra_setting(user, setting)
-	if(setting == NES_MOOD_MESSAGE)
-		var/new_message = input(user, "Choose the message visible on the mood effect.", NES_MESSAGE, message, MAX_NAME_LEN)
-		if(!new_message)
-			return
-		message = new_message
-
-/datum/nanite_program/good_mood/get_extra_setting_value(setting)
-	if(setting == NES_MOOD_MESSAGE)
-		return message
-
-/datum/nanite_program/good_mood/copy_extra_settings_to(datum/nanite_program/good_mood/target)
-	target.message = message
-
-/datum/nanite_program/good_mood/enable_passive_effect()
-	. = ..()
-	//SEND_SIGNAL(host_mob, COMSIG_ADD_MOOD_EVENT, "nanite_happy", /datum/mood_event/nanite_happiness, message)
-
-/datum/nanite_program/good_mood/disable_passive_effect()
-	. = ..()
-	//SEND_SIGNAL(host_mob, COMSIG_CLEAR_MOOD_EVENT, "nanite_happy")
-
 /datum/nanite_program/bad_mood
 	name = "Happiness Suppressor"
 	desc = "The nanites suppress the production of serotonin inside the host's brain, creating an artificial state of depression."
@@ -313,25 +203,4 @@
 	rogue_types = list(/datum/nanite_program/brain_decay)
 	extra_settings = list(NES_MOOD_MESSAGE)
 	var/message = "HAPPINESS SUPPRESSION"
-
-/datum/nanite_program/bad_mood/set_extra_setting(user, setting)
-	if(setting == NES_MOOD_MESSAGE)
-		var/new_message = input(user, "Choose the message visible on the mood effect.", NES_MESSAGE, message, MAX_NAME_LEN)
-		if(!new_message)
-			return
-		message = new_message
-
-/datum/nanite_program/bad_mood/get_extra_setting_value(setting)
-	if(setting == NES_MOOD_MESSAGE)
-		return message
-
-/datum/nanite_program/bad_mood/copy_extra_settings_to(datum/nanite_program/bad_mood/target)
-	target.message = message
-
-/datum/nanite_program/bad_mood/enable_passive_effect()
-	. = ..()
-	//SEND_SIGNAL(host_mob, COMSIG_ADD_MOOD_EVENT, "nanite_sadness", /datum/mood_event/nanite_sadness, message)
-
-/datum/nanite_program/bad_mood/disable_passive_effect()
-	. = ..()
-	//SEND_SIGNAL(host_mob, COMSIG_CLEAR_MOOD_EVENT, "nanite_sadness")
+*/
