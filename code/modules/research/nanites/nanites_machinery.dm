@@ -249,10 +249,11 @@
 /obj/machinery/computer/nanite_chamber_control
 	name = "nanite chamber control console"
 	desc = "Controls a connected nanite chamber. Can inoculate nanites, load programs, and analyze existing nanite swarms."
+	icon_state = "nanite_chamber_control"
+	circuit = /obj/item/weapon/circuitboard/nanite_chamber_control
 	var/obj/machinery/nanite_chamber/chamber
 	var/obj/item/disk/nanite_program/disk
-	circuit = /obj/item/weapon/circuitboard/nanite_chamber_control
-	icon_state = "nanite_chamber_control"
+	var/details_view = FALSE
 
 /obj/machinery/computer/nanite_chamber_control/atom_init()
 	. = ..()
@@ -287,6 +288,7 @@
 	var/mob/living/occupant = chamber.occupant
 	var/datum/component/nanites/data_handler = occupant?.GetComponent(/datum/component/nanites)
 	var/has_nanites = !isnull(data_handler)
+	var/scan_lvl = chamber.scan_level
 	data += "Scan Level: [chamber.scan_level]<br>"
 	data += "Chamber: [occupant ? "<A href='?src=\ref[src];eject_occupant=1'>[occupant.name]</A>" : ""]<br>"
 	data += "Lock: [chamber.locked ? "Engaged" : "Disengaged"]. <A href='?src=\ref[src];toggle_lock=1'>[chamber.locked ? "Unlock" : "Lock"]</A><br>"
@@ -296,7 +298,38 @@
 		data += "Grown Rate: [data_handler.regen_rate]<br>"
 		data += "Current Safety Treshold: [data_handler.safety_threshold] <A href='?src=\ref[src];set_safety=1'>Set Safety Threshold</A><br>"
 		data += "Cloud ID: [data_handler.cloud_id] <A href='?src=\ref[src];set_cloud=1'>Set cloud ID</A><br>"
-		data += "Synchronization: [data_handler.cloud_active ? "Actived" : "Deactivated"]"
+		data += "Synchronization: [data_handler.cloud_active ? "Actived" : "Deactivated"]<br>"
+		if(scan_lvl >= 2)
+			data += "<hr><A href='?src=\ref[src];det_view=1'>Details</A><br>"
+		if(details_view)
+			for(var/datum/nanite_program/P in data_handler.programs)
+			data += "Program name: [P.name] Status: [P.activated ? "Activated" : "Deactivated"]<br>"
+			data += "Use Rate: [P.use_rate]<br>"
+			if(P.can_trigger)
+				data += "Trigger Cost: [P.trigger_cost]<br>"
+				data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
+			if(scan_lvl >= 3)
+				data += "Timer Restart: [P.timer_restart / 10]<br>"
+				data += "Timer Shutdown: [P.timer_shutdown / 10]<br>"
+				data += "Timer Trigger: [P.timer_trigger / 10]<br>"
+				data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
+				var/list/extra_settings = P.get_extra_settings_frontend()
+				if(extra_settings.len)
+					data += "<hr>Special Settings:<br>"
+					for(var/settin in extra_settings)
+						data += "[settin["name"]]: [settin["value"]]<br>"
+			if(scan_lvl >= 4)
+				data += "Activation Code: [P.activation_code]<br>"
+				data += "Deactivation Code: [P.deactivation_code]<br>"
+				data += "Kill Code: [P.kill_code]<br>"
+				if(P.can_trigger)
+					data += "Trigger Code: [P.trigger_code]<br>"
+				if(P.rules.len)
+					data += "<hr>Rules:<br>"
+					var/rule_id = 1
+					for(var/datum/nanite_rule/nanite_rule in P.rules)
+						data += "[rule_id] - [nanite_rule.display()]"
+						rule_id++
 		data += "<hr><A href='?src=\ref[src];remove_nanites=1'><span class='red'>Destroy Nanites</span></A><br>"
 	else
 		data += "No nanites detected.<br>"
@@ -334,6 +367,8 @@
 		chamber.inject_nanites()
 	if(href_list["eject_occupant"])
 		chamber.toggle_open()
+	if(href_list["det_view"])
+		details_view = !details_view
 	updateUsrDialog()
 
 //Nanite Cloud Controller
