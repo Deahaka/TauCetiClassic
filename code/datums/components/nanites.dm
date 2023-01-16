@@ -136,7 +136,7 @@
 			qdel(X)
 	for(var/X in programs_to_add)
 		var/datum/nanite_program/SNP = X
-		add_program(SNP.copy())
+		add_program(null, SNP.copy())
 
 /datum/component/nanites/proc/cloud_sync()
 	if(cloud_id)
@@ -187,8 +187,8 @@
 	holder.icon_state = "nanites[nanite_percent]"
 
 /datum/component/nanites/proc/on_emp(datum/source, severity)
-	nanite_volume *= (rand(0.60, 0.90))		//Lose 10-40% of nanites
-	adjust_nanites(-(rand(5, 50)))		//Lose 5-50 flat nanite volume
+	nanite_volume *= (rand(60, 90) * 0.01) //Lose 10-40% of nanites
+	adjust_nanites(-(rand(5, 50))) //Lose 5-50 flat nanite volume
 	if(prob(40/severity))
 		cloud_id = 0
 	for(var/X in programs)
@@ -196,8 +196,8 @@
 		NP.on_emp(severity)
 
 /datum/component/nanites/proc/on_shock(datum/source, shock_damage)
-	nanite_volume *= (rand(0.45, 0.80))		//Lose 20-55% of nanites
-	adjust_nanites(-(rand(5, 50)))			//Lose 5-50 flat nanite volume
+	nanite_volume *= (rand(45, 80) * 0.01) //Lose 20-55% of nanites
+	adjust_nanites(-(rand(5, 50)))  //Lose 5-50 flat nanite volume
 	for(var/X in programs)
 		var/datum/nanite_program/NP = X
 		NP.on_shock(shock_damage)
@@ -217,8 +217,7 @@
 		NP.on_death(gibbed)
 
 /datum/component/nanites/proc/receive_signal(datum/source, code, source = "an unidentified source")
-	for(var/X in programs)
-		var/datum/nanite_program/NP = X
+	for(var/datum/nanite_program/NP in programs)
 		NP.receive_signal(code, source)
 
 /datum/component/nanites/proc/receive_comm_signal(datum/source, comm_code, comm_message, comm_source = "an unidentified source")
@@ -296,7 +295,6 @@
 		if(!stealth)
 			to_chat(user, "<span class='notice'><b>Nanites Detected</b></span>")
 			to_chat(user, "<span class='notice'>Saturation: [nanite_volume]/[max_nanites]</span>")
-			return TRUE
 	else
 		to_chat(user, "<span class='info'>NANITES DETECTED</span>")
 		to_chat(user, "<span class='info'>================</span>")
@@ -309,10 +307,9 @@
 		if(!diagnostics)
 			to_chat(user, "<span class='alert'>Diagnostics Disabled</span>")
 		else
-			for(var/X in programs)
-				var/datum/nanite_program/NP = X
+			for(var/datum/nanite_program/NP in programs)
 				to_chat(user, "<span class='info'><b>[NP.name]</b> | [NP.activated ? "Active" : "Inactive"]</span>")
-		return TRUE
+	return COMPONENT_NANITES_DETECTED
 
 /datum/component/nanites/proc/nanite_ui_data(datum/source, list/data, scan_level)
 	data["has_nanites"] = TRUE
