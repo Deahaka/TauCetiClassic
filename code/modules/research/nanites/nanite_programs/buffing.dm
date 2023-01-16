@@ -44,21 +44,16 @@
 
 /datum/nanite_program/hardening/enable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.armor.melee += 50
-		H.physiology.armor.bullet += 35
-		*/
+		ADD_TRAIT(H, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
+
 
 /datum/nanite_program/hardening/disable_passive_effect()
 	. = ..()
-	/*
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		H.physiology.armor.melee -= 50
-		H.physiology.armor.bullet -= 35
-		*/
+		REMOVE_TRAIT(H, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
 
 /datum/nanite_program/refractive
 	name = "Dermal Refractive Surface"

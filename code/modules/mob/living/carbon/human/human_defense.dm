@@ -217,6 +217,15 @@
 			var/obj/item/clothing/C = gear
 			if(istype(C) && (C.body_parts_covered & BP.body_part))
 				protection += C.armor[type]
+
+	if(HAS_TRAIT_FROM(src, TRAIT_REINFORCING_NANITES, NANITE_TRAIT))
+		//Never become invincible
+		if(type == BRUTE)
+			protection += min(50, (90 - protection))
+		if(type == BULLET)
+			protection += min(35, (90 - protection))
+		BP.AddBodypartNaniteOverlay()
+
 	return protection
 
 /mob/living/carbon/human/proc/check_head_coverage()

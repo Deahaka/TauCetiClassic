@@ -170,6 +170,7 @@
 #define TRAIT_STEEL_NERVES        "steel_nerves"
 #define TRAIT_MINDSHIELD          "mindshield"
 #define TRAIT_REFLECT_SKIN        "reflect_skin"
+#define TRAIT_REINFORCING_NANITES "reinforcing_nanites"
 
 /*
  * Used for movables that need to be updated, via COMSIG_ENTER_AREA and COMSIG_EXIT_AREA, when transitioning areas.
