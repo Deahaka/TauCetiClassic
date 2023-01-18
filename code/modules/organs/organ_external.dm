@@ -600,16 +600,14 @@ Note that amputating the affected organ does in fact remove the infection from t
 		. += lips
 
 /obj/item/organ/external/proc/AddBodypartNaniteOverlay()
-	var/robotic_organ_path = "[type]/robot"
-	var/obj/item/organ/external/robotic_organ = new robotic_organ_path(null)
-	if(robotic_organ)
-		var/image/I = image(robotic_organ.icon, robotic_organ.icon_state)
-		add_overlay(I)
-		qdel(robotic_organ)
-		addtimer(CALLBACK(src, .proc/RemoveBodypartNaniteOverlay, I), 2 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_STOPPABLE)
+	original_color = COLOR_DARK_GRAY
+	color = original_color
+	owner.regenerate_icons()
+	addtimer(CALLBACK(src, .proc/aboba), 4 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_STOPPABLE)
 
-/obj/item/organ/external/proc/RemoveBodypartNaniteOverlay(image/overlay)
-	cut_overlay(overlay)
+/obj/item/organ/external/proc/aboba()
+	recolor()
+	owner.regenerate_icons()
 
 // Runs once when attached
 /obj/item/organ/external/proc/check_rejection()
