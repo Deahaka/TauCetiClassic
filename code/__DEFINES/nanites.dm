@@ -11,6 +11,10 @@
 #define NANITE_CLOUD_DISABLE 2
 #define NANITE_CLOUD_ENABLE	3
 
+//Nanite excess thresholds
+#define NANITE_EXCESS_VOMIT 100
+#define NANITE_EXCESS_BURST 350
+
 ///Nanite extra settings types: used to help uis know what type an extra setting is
 #define NESTYPE_TEXT "text"
 #define NESTYPE_NUMBER "number"
