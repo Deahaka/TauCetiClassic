@@ -57,14 +57,21 @@
 	var/obj/machinery/computer/nanite_chamber_control/console
 	var/locked = FALSE
 	var/breakout_time = 1200
-	var/scan_level = 0
+	var/scan_level = 1
 	var/busy = FALSE
 	var/busy_icon_state
 	var/busy_message
 	var/message_cooldown = 0
 
+/obj/machinery/nanite_chamber/atom_init()
+	. = ..()
+	//shitspawned chamber don't have scanning module to upgrade
+	var/obj/item/weapon/stock_parts/scanning_module/M = new(null)
+	M.rating = 0
+	component_parts += M
+
 /obj/machinery/nanite_chamber/RefreshParts()
-	scan_level = 0
+	scan_level = 1
 	for(var/obj/item/weapon/stock_parts/scanning_module/P in component_parts)
 		scan_level += P.rating
 
@@ -281,6 +288,7 @@
 		return data
 	if(!chamber.occupant)
 		data += "No occupant detected"
+		data += "<A href='?src=\ref[src];connect_chamber=1'>Try Connect Chamber</A><br>"
 		return data
 	if(chamber.busy)
 		data += "[chamber.busy_message]"
@@ -338,6 +346,8 @@
 	return data
 
 /obj/machinery/computer/nanite_chamber_control/ui_interact(mob/user)
+	if(chamber)
+		chamber.RefreshParts()
 	var/data = get_data()
 	popup(user, data, name)
 
