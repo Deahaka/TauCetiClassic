@@ -759,6 +759,15 @@ th.cargo {
 .sciTechTreeIcon.icon-module { background-position: -192px -288px; }
 .sciTechTreeIcon.icon-borgmodule { background-position: -224px -288px; }
 
+.sciTechTreeIcon.icon-nanitbase { background-position: 0px -320px; }
+.sciTechTreeIcon.icon-nanitmesh { background-position: -32px -320px; }
+.sciTechTreeIcon.icon-nanitcombat { background-position: -64px -320px; }
+.sciTechTreeIcon.icon-nanitsmart { background-position: -96px -320px; }
+.sciTechTreeIcon.icon-nanitbio { background-position: -128px -320px; }
+.sciTechTreeIcon.icon-nanitsynaptic { background-position: -160px -320px; }
+.sciTechTreeIcon.icon-nanitharmonic { background-position: -192px -320px; }
+.sciTechTreeIcon.icon-nanithazard { background-position: -224px -320px; }
+
 .sciMenuButton {
     width: 300px;
     float: left;
