@@ -1,9 +1,7 @@
 /obj/item/device/nanite_scanner
 	name = "nanite scanner"
-	icon_state = "health"
-	item_state = "healthanalyzer"
-	//icon_state = "nanite_scanner"
-	//item_state = "nanite_remote"
+	icon_state = "nanite_scanner"
+	item_state = "nanite_remote"
 	desc = "A hand-held body scanner able to detect nanites and their programming."
 	flags = CONDUCT | NOBLUDGEON
 	slot_flags = SLOT_FLAGS_BELT
