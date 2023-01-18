@@ -74,6 +74,7 @@
 		var/mob/living/carbon/human/H = host_mob
 		REMOVE_TRAIT(H, TRAIT_REFLECT_SKIN, NANITE_TRAIT)
 
+//TODO: DELETE??? LOSS BLOOD = LOSS NANITES
 /datum/nanite_program/coagulating
 	name = "Rapid Coagulation"
 	desc = "The nanites induce rapid coagulation when the host is wounded, dramatically reducing bleeding rate."
@@ -103,13 +104,19 @@
 
 /datum/nanite_program/conductive/enable_passive_effect()
 	. = ..()
-	var/datum/dna/gene/basic/noshock/shockimmune = global.dna_genes[SHOCKIMMUNITYBLOCK]
-	shockimmune.activate(host_mob)
+	/* FUCKING SHIT NOT WORKING
+	if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		H.dna.SetSEState(SHOCKIMMUNITYBLOCK, 1)
+		H.dna.SetSEValueRange(MONKEYBLOCK, 0xDAC, 0xFFF)
+		domutcheck(H, null)*/
 
 /datum/nanite_program/conductive/disable_passive_effect()
 	. = ..()
-	var/datum/dna/gene/basic/noshock/shockimmune = global.dna_genes[SHOCKIMMUNITYBLOCK]
-	shockimmune.deactivate(host_mob)
+	/*if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		H.dna.SetSEState(SHOCKIMMUNITYBLOCK, 0)
+		domutcheck(H, null)*/
 
 /datum/nanite_program/mindshield
 	name = "Imitation Mental Barrier"
