@@ -836,12 +836,10 @@
 
 /obj/machinery/nanite_program_hub/atom_init()
 	. = ..()
-	//TODO: isstationlevel????
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
-		if(RD.id == 1)
-			//Derelict have RDconsole with id = 1
-			if(is_station_level(RD.z))
-				linked_techweb = RD.files
+		//Robo console have id 2
+		if(RD.id == 2)
+			linked_techweb = RD.files
 
 /obj/machinery/nanite_program_hub/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
