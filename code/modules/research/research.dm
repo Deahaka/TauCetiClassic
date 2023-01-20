@@ -1479,8 +1479,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_teleporter_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.75
-	y = 0.25
+	x = 0.85
+	y = 0.4
 	icon = "mechteleporter"
 
 	required_technologies = list("mech_utility_modules")
@@ -1495,8 +1495,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_armor_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.85
-	y = 0.4
+	x = 0.75
+	y = 0.25
 	icon = "mecharmor"
 
 	required_technologies = list("mech_utility_modules")
