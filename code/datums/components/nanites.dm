@@ -11,6 +11,7 @@
 	var/next_sync = 0
 	var/list/datum/nanite_program/programs = list()
 	var/max_programs = NANITE_PROGRAM_LIMIT
+	var/datum/research/linked_techweb = null
 
 	var/stealth = FALSE //if TRUE, does not appear on HUDs and health scans
 	var/diagnostics = FALSE //if TRUE, displays program list when scanned by nanite scanners
@@ -21,6 +22,11 @@
 
 	nanite_volume = amount
 	cloud_id = cloud
+
+	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
+		//ID 2 is robo console
+		if(RD.id == 2)
+			linked_techweb = RD.files
 
 	//Nanites without hosts are non-interactive through normal means
 	if(isliving(parent))
@@ -334,7 +340,8 @@
 		research_value *= 0.5
 	if(host_mob.stat == DEAD)
 		research_value *= 0.75
-	/*SSresearch.science_tech.add_point_list(list(TECHWEB_POINT_TYPE_NANITES = research_value))*/
+	if(linked_techweb)
+		linked_techweb.research_points += round(research_value)
 
 /datum/component/nanites/proc/nanite_scan(datum/source, mob/user, full_scan)
 	SIGNAL_HANDLER
