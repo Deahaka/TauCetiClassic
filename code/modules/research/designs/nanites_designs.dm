@@ -8,7 +8,7 @@
 	build_type = PROTOLATHE
 	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
 	build_path = /obj/item/nanite_remote
-	category = list("Tools")
+	category = list("Nanite Tools")
 
 /datum/design/nanite_scanner
 	name = "Nanite Scanner"
@@ -17,7 +17,7 @@
 	build_type = PROTOLATHE
 	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_SILVER = 1500)
 	build_path = /obj/item/device/nanite_scanner
-	category = list("Tools")
+	category = list("Nanite Tools")
 
 /datum/design/nanite_disk
 	name = "Nanite Program Disk"
@@ -26,9 +26,35 @@
 	build_type = PROTOLATHE
 	materials = list(MAT_GOLD = 100, MAT_GLASS = 100)
 	build_path = /obj/item/disk/nanite_program
-	category = list("Electronics")
+	category = list("Nanite Tools")
+
+/datum/design/nanite_comm_remote
+	name = "Nanite Communication Remote"
+	desc = "Allows for the construction of a nanite communication remote."
+	id = "nanite_comm_remote"
+	build_type = PROTOLATHE
+	build_path = /obj/item/nanite_remote/comm
+	materials = list(MAT_GLASS = 500, MAT_METAL = 500)
+	category = list("Nanite Tools")
 
 //circuit boards
+/datum/design/board/nanite_chamber_control
+	name = "Circuit Design (Nanite Chamber Control)"
+	desc = "Allows for the construction of circuit boards used to build a new nanite chamber control console."
+	id = "nanite_chamber_control"
+	build_type = IMPRINTER
+	build_path = /obj/item/weapon/circuitboard/nanite_chamber_control
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
+	category = list("Nanite Electronics")
+
+/datum/design/board/nanite_cloud_control
+	name = "Circuit Design (Nanite Cloud Control)"
+	desc = "Allows for the construction of circuit boards used to build a new nanite cloud control console."
+	id = "nanite_cloud_control"
+	build_type = IMPRINTER
+	build_path = /obj/item/weapon/circuitboard/nanite_cloud_controller
+	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
+	category = list("Nanite Electronics")
 
 /datum/design/nanite_chamber
 	name = "Nanite Chamber"
@@ -37,7 +63,7 @@
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_chamber
 	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
-	category = list("Machine")
+	category = list("Nanite Electronics")
 
 /datum/design/public_nanite_chamber
 	name = "Public Nanite Chamber Board"
@@ -46,7 +72,7 @@
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/public_nanite_chamber
 	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
-	category = list("Machine")
+	category = list("Nanite Electronics")
 
 /datum/design/nanite_programmer
 	name = "Nanite Programmer Board"
@@ -55,7 +81,7 @@
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_programmer
 	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
-	category = list("Machine")
+	category = list("Nanite Electronics")
 
 /datum/design/nanite_program_hub
 	name = "Nanite Program Hub Board"
@@ -64,7 +90,7 @@
 	build_type = IMPRINTER
 	build_path = /obj/item/weapon/circuitboard/nanite_program_hub
 	materials = list(MAT_GOLD = 1500, MAT_GLASS = 3000, MAT_DIAMOND = 150, "sacid" = 20)
-	category = list("Machine")
+	category = list("Nanite Electronics")
 
 //Nanites designs
 
@@ -72,15 +98,13 @@
 	name = "None"
 	desc = "Warn a coder if you see this."
 	id = "default_nanites"
-	build_type = NANITE_COMPILER
+	build_type = PROTOLATHE
 	construction_time = 50
 	category = list()
-	//research_icon = 'icons/obj/device.dmi'
-	//research_icon_state = "nanite_program"
+	materials = list(MAT_GLASS = 100, MAT_METAL = 100)
 	var/program_type = /datum/nanite_program
 
 ////////////////////UTILITY NANITES//////////////////////////////////////
-
 /datum/design/nanites/metabolic_synthesis
 	name = "Metabolic Synthesis"
 	desc = "The nanites use the metabolic cycle of the host to speed up their replication rate, using their extra nutrition as fuel."
@@ -174,6 +198,34 @@
 	program_type = /datum/nanite_program/mitosis
 	category = list("Utility Nanites")
 
+/datum/design/nanites/nanite_sting
+	name = "Nanite Sting"
+	desc = "When triggered, projects a nearly invisible spike of nanites that attempts to infect a nearby non-host with a copy of the host's nanites cluster."
+	id = "nanite_sting_nanites"
+	program_type = /datum/nanite_program/nanite_sting
+	category = list("Utility Nanites")
+
+/datum/design/nanites/dermal_button
+	name = "Dermal Button"
+	desc = "Displays a button on the host's skin, which can be used to send a signal to the nanites."
+	id = "dermal_button_nanites"
+	program_type = /datum/nanite_program/dermal_button
+	category = list("Utility Nanites")
+
+/datum/design/nanites/research
+	name = "Distributed Computing"
+	desc = "The nanites aid the research servers by performing a portion of its calculations, increasing research point generation."
+	id = "research_nanites"
+	program_type = /datum/nanite_program/research
+	category = list("Utility Nanites")
+
+/datum/design/nanites/researchplus
+	name = "Neural Network"
+	desc = "The nanites link the host's brains together forming a neural research network, that becomes more efficient with the amount of total hosts. Can be overloaded to increase research output."
+	id = "researchplus_nanites"
+	program_type = /datum/nanite_program/researchplus
+	category = list("Utility Nanites")
+
 ////////////////////MEDICAL NANITES//////////////////////////////////////
 /datum/design/nanites/regenerative
 	name = "Accelerated Regeneration"
@@ -247,9 +299,7 @@
 	program_type = /datum/nanite_program/defib
 	category = list("Medical Nanites")
 
-
 ////////////////////AUGMENTATION NANITES//////////////////////////////////////
-
 /datum/design/nanites/nervous
 	name = "Nerve Support"
 	desc = "The nanites act as a secondary nervous system, reducing the amount of time the host is stunned."
@@ -300,7 +350,6 @@
 	category = list("Augmentation Nanites")
 
 ////////////////////DEFECTIVE NANITES//////////////////////////////////////
-
 /datum/design/nanites/glitch
 	name = "Glitch"
 	desc = "A heavy software corruption that causes nanites to gradually break down."
@@ -358,7 +407,6 @@
 	category = list("Defective Nanites")
 
 ////////////////////WEAPONIZED NANITES/////////////////////////////////////
-
 /datum/design/nanites/flesh_eating
 	name = "Cellular Breakdown"
 	desc = "The nanites destroy cellular structures in the host's body, causing brute damage."
@@ -495,17 +543,7 @@
 	program_type = /datum/nanite_program/comm/speech
 	category = list("Suppression Nanites")
 
-/*
-// See nanite_programs/suppression.dm
-/datum/design/nanites/hallucination
-	name = "Hallucination"
-	desc = "The nanites make the host see and hear things that aren't real."
-	id = "hallucination_nanites"
-	program_type = /datum/nanite_program/comm/hallucination
-	category = list("Suppression Nanites")
-*/
 ////////////////////SENSOR NANITES//////////////////////////////////////
-
 /datum/design/nanites/sensor_health
 	name = "Health Sensor"
 	desc = "The nanites receive a signal when the host's health is above/below a certain percentage."
@@ -548,83 +586,9 @@
 	program_type = /datum/nanite_program/sensor/nanite_volume
 	category = list("Sensor Nanites")
 
-// Circuits
-
-/datum/design/board/nanite_chamber_control
-	name = "Nanite Chamber Control"
-	desc = "Allows for the construction of circuit boards used to build a new nanite chamber control console."
-	id = "nanite_chamber_control"
-	build_type = IMPRINTER
-	build_path = /obj/item/weapon/circuitboard/nanite_chamber_control
-	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
-	category = list("Computer")
-
-/datum/design/board/nanite_cloud_control
-	name = "Nanite Cloud Control"
-	desc = "Allows for the construction of circuit boards used to build a new nanite cloud control console."
-	id = "nanite_cloud_control"
-	build_type = IMPRINTER
-	build_path = /obj/item/weapon/circuitboard/nanite_cloud_controller
-	materials = list(MAT_GLASS = 1500, MAT_GOLD = 1500, MAT_DIAMOND = 500)
-	category = list("Computer")
-
-/datum/design/nanite_comm_remote
-	name = "Nanite Communication Remote"
-	desc = "Allows for the construction of a nanite communication remote."
-	id = "nanite_comm_remote"
-	build_type = PROTOLATHE
-	build_path = /obj/item/nanite_remote/comm
-	materials = list(MAT_GLASS = 500, MAT_METAL = 500)
-	category = list("Electronics")
-
-/*
-// See nanite_programs/suppression.dm
-/datum/design/nanites/good_mood
-	name = "Happiness Enhancer"
-	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
-	id = "good_mood_nanites"
-	program_type = /datum/nanite_program/good_mood
-	category = list("Suppression Nanites")
-
-/datum/design/nanites/bad_mood
-	name = "Happiness Suppressor"
-	desc = "The nanites suppress the production of serotonin inside the host's brain, creating an artificial state of depression."
-	id = "bad_mood_nanites"
-	program_type = /datum/nanite_program/bad_mood
-	category = list("Suppression Nanites")
-*/
-
-/datum/design/nanites/nanite_sting
-	name = "Nanite Sting"
-	desc = "When triggered, projects a nearly invisible spike of nanites that attempts to infect a nearby non-host with a copy of the host's nanites cluster."
-	id = "nanite_sting_nanites"
-	program_type = /datum/nanite_program/nanite_sting
-	category = list("Utility Nanites")
-
 /datum/design/nanites/sensor_species
 	name = "Species Sensor"
 	desc = "When triggered, the nanites scan the host to determine their species and output a signal depending on the conditions set in the settings."
 	id = "sensor_species_nanites"
 	program_type = /datum/nanite_program/sensor/species
 	category = list("Sensor Nanites")
-
-/datum/design/nanites/dermal_button
-	name = "Dermal Button"
-	desc = "Displays a button on the host's skin, which can be used to send a signal to the nanites."
-	id = "dermal_button_nanites"
-	program_type = /datum/nanite_program/dermal_button
-	category = list("Utility Nanites")
-
-/datum/design/nanites/research
-	name = "Distributed Computing"
-	desc = "The nanites aid the research servers by performing a portion of its calculations, increasing research point generation."
-	id = "research_nanites"
-	program_type = /datum/nanite_program/research
-	category = list("Utility Nanites")
-
-/datum/design/nanites/researchplus
-	name = "Neural Network"
-	desc = "The nanites link the host's brains together forming a neural research network, that becomes more efficient with the amount of total hosts. Can be overloaded to increase research output."
-	id = "researchplus_nanites"
-	program_type = /datum/nanite_program/researchplus
-	category = list("Utility Nanites")
