@@ -42,6 +42,8 @@ cause a ton of data to be lost, an admin can go send it back.
 	var/id = 0                //ID of the computer (for server restrictions).
 	var/sync = TRUE           //If sync = 0, it doesn't show up on Server Control Console
 	var/can_research = TRUE   //Is this console capable of researching
+	var/whitelisted_techs = list()
+	var/blacklisted_categories = list()
 
 	var/selected_tech_tree
 	var/selected_technology
@@ -400,6 +402,8 @@ cause a ton of data to be lost, an admin can go send it back.
 			var/cat = list("Unspecified")
 			if(D.category)
 				cat = D.category
+			if(cat in blacklisted_categories)
+				continue
 			if((category in cat) || (category == "Search Results" && findtext(D.name, search_text)))
 				var/temp_material
 				var/c = 50
@@ -445,6 +449,8 @@ cause a ton of data to be lost, an admin can go send it back.
 		for(var/tech_tree_id in files.tech_trees)
 			var/datum/tech/Tech_Tree = files.tech_trees[tech_tree_id]
 			if(!Tech_Tree.shown)
+				continue
+			if(!(tech_tree_id in whitelisted_techs))
 				continue
 			var/list/tech_tree_data = list(
 				"id" =             Tech_Tree.id,
@@ -554,6 +560,8 @@ cause a ton of data to be lost, an admin can go send it back.
 			var/datum/tech/Tech_Tree = files.tech_trees[tech_tree_id]
 			if(!Tech_Tree.shown)
 				continue
+			if(!(tech_tree_id in whitelisted_techs))
+				continue
 			var/list/tech_tree_data = list(
 				"id" =             Tech_Tree.id,
 				"name" =           "[Tech_Tree.name]",
@@ -564,7 +572,10 @@ cause a ton of data to be lost, an admin can go send it back.
 		data["tech_trees"] = tech_tree_list
 
 		if(!selected_tech_tree)
-			selected_tech_tree = files.all_technologies[1]
+			for(var/i in 1 to files.all_technologies.len)
+				if(files.all_technologies[i] in whitelisted_techs)
+					selected_tech_tree = files.all_technologies[i]
+					break
 
 		var/list/tech_list = list()
 		if(selected_tech_tree && files.all_technologies[selected_tech_tree])
@@ -674,7 +685,7 @@ cause a ton of data to be lost, an admin can go send it back.
 	name = "Robotics R&D Console"
 	id = 2
 	req_access = list(29)
-	can_research = FALSE
+	whitelisted_techs = list(RESEARCH_ROBOTICS)
 	required_skills = list(/datum/skill/research = SKILL_LEVEL_TRAINED)
 
 /obj/machinery/computer/rdconsole/robotics/atom_init()
@@ -687,12 +698,15 @@ cause a ton of data to be lost, an admin can go send it back.
 	name = "Core R&D Console"
 	id = 1
 	can_research = TRUE
+	whitelisted_techs = list(RESEARCH_BLUESPACE, RESEARCH_POWERSTORAGE, RESEARCH_COMBAT, RESEARCH_BIOTECH, RESEARCH_ENGINEERING, RESEARCH_ILLEGAL)
+	blacklisted_categories = list("Sensor Nanites", "Suppression Nanites", "Weaponized Nanites", "Defective Nanites", "Augmentation Nanites", "Medical Nanites", "Utility Nanites", "Nanite Tools", "Nanite Electronics")
 
 /obj/machinery/computer/rdconsole/mining
 	name = "Mining R&D Console"
 	id = 3
 	req_access = list(48)
 	can_research = FALSE
+	blacklisted_categories = list("Sensor Nanites", "Suppression Nanites", "Weaponized Nanites", "Defective Nanites", "Augmentation Nanites", "Medical Nanites", "Utility Nanites", "Nanite Tools", "Nanite Electronics")
 	required_skills = list(/datum/skill/research = SKILL_LEVEL_NOVICE)
 
 /obj/machinery/computer/rdconsole/mining/atom_init()
