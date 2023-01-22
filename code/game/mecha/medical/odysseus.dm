@@ -11,6 +11,10 @@
 	deflect_chance = 15
 	step_energy_drain = 6
 
+/obj/mecha/medical/odysseus/atom_init()
+	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 800, DIAGNOSTIC_EXTRA_CHECK)
+
 /obj/mecha/medical/odysseus/moved_inside(mob/living/carbon/human/H)
 	. = ..()
 	if(.)

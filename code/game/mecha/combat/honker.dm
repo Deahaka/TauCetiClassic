@@ -16,9 +16,11 @@
 	max_equip = 3
 	var/squeak = 0
 
-/*
+
 /obj/mecha/combat/honker/atom_init()
 	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 500, DIAGNOSTIC_EXTRA_CHECK)
+/*
 	weapons += new /datum/mecha_weapon/honker(src)
 	weapons += new /datum/mecha_weapon/missile_rack/banana_mortar(src)
 	weapons += new /datum/mecha_weapon/missile_rack/banana_mortar/mousetrap_mortar(src)

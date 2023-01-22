@@ -18,6 +18,11 @@
 
 	var/datum/action/innate/mecha/mech_overload_mode/overload_action = new
 
+
+/obj/mecha/combat/gygax/atom_init()
+	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 2600, DIAGNOSTIC_EXTRA_CHECK)
+
 /obj/mecha/combat/gygax/Destroy()
 	QDEL_NULL(overload_action)
 	return ..()
@@ -43,6 +48,10 @@
 	wreckage = /obj/effect/decal/mecha_wreckage/gygax/ultra
 	animated = 1
 
+/obj/mecha/combat/gygax/atom_init()
+	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 4600, DIAGNOSTIC_EXTRA_CHECK)
+
 /obj/mecha/combat/gygax/dark
 	desc = "A lightweight exosuit used by Nanotrasen Death Squads. A significantly upgraded Gygax security mech."
 	name = "Dark Gygax"
@@ -67,6 +76,7 @@
 	ME.attach(src)
 	ME = new /obj/item/mecha_parts/mecha_equipment/tesla_energy_relay(src)
 	ME.attach(src)
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 4000, DIAGNOSTIC_EXTRA_CHECK)
 
 /obj/mecha/combat/gygax/dark/add_cell(obj/item/weapon/stock_parts/cell/C=null)
 	if(C)
