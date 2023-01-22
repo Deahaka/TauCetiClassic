@@ -24,8 +24,7 @@
 	cloud_id = cloud
 
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
-		//ID 2 is robo console
-		if(RD.id == 2)
+		if(RD.id == DEFAULT_ROBOT_CONSOLE_ID)
 			linked_techweb = RD.files
 
 	//Nanites without hosts are non-interactive through normal means

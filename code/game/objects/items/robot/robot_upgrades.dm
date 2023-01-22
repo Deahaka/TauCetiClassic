@@ -189,14 +189,6 @@
 	icon_state = "cyborg_upgrade2"
 	require_module = TRUE
 
-/obj/item/borg/upgrade/hud_calibrator/atom_init()
-	var/datum/research/linked_techweb
-	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
-		if(RD.id == 2)
-			linked_techweb = RD.files
-	if(linked_techweb)
-		AddComponent(/datum/component/examine_research, linked_techweb, 200, DIAGNOSTIC_EXTRA_CHECK)
-
 /obj/item/borg/upgrade/hud_calibrator/action(mob/living/silicon/robot/R)
 	if(..())
 		return FALSE

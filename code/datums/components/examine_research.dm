@@ -1,21 +1,27 @@
 #define DIAGNOSTIC_EXTRA_CHECK "diagnostic"
 #define SCIENCE_EXTRA_CHECK "science"
 
+#define DEFAULT_SCIENCE_CONSOLE_ID 1
+#define DEFAULT_ROBOT_CONSOLE_ID 2
+#define DEFAULT_MINING_CONSOLE_ID 3
+
 /datum/component/examine_research
 	var/datum/research/linked_techweb
 	var/points_value = 0
 	var/extra_check
 
-/datum/component/examine_research/Initialize(_linked_techweb, research_value, _extra_check)
+/datum/component/examine_research/Initialize(linked_techweb_id, research_value, _extra_check)
 	//Current use for mechs and items
 	if(!isobj(parent))
 		return COMPONENT_INCOMPATIBLE
-	linked_techweb = _linked_techweb
+	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
+		if(RD.id == linked_techweb_id)
+			linked_techweb = RD.files
 	if(!istype(linked_techweb))
-		return COMPONENT_INCOMPATIBLE
+		return COMPONENT_NOT_ATTACHED
 	points_value = research_value
 	if(points_value <= 0)
-		return COMPONENT_INCOMPATIBLE
+		return COMPONENT_NOT_ATTACHED
 	extra_check = _extra_check
 	RegisterSignal(parent, COMSIG_PARENT_EXAMINE, .proc/begin_scan)
 

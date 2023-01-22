@@ -683,7 +683,7 @@ cause a ton of data to be lost, an admin can go send it back.
 
 /obj/machinery/computer/rdconsole/robotics
 	name = "Robotics R&D Console"
-	id = 2
+	id = DEFAULT_ROBOT_CONSOLE_ID
 	req_access = list(29)
 	whitelisted_techs = list(RESEARCH_ROBOTICS)
 	required_skills = list(/datum/skill/research = SKILL_LEVEL_TRAINED)
@@ -696,14 +696,14 @@ cause a ton of data to be lost, an admin can go send it back.
 
 /obj/machinery/computer/rdconsole/core
 	name = "Core R&D Console"
-	id = 1
+	id = DEFAULT_SCIENCE_CONSOLE_ID
 	can_research = TRUE
 	whitelisted_techs = list(RESEARCH_BLUESPACE, RESEARCH_POWERSTORAGE, RESEARCH_COMBAT, RESEARCH_BIOTECH, RESEARCH_ENGINEERING, RESEARCH_ILLEGAL)
 	blacklisted_categories = list("Sensor Nanites", "Suppression Nanites", "Weaponized Nanites", "Defective Nanites", "Augmentation Nanites", "Medical Nanites", "Utility Nanites", "Nanite Tools", "Nanite Electronics")
 
 /obj/machinery/computer/rdconsole/mining
 	name = "Mining R&D Console"
-	id = 3
+	id = DEFAULT_MINING_CONSOLE_ID
 	req_access = list(48)
 	can_research = FALSE
 	blacklisted_categories = list("Sensor Nanites", "Suppression Nanites", "Weaponized Nanites", "Defective Nanites", "Augmentation Nanites", "Medical Nanites", "Utility Nanites", "Nanite Tools", "Nanite Electronics")
