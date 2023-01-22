@@ -48,6 +48,7 @@
 		if((lasertag_color == "red") && (name == "ED-209 Security Robot"))
 			name = pick("RED RAMPAGE","RED ROVER","RED KILLDEATH MURDERBOT")
 
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 1500, DIAGNOSTIC_EXTRA_CHECK)
 
 /obj/machinery/bot/secbot/ed209/update_icon()
 	icon_state = "[lasertag_color]ed209[on]"
@@ -509,5 +510,13 @@
 /obj/machinery/bot/secbot/ed209/bluetag
 	lasertag_color = "blue"
 
+/obj/machinery/bot/secbot/ed209/bluetag/atom_init()
+	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 50, DIAGNOSTIC_EXTRA_CHECK)
+
 /obj/machinery/bot/secbot/ed209/redtag
 	lasertag_color = "red"
+
+/obj/machinery/bot/secbot/ed209/redtag/atom_init()
+	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 50, DIAGNOSTIC_EXTRA_CHECK)

@@ -53,6 +53,7 @@
 /obj/machinery/bot/farmbot/atom_init()
 	..()
 	icon_state = "farmbot[src.on]"
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 500, DIAGNOSTIC_EXTRA_CHECK)
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/machinery/bot/farmbot/atom_init_late()

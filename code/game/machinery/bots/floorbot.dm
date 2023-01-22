@@ -63,6 +63,7 @@
 
 /obj/machinery/bot/floorbot/atom_init()
 	. = ..()
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 200, DIAGNOSTIC_EXTRA_CHECK)
 	updateicon()
 
 /obj/machinery/bot/floorbot/turn_on()
