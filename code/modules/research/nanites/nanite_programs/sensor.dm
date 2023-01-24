@@ -2,7 +2,6 @@
 	name = "Sensor Nanites"
 	desc = "These nanites send a signal code when a certain condition is met."
 	unique = FALSE
-
 	var/can_rule = FALSE
 
 /datum/nanite_program/sensor/register_extra_settings()
@@ -67,6 +66,7 @@
 /datum/nanite_program/sensor/health
 	name = "Health Sensor"
 	desc = "The nanites receive a signal when the host's health is above/below a target percentage."
+	can_rule = TRUE
 	var/spent = FALSE
 
 /datum/nanite_program/sensor/health/register_extra_settings()
@@ -115,9 +115,8 @@
 			spent = TRUE
 			return TRUE
 		return FALSE
-	else
-		spent = FALSE
-		return FALSE
+	spent = FALSE
+	return FALSE
 
 /datum/nanite_program/sensor/crit/make_rule(datum/nanite_program/target)
 	var/datum/nanite_rule/crit/rule = new(target)
@@ -151,9 +150,7 @@
 	var/nanite_percent = (nanites.nanite_volume - nanites.safety_threshold)/(nanites.max_nanites - nanites.safety_threshold)*100
 	var/datum/nanite_extra_setting/percent = extra_settings[NES_NANITE_PERCENT]
 	var/datum/nanite_extra_setting/direction = extra_settings[NES_DIRECTION]
-
 	var/detected = FALSE
-
 	if(direction.get_value())
 		if(nanite_percent >= percent.get_value())
 			detected = TRUE
@@ -183,11 +180,8 @@
 	desc = "The nanites receive a signal when a host's specific damage type is above/below a target value."
 	can_rule = TRUE
 	var/spent = FALSE
-	var/damage_type = BRUTE
-	var/damage = 50
-	var/direction = "Above"
 
-/datum/nanite_program/senor/damage/register_extra_settings()
+/datum/nanite_program/sensor/damage/register_extra_settings()
 	. = ..()
 	extra_settings[NES_DAMAGE_TYPE] = new /datum/nanite_extra_setting/type(BRUTE, list(BRUTE, BURN, TOX, OXY, CLONE))
 	extra_settings[NES_DAMAGE] = new /datum/nanite_extra_setting/number(50, 0, 500)
@@ -198,7 +192,7 @@
 	var/datum/nanite_extra_setting/type = extra_settings[NES_DAMAGE_TYPE]
 	var/datum/nanite_extra_setting/damage = extra_settings[NES_DAMAGE]
 	var/datum/nanite_extra_setting/direction = extra_settings[NES_DIRECTION]
-	var/check_above = (direction == "Above")
+	var/check_above =  direction.get_value()
 	var/damage_amt = 0
 	switch(type.get_value())
 		if(BRUTE)
@@ -212,11 +206,12 @@
 		if(CLONE)
 			damage_amt = host_mob.getCloneLoss()
 
-	if(damage_amt >= damage.get_value())
-		if(check_above)
+	if(check_above)
+		if(damage_amt >= damage.get_value())
 			reached_threshold = TRUE
-	else if(!check_above)
-		reached_threshold = TRUE
+	else
+		if(damage_amt < damage.get_value())
+			reached_threshold = TRUE
 
 	if(reached_threshold)
 		if(!spent)
@@ -230,15 +225,16 @@
 /datum/nanite_program/sensor/damage/make_rule(datum/nanite_program/target)
 	var/datum/nanite_rule/damage/rule = new(target)
 	var/datum/nanite_extra_setting/direction = extra_settings[NES_DIRECTION]
-	rule.above = direction.get_value()
-	rule.threshold = damage
-	rule.damage_type = damage_type
+	var/datum/nanite_extra_setting/damage_type = extra_settings[NES_DAMAGE_TYPE]
+	var/datum/nanite_extra_setting/damage = extra_settings[NES_DAMAGE]
+	rule.above  =  direction.get_value()
+	rule.threshold = damage.get_value()
+	rule.damage_type = damage_type.get_value()
 	return rule
 
 /datum/nanite_program/sensor/voice
 	name = "Voice Sensor"
-	desc = "Sends a signal when the nanites hear a determined word or sentence."
-	var/spent = FALSE
+	desc = "The nanites receive a signal when they detect a specific, preprogrammed word or phrase being said."
 
 /datum/nanite_program/sensor/voice/register_extra_settings()
 	. = ..()
@@ -253,20 +249,21 @@
 	UnregisterSignal(host_mob, COMSIG_MOVABLE_HEAR, .proc/on_hear)
 
 /datum/nanite_program/sensor/voice/proc/on_hear(datum/source, msg, mob/speaker)
+	SIGNAL_HANDLER
 	var/datum/nanite_extra_setting/sentence = extra_settings[NES_SENTENCE]
 	var/datum/nanite_extra_setting/inclusive = extra_settings[NES_INCLUSIVE_MODE]
 	if(!sentence.get_value())
 		return
 	if(inclusive.get_value())
-		if(findtextEx(msg, sentence))
+		if(findtext(msg, sentence.get_value()))
 			send_code()
 	else
-		if(msg == sentence)
+		if(msg == sentence.get_value())
 			send_code()
 
 /datum/nanite_program/sensor/species
 	name = "Species Sensor"
-	desc = "When triggered, the nanites scan the host to determine their species and output a signal depending on the conditions set in the settings."
+	desc = "When triggered, the nanites scan the host to determine their species and receive a signal depending on the conditions set in the settings."
 	can_trigger = TRUE
 	trigger_cost = 0
 	trigger_cooldown = 5
