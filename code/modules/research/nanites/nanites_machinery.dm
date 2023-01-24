@@ -11,6 +11,7 @@
 /obj/item/weapon/circuitboard/nanite_chamber
 	name = "Nanite Chamber (Machine Board)"
 	build_path = /obj/machinery/nanite_chamber
+	board_type = "machine"
 	req_components = list(
 		/obj/item/weapon/stock_parts/scanning_module = 2,
 		/obj/item/weapon/stock_parts/micro_laser = 2,
@@ -19,6 +20,7 @@
 /obj/item/weapon/circuitboard/public_nanite_chamber
 	name = "Public Nanite Chamber (Machine Board)"
 	build_path = /obj/machinery/public_nanite_chamber
+	board_type = "machine"
 	var/cloud_id = 1
 	req_components = list(/obj/item/weapon/stock_parts/micro_laser = 2,
 						/obj/item/weapon/stock_parts/manipulator = 1)
@@ -30,6 +32,7 @@
 /obj/item/weapon/circuitboard/nanite_program_hub
 	name = "Nanite Program Hub (Machine Board)"
 	build_path = /obj/machinery/nanite_program_hub
+	board_type = "machine"
 	req_components = list(
 		/obj/item/weapon/stock_parts/matter_bin = 1,
 		/obj/item/weapon/stock_parts/manipulator = 1)
@@ -37,6 +40,7 @@
 /obj/item/weapon/circuitboard/nanite_programmer
 	name = "Nanite Programmer (Machine Board)"
 	build_path = /obj/machinery/nanite_programmer
+	board_type = "machine"
 	req_components = list(
 		/obj/item/weapon/stock_parts/manipulator = 2,
 		/obj/item/weapon/stock_parts/micro_laser = 2,
@@ -57,7 +61,7 @@
 	var/obj/machinery/computer/nanite_chamber_control/console
 	var/locked = FALSE
 	var/breakout_time = 1200
-	var/scan_level = 1
+	var/scan_level = 0
 	var/busy = FALSE
 	var/busy_icon_state
 	var/busy_message
@@ -65,13 +69,17 @@
 
 /obj/machinery/nanite_chamber/atom_init()
 	. = ..()
-	//shitspawned chamber don't have scanning module to upgrade
-	var/obj/item/weapon/stock_parts/scanning_module/M = new(null)
-	M.rating = 0
-	component_parts += M
+	component_parts = list()
+	component_parts += new /obj/item/weapon/circuitboard/nanite_chamber(null)
+	component_parts += new /obj/item/weapon/stock_parts/scanning_module(null)
+	component_parts += new /obj/item/weapon/stock_parts/scanning_module(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
+	RefreshParts()
 
 /obj/machinery/nanite_chamber/RefreshParts()
-	scan_level = 1
+	scan_level = 0
 	for(var/obj/item/weapon/stock_parts/scanning_module/P in component_parts)
 		scan_level += P.rating
 
@@ -260,7 +268,7 @@
 	circuit = /obj/item/weapon/circuitboard/nanite_chamber_control
 	var/obj/machinery/nanite_chamber/chamber
 	var/obj/item/disk/nanite_program/disk
-	var/details_view = FALSE
+	var/detail_menu_view = "None"
 
 /obj/machinery/computer/nanite_chamber_control/atom_init()
 	. = ..()
@@ -283,11 +291,11 @@
 /obj/machinery/computer/nanite_chamber_control/proc/get_data()
 	var/data = ""
 	if(!chamber)
-		data += "No chamber detected"
+		data += "No chamber detected<br>"
 		data += "<A href='?src=\ref[src];connect_chamber=1'>Try Connect Chamber</A><br>"
 		return data
 	if(!chamber.occupant)
-		data += "No occupant detected"
+		data += "No occupant detected<br>"
 		data += "<A href='?src=\ref[src];connect_chamber=1'>Try Connect Chamber</A><br>"
 		return data
 	if(chamber.busy)
@@ -302,43 +310,95 @@
 	data += "Lock: [chamber.locked ? "Engaged" : "Disengaged"]. <A href='?src=\ref[src];toggle_lock=1'>[chamber.locked ? "Unlock" : "Lock"]</A><br>"
 	data += "<hr>"
 	if(has_nanites)
+		data += "<table border='1' width='100%'>"
+		data += "<tr><th width = '45%'>Status</th><td width='55%'><div align='right'><A href='?src=\ref[src];remove_nanites=1'><span class='red'>Destroy Nanites</span></A></div></th></tr>"
+		data += "<tr>"
+		data += "<td width = '45%'>"
 		data += "Nanite Volume: [data_handler.nanite_volume]<br>"
 		data += "Grown Rate: [data_handler.regen_rate]<br>"
-		data += "Current Safety Treshold: [data_handler.safety_threshold] <A href='?src=\ref[src];set_safety=1'>Set Safety Threshold</A><br>"
-		data += "Cloud ID: [data_handler.cloud_id] <A href='?src=\ref[src];set_cloud=1'>Set cloud ID</A><br>"
 		data += "Synchronization: [data_handler.cloud_active ? "Actived" : "Deactivated"]<br>"
-		if(scan_lvl >= 2)
-			data += "<hr><A href='?src=\ref[src];det_view=1'>Details</A><br>"
-		if(details_view)
-			for(var/datum/nanite_program/P in data_handler.programs)
-				data += "Program name: [P.name] Status: [P.activated ? "Activated" : "Deactivated"]<br>"
-				data += "Use Rate: [P.use_rate]<br>"
-				if(P.can_trigger)
-					data += "Trigger Cost: [P.trigger_cost]<br>"
-					data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
-				if(scan_lvl >= 3)
-					data += "Timer Restart: [P.timer_restart / 10]<br>"
-					data += "Timer Shutdown: [P.timer_shutdown / 10]<br>"
-					data += "Timer Trigger: [P.timer_trigger / 10]<br>"
-					data += "Timer Trigger Delay: [P.timer_trigger_delay / 10]<br>"
-					var/list/extra_settings = P.get_extra_settings_frontend()
-					if(extra_settings.len)
-						data += "<hr>Special Settings:<br>"
-						for(var/settin in extra_settings)
-							data += "[settin["name"]]: [settin["value"]]<br>"
-				if(scan_lvl >= 4)
-					data += "Activation Code: [P.activation_code]<br>"
-					data += "Deactivation Code: [P.deactivation_code]<br>"
-					data += "Kill Code: [P.kill_code]<br>"
+		data += "</td>"
+		data += "<td width='55%'>"
+		data += "Current Safety Treshold: <A href='?src=\ref[src];set_safety=1'>[data_handler.safety_threshold]</A><br>"
+		data += "Cloud ID: <A href='?src=\ref[src];set_cloud=1'>[data_handler.cloud_id]</A><br>"
+		data += "</td>"
+		data += "</tr>"
+		data += "</table>"
+		data += "<br>"
+		data += "Programs:<hr>"
+		for(var/datum/nanite_program/P in data_handler.programs)
+			data += "<A href='?src=\ref[src];details=[P.name]'>[P.name]</A><br>"
+			if(detail_menu_view == P.name)
+				data += "<table border='1' width='100%'>"
+				data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
+				data += "<tr>"
+				data += "<td width = '60%'>[P.desc]</td>"
+				data += "<td width='40%'>"
+				data += "Status: [P.activated ? "<span class='green'>Active</span>" : "<span class='red'>Inactive</span>"]<br>"
+				data += "Nanite Consumed: [P.use_rate]/s<br>"
+				data += "</td>"
+				data += "</tr>"
+				data += "</table>"
+				if(scan_lvl >= 2)
 					if(P.can_trigger)
-						data += "Trigger Code: [P.trigger_code]<br>"
-					if(P.rules.len)
-						data += "<hr>Rules:<br>"
-						var/rule_id = 1
-						for(var/datum/nanite_rule/nanite_rule in P.rules)
-							data += "[rule_id] - [nanite_rule.display()]"
-							rule_id++
-		data += "<hr><A href='?src=\ref[src];remove_nanites=1'><span class='red'>Destroy Nanites</span></A><br>"
+						data += "<hr>"
+						data += "Triggers:<br>"
+						data += "<dd>"
+						data += "Trigger Cost: [P.trigger_cost]<br>"
+						data += "Trigger Cooldown: [P.trigger_cooldown / 10]<br>"
+						if(P.timer_trigger)
+							data += "Trigger Repeat Timer: [P.timer_trigger / 10]/s<br>"
+						if(P.timer_trigger_delay)
+							data += "Trigger Delay: [P.timer_trigger_delay / 10]/s<br>"
+						data += "</dd>"
+					if(P.timer_restart)
+						data += "Timer Restart: [P.timer_restart / 10]/s<br>"
+					if(P.timer_shutdown)
+						data += "Timer Shutdown: [P.timer_shutdown / 10]/s<br>"
+					if(scan_lvl >= 3)
+						var/list/extra_detail_settings = P.get_extra_settings_frontend()
+						if(extra_detail_settings.len)
+							data += "<hr>"
+							data += "Extra Settings:<br>"
+							for(var/setting in extra_detail_settings)
+								switch(setting["type"])
+									if(NESTYPE_TEXT)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
+									if(NESTYPE_NUMBER)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : 1] [setting["unit"] ? setting["unit"] : ""]<br>"
+									if(NESTYPE_BOOLEAN)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["true_text"] : setting["false_text"]]<br>"
+									if(NESTYPE_TYPE)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
+						if(scan_lvl >= 4)
+							data += "<hr>"
+							data += "<table border='1' width='100%'>"
+							data += "<tr><th width = '50%'>Codes</th><td width='50%'>Rules</th></tr>"
+							data += "<tr>"
+							data += "<td width = '50%'>"
+							data += "Activation: [P.activation_code]<br>"
+							data += "Deactivation: [P.deactivation_code]<br>"
+							data += "Kill: [P.kill_code]<br>"
+							if(P.can_trigger)
+								data += "Trigger: [P.trigger_code]<br>"
+							data += "</td>"
+							data += "<td width='50%'>"
+							var/list/rules = list()
+							var/rule_id = 1
+							for(var/datum/nanite_rule/nanite_rule in P.rules)
+								var/list/rule = list()
+								rule["display"] = nanite_rule.display()
+								rule["id"] = rule_id
+								rules += list(rule)
+								rule_id++
+							if(rules.len)
+								for(var/my_rule in rules)
+									data += "[my_rule["id"]]. [my_rule["display"]]<br>"
+							else
+								data += "No Active Rules<br>"
+							data += "</td>"
+							data += "</tr>"
+							data += "</table>"
 	else
 		data += "No nanites detected.<br>"
 		data += "<hr><A href='?src=\ref[src];nanite_injection=1'><span class='green'>Inject Nanites</span></A>"
@@ -381,8 +441,11 @@
 	if(href_list["eject_occupant"])
 		if(chamber.occupant && !chamber.locked && !chamber.state_open)
 			chamber.toggle_open()
-	if(href_list["det_view"])
-		details_view = !details_view
+	if(href_list["details"])
+		if(detail_menu_view == href_list["details"])
+			detail_menu_view = "None"
+		else
+			detail_menu_view = href_list["details"]
 	updateUsrDialog()
 
 //Nanite Cloud Controller
@@ -396,6 +459,7 @@
 	var/list/datum/nanite_cloud_backup/cloud_backups = list()
 	var/current_view = 0 //0 is the main menu, any other number is the page of the backup with that ID
 	var/new_backup_id = 1
+	var/detail_menu_view = "None"
 
 /obj/machinery/computer/nanite_cloud_controller/Destroy()
 	QDEL_LIST(cloud_backups) //rip backups
@@ -442,44 +506,83 @@
 	var/data = ""
 	var/has_disk = !isnull(disk)
 	var/has_program = FALSE
-	var/can_rule = FALSE
+	var/disk_program_can_rule = FALSE
 	if(has_disk)
-		data += "Program disk: <A href='?src=\ref[src];eject=1'>Eject</A><hr>"
+		data += "Program disk: <A href='?src=\ref[src];eject=1'>Eject</A><br>"
+		data += "<A href='?src=\ref[src];details=Disk'>Details</A><br>"
 		if(disk.program)
-			var/datum/nanite_program/disk_program = disk.program
 			has_program = TRUE
+			var/datum/nanite_program/disk_program = disk.program
 			var/is_can_be_triggered = disk_program.can_trigger
-			data += "[disk_program.name] [disk_program.activated ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br><hr>"
-			data += "[disk_program.desc]<br>"
-			data += "Use_rate: [disk_program.use_rate]<br>"
-			if(is_can_be_triggered)
-				data += "Trigger Cost: [disk_program.trigger_cost]<br>"
-				data += "Trigger Cooldown: [disk_program.trigger_cooldown / 10]<br>"
-			data += "<hr>"
-			data += "Activation Code: [disk_program.activation_code]<br>"
-			data += "Deactivation Code: [disk_program.deactivation_code]<br>"
-			data += "Kill Code: [disk_program.kill_code]<br>"
-			data += "<hr>"
-			data += "Restart: [disk_program.timer_restart / 10]<br>"
-			data += "Shutdown: [disk_program.timer_shutdown / 10]<br>"
-			if(is_can_be_triggered)
-				data += "Trigger Code: [disk_program.trigger_code]<br>"
-				data += "Timer Trugger: [disk_program.timer_trigger / 10]<br>"
-				data += "Timer Trigger Delay: [disk_program.timer_trigger_delay / 10]<br>"
 			var/list/list_of_extra_settings = disk_program.get_extra_settings_frontend()
 			if(list_of_extra_settings.len)
 				if(istype(disk_program, /datum/nanite_program/sensor))
 					var/datum/nanite_program/sensor/sensor = disk_program
 					if(sensor.can_rule)
-						can_rule = TRUE
+						disk_program_can_rule = TRUE
+			if(detail_menu_view == "Disk")
+				data += "<hr>"
+				data += "[disk_program.name] [disk_program.activated ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br>"
+				data += "<hr>"
+
+				data += "<table border='1' width='100%'>"
+				data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
+				data += "<tr>"
+				data += "<td width = '60%'>[disk_program.desc]</td>"
+				data += "<td width='40%'>"
+				data += "<div align='left'>"
+				data += "Use Rate: [disk_program.use_rate]<br>"
+				if(is_can_be_triggered)
+					data += "Trigger Cost: [disk_program.trigger_cost]<br>"
+					data += "Trigger Cooldown: [disk_program.trigger_cooldown / 10]<br>"
+				data += "<div>"
+				data += "</td>"
+				data += "</tr>"
+				data += "</table>"
+
+				data += "<hr>"
+
+				data += "<table border='1' width='100%'>"
+				data += "<tr><th width = '50%'>Codes</th><td width='50%'>Delays</th></tr>"
+				data += "<tr>"
+				data += "<td width = '50%'>"
+				data += "Activation: [disk_program.activation_code]<br>"
+				data += "Deactivation: [disk_program.deactivation_code]<br>"
+				data += "Kill: [disk_program.kill_code]<br>"
+				data += "</td>"
+				data += "<td width='50%'>"
+				data += "Restart: [disk_program.timer_restart / 10]<br>"
+				data += "Shutdown [disk_program.timer_shutdown / 10]<br>"
+				data += "</td>"
+				data += "</tr>"
+				if(is_can_be_triggered)
+					data += "<tr>"
+					data += "<td width = '50%'>"
+					data += "Trigger: [disk_program.trigger_code]<br>"
+					data += "</td>"
+					data += "<td width='50%'>"
+					data += "Trigger Repeat Timer: [disk_program.timer_trigger / 10]<br>"
+					data += "Trigger Delay: [disk_program.timer_trigger_delay / 10]<br>"
+					data += "</td>"
+					data += "</tr>"
+				data += "</table>"
+				for(var/setting in list_of_extra_settings)
+					switch(setting["type"])
+						if(NESTYPE_TEXT)
+							data += "[setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
+						if(NESTYPE_NUMBER)
+							data += "[setting["name"]]: [setting["value"] ? setting["value"] : 1] [setting["unit"] ? setting["unit"] : ""]<br>"
+						if(NESTYPE_BOOLEAN)
+							data += "[setting["name"]]: [setting["value"] ? setting["true_text"] : setting["false_text"]]<br>"
+						if(NESTYPE_TYPE)
+							data += "[setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
 		else
 			data += "Inserted disk has no program<br>"
 	//cant early return because there is 3 more buttons in menu
 	else
 		data += "No disk inserted<br>"
-	var/has_rules = FALSE
+
 	if(current_view)
-		data += "<A href='?src=\ref[src];return_view=1'>Return</A><br>"
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
 			var/datum/component/nanites/nanites = backup.nanites
@@ -511,55 +614,96 @@
 					rule["display"] = nanite_rule.display()
 					rule["program_id"] = id
 					rule["id"] = rule_id
-					rules += rule
+					rules += list(rule)
 					rule_id++
 				cloud_program["rules"] = rules
 				if(rules.len)
-					has_rules = TRUE
+					cloud_program["program_have_rules"] = TRUE
 				var/list/extra_settings = P.get_extra_settings_frontend()
 				cloud_program["extra_settings"] = extra_settings
 				if(extra_settings.len)
 					cloud_program["has_extra_settings"] = TRUE
 				id++
-				cloud_programs += cloud_program
+				cloud_programs += list(cloud_program)
+			data += "<hr>"
+			data += "<h1 align='left'>Backup # [current_view] <A href='?src=\ref[src];return_view=1'>Return</A></h1><br>"
 			if(cloud_programs.len)
-				data += "Backup # [current_view]<br>"
-				//I dont understand how i can throw all programs in backup -_-
-				data += "[cloud_programs["name"]] <A href='?src=\ref[src];remove_program=[cloud_programs["name"]]'>Remove</A><br>"
-				if(has_rules && can_rule)
-					//not tested
-					var/list/rules_list = cloud_programs["rules"]
-					if(rules_list.len)
-						data += "Rules:<br>"
-						for(var/cloud_program in cloud_programs)
-							data += "<A href='?src=\ref[src];add_rule=[cloud_program["id"]]'>Add Rule from Disk</A><br>"
-							if(has_rules)
-								for(var/nanite_rules in rules_list)
-									data += "<A href='?src=\ref[src];remove_rule=[cloud_program["id"]];rule_id=[nanite_rules["id"]]'>Remove Rule Display:[nanite_rules["display"]]</A><br>"
-							else
-								data += "No Active Rules<br>"
+				data += "<dd>"
+				for(var/associative_program_list in cloud_programs)
+					data += "[associative_program_list["id"]]. <A href='?src=\ref[src];details=[associative_program_list["name"]]'>[associative_program_list["name"]]</A> <A href='?src=\ref[src];remove_program=[associative_program_list["name"]]'>—</A> [associative_program_list["activated"] ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br>"
+					if(detail_menu_view == associative_program_list["name"])
+						data += "<table border='1' width='100%'>"
+						data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
+						data += "<tr>"
+						data += "<td width = '60%'>[associative_program_list["desc"]]</td>"
+						data += "<td width='40%'>"
+						data += "<div align='left'>"
+						data += "Use Rate: [associative_program_list["use_rate"]]<br>"
+						if(associative_program_list["can_trigger"])
+							data += "Trigger Cost: [associative_program_list["trigger_cost"]]<br>"
+							data += "Trigger Cooldown: [associative_program_list["trigger_cooldown"]]<br>"
+						data += "<div>"
+						data += "</td>"
+						data += "</tr>"
+						data += "</table>"
 
-				/*old code not worked
-				for(var/programs in cloud_programs)
-					to_chat(world, "programs is [programs]")
-					for(var/x in programs)
-						to_chat(world, "x is [x]")
-						to_chat(world, "xrules is [x["rules"]]")*/
-					/*var/list/rules_list = list()
-					rules_list += programs["rules"]
-					if(can_rule && has_rules && rules_list.len)
-						data += "Rules:<br>"
-						for(var/cloud_program in programs)
-							data += "<A href='?src=\ref[src];add_rule=[cloud_program["id"]]'>Add Rule from Disk</A><br>"
-							if(has_rules)
-								for(var/nanite_rules in rules_list)
-									data += "<A href='?src=\ref[src];remove_rule=[cloud_program["id"]];rule_id=[nanite_rules["id"]]'>Remove Rule Display:[nanite_rules["display"]]</A><br>"
-							else
-								data += "No Active Rules<br>"*/
+						data += "<hr>"
+
+						data += "<table border='1' width='100%'>"
+						data += "<tr><th width = '50%'>Codes</th><td width='50%'>Delays</th></tr>"
+						data += "<tr>"
+						data += "<td width = '50%'>"
+						data += "Activation: [associative_program_list["activation_code"]]<br>"
+						data += "Deactivation: [associative_program_list["deactivation_code"]]<br>"
+						data += "Kill: [associative_program_list["kill_code"]]<br>"
+						data += "</td>"
+						data += "<td width='50%'>"
+						data += "Restart: [associative_program_list["timer_restart"]]<br>"
+						data += "Shutdown [associative_program_list["timer_shutdown"]]<br>"
+						data += "</td>"
+						data += "</tr>"
+						if(associative_program_list["can_trigger"])
+							data += "<tr>"
+							data += "<td width = '50%'>"
+							data += "Trigger: [associative_program_list["trigger_code"]]<br>"
+							data += "</td>"
+							data += "<td width='50%'>"
+							data += "Trigger Repeat Timer: [associative_program_list["timer_trigger"]]<br>"
+							data += "Trigger Delay: [associative_program_list["timer_trigger_delay"]]<br>"
+							data += "</td>"
+							data += "</tr>"
+						data += "</table>"
+						data += "<hr>"
+						if(associative_program_list["has_extra_settings"])
+							data += "Extra Settings:<br>"
+							var/list/extra_detail_settings = associative_program_list["extra_settings"]
+							for(var/setting in extra_detail_settings)
+								switch(setting["type"])
+									if(NESTYPE_TEXT)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
+									if(NESTYPE_NUMBER)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : 1] [setting["unit"] ? setting["unit"] : ""]<br>"
+									if(NESTYPE_BOOLEAN)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["true_text"] : setting["false_text"]]<br>"
+									if(NESTYPE_TYPE)
+										data += "--- [setting["name"]]: [setting["value"] ? setting["value"] : "None"]<br>"
+							data += "<hr>"
+					var/list/rules_list = associative_program_list["rules"]
+					data += "Rules:<br>"
+					if(associative_program_list["program_have_rules"])
+						for(var/my_rule in rules_list)
+							data += "--- [my_rule["display"]] <A href='?src=\ref[src];remove_rule=[associative_program_list["id"]];rule_id=[my_rule["id"]]'>—</A><br>"
+					else
+						data += "--- No Active Rules<br>"
+					if(disk_program_can_rule)
+						data += "<div align='right'><A href='?src=\ref[src];add_rule=[associative_program_list["id"]]'>Add Rule from Disk</A></div><br>"
+					data += "<hr>"
+				data += "</dd>"
 			else
 				data += "No cloud programs<br>"
 			if(has_program)
-				data += "<A href='?src=\ref[src];upload_program=1'>Upload From Disk</A><br>"
+				data += "<hr>"
+				data += "<A href='?src=\ref[src];upload_program=1'>Upload Program from Disk</A><br>"
 		else
 			data += "ERROR: Backup not found<br>"
 	else
@@ -574,9 +718,9 @@
 			backup_list += list(cloud_backup)
 		if(backup_list.len)
 			for(var/backups in backup_list)
-				data += "Backup # <A href='?src=\ref[src];set_view=[backups["cloud_id"]]'>[backups["cloud_id"]]</A><br>"
+				data += "<center>Backup # <A href='?src=\ref[src];set_view=[backups["cloud_id"]]'>[backups["cloud_id"]]</A></center><br>"
 		else
-			data += "No backups<br>"
+			data += "<center>No backups</center><br>"
 	return data
 
 /obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user)
@@ -588,7 +732,8 @@
 	if(href_list["eject"])
 		eject(usr)
 	if(href_list["set_view"])
-		current_view = href_list["set_view"]
+		if(!isnull(href_list["set_view"]))
+			current_view = href_list["set_view"]
 	//set_view=0 its ^^^ href_list["set_view"] = 0 and clause not working
 	if(href_list["return_view"])
 		current_view = 0
@@ -633,16 +778,24 @@
 			if(backup)
 				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				var/datum/component/nanites/nanites = backup.nanites
-				var/datum/nanite_program/P = nanites.programs[href_list["add_rule"]]
+				var/num = text2num(href_list["add_rule"])
+				var/datum/nanite_program/P = nanites.programs[num]
 				rule_template.make_rule(P)
 	if(href_list["remove_rule"])
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
 			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 			var/datum/component/nanites/nanites = backup.nanites
-			var/datum/nanite_program/P = nanites.programs[href_list["remove_rule"]]
-			var/datum/nanite_rule/rule = P.rules[href_list["rule_id"]]
+			var/num_P = text2num(href_list["remove_rule"])
+			var/datum/nanite_program/P = nanites.programs[num_P]
+			var/num_R = text2num(href_list["rule_id"])
+			var/datum/nanite_rule/rule = P.rules[num_R]
 			rule.remove()
+	if(href_list["details"])
+		if(detail_menu_view == href_list["details"])
+			detail_menu_view = "None"
+		else
+			detail_menu_view = href_list["details"]
 	updateUsrDialog()
 
 /datum/nanite_cloud_backup
@@ -836,6 +989,11 @@
 
 /obj/machinery/nanite_program_hub/atom_init()
 	. = ..()
+	component_parts = list()
+	component_parts += new /obj/item/weapon/circuitboard/nanite_program_hub(null)
+	component_parts += new /obj/item/weapon/stock_parts/matter_bin(null)
+	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
+
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
 		//Robo console have id 2
 		if(RD.id == 2)
@@ -875,10 +1033,11 @@
 		data += "Insert a nanite program disk<br>"
 		return data
 	data += "<hr>"
-	data += "Programs Hub<br>"
+	data += "<div align='center'>Programs Hub</div>"
 	data += "<hr>"
 	data += "<A href='?src=\ref[src];category=1'>[current_category ? current_category : "Main Menu"]</A><br>"
 	if(current_category != null)
+		data += "<dd>"
 		var/list/program_list = list()
 		for(var/datum/design/nanites/D in linked_techweb.known_designs)
 			if(!istype(D))
@@ -887,9 +1046,10 @@
 				program_list[D.name] = D
 		for(var/program_name in program_list)
 			data += "[program_name]<br>"
+		data += "</dd>"
 		data += "<hr>"
 		if(program_list.len)
-			data += "<A href='?src=\ref[src];download=1'>Download Program</A><br>"
+			data += "<h1><A href='?src=\ref[src];download=1'>Download Program</A></h1><br>"
 	return data
 
 /obj/machinery/nanite_program_hub/ui_interact(mob/user)
@@ -943,6 +1103,16 @@
 	anchored = TRUE
 	density = TRUE
 
+/obj/machinery/nanite_programmer/atom_init()
+	. = ..()
+	component_parts = list()
+	component_parts += new /obj/item/weapon/circuitboard/nanite_programmer(null)
+	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
+	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/scanning_module(null)
+
 /obj/machinery/nanite_programmer/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
 		var/obj/item/disk/nanite_program/N = I
@@ -975,26 +1145,55 @@
 		data += "<A href='?src=\ref[src];eject=1'>Eject</A>"
 		return data
 
-	data += "[program.name] <A href='?src=\ref[src];eject=1'>Eject</A><br><hr>"
-	data += "Info:<br><hr>"
-	data += "[program.desc]<br>"
+	data += "<h1><div align='center'>[program.name] <A href='?src=\ref[src];eject=1'>Eject</A></div></h1><hr>"
+	data += "<div align='center'>Info:</div>"
+
+	data += "<table border='1' width='100%'>"
+	data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
+	data += "<tr>"
+	data += "<td width = '60%'>[program.desc]</td>"
+	data += "<td width='40%'>"
+	data += "<div align='left'>"
 	data += "Use Rate: [program.use_rate]<br>"
 	var/is_can_be_triggered = program.can_trigger
 	if(is_can_be_triggered)
 		data += "Trigger Cost: [program.trigger_cost]<br>"
 		data += "Trigger Cooldown: [program.trigger_cooldown / 10]<br>"
+	data += "<div>"
+	data += "</td>"
+	data += "</tr>"
+	data += "</table>"
+
 	data += "<hr>"
 	data += "Settings <A href='?src=\ref[src];toggle_active=1'>[program.activated ? "<span class='green'>Active</span>" : "<span class='red'>Inactive</span>"]</A><br><hr>"
+
+	data += "<table border='1' width='100%'>"
+	data += "<tr><th width = '40%'>Codes</th><td width='60%'>Delays</th></tr>"
+	data += "<tr>"
+	data += "<td width = '40%'>"
 	data += "Activation: <A href='?src=\ref[src];set_code=activation'>[program.activation_code]</A><br>"
 	data += "Deactivation: <A href='?src=\ref[src];set_code=deactivation'>[program.deactivation_code]</A><br>"
 	data += "Kill: <A href='?src=\ref[src];set_code=kill'>[program.kill_code]</A><br>"
+	data += "</td>"
+	data += "<td width='60%'>"
 	data += "Restart timer: <A href='?src=\ref[src];set_restart_timer=1'>[program.timer_restart / 10]</A><br>"
 	data += "Shutdown timer: <A href='?src=\ref[src];set_shutdown_timer=1'>[program.timer_shutdown / 10]</A><br>"
+	data += "</td>"
+	data += "</tr>"
 	if(is_can_be_triggered)
+		data += "<tr>"
+		data += "<td width = '35%'>"
 		data += "Trigger: <A href='?src=\ref[src];set_code=trigger'>[program.trigger_code]</A><br>"
+		data += "</td>"
+		data += "<td width='65%'>"
 		data += "Trigger Repeat Timer: <A href='?src=\ref[src];set_trigger_timer=1'>[program.timer_trigger / 10]</A><br>"
 		data += "Trigger Delay: <A href='?src=\ref[src];set_timer_trigger_delay=1'>[program.timer_trigger_delay / 10]</A><br>"
-
+		data += "</td>"
+		data += "</tr>"
+	data += "</table>"
+	data += "<hr>"
+	data += "Special:<br>"
+	data += "<dd>"
 	var/list/extra_settings = program.get_extra_settings_frontend()
 	for(var/setting in extra_settings)
 		switch(setting["type"])
@@ -1006,6 +1205,7 @@
 				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=bool'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
 			if(NESTYPE_TYPE)
 				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=type'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+	data += "</dd>"
 	return data
 
 /obj/machinery/nanite_programmer/ui_interact(mob/user)
@@ -1045,7 +1245,7 @@
 				var/list/extra_settings = program.get_extra_settings_frontend()
 				for(var/setting in extra_settings)
 					if(setting["type"] == NESTYPE_NUMBER)
-						var/number = input(usr, "Set number in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
+						var/number = input(usr, "Set extra setting's number in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
 						var/clamp_number = clamp(number, setting["min"], setting["max"])
 						program.set_extra_setting(setting["name"], clamp_number)
 			if("bool")
@@ -1057,7 +1257,7 @@
 				var/list/extra_settings = program.get_extra_settings_frontend()
 				for(var/setting in extra_settings)
 					if(setting["type"] == NESTYPE_TYPE)
-						var/new_type = input(usr, "Choose new type", "Select Type") as null|anything in setting["types"] + "Cancel"
+						var/new_type = input(usr, "Choose extra setting's new type", "Select Type") as null|anything in setting["types"] + "Cancel"
 						if(new_type && new_type != "Cancel")
 							program.set_extra_setting(setting["name"], new_type)
 		playsound(src, "terminal_type", 25, 0)
@@ -1109,6 +1309,14 @@
 	var/busy = FALSE
 	var/busy_icon_state
 	var/message_cooldown = 0
+
+/obj/machinery/public_nanite_chamber/atom_init()
+	. = ..()
+	component_parts = list()
+	component_parts += new /obj/item/weapon/circuitboard/public_nanite_chamber(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/micro_laser(null)
+	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
 
 /obj/machinery/public_nanite_chamber/proc/set_busy(status, working_icon)
 	busy = status
