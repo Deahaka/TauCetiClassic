@@ -3,6 +3,7 @@
 /datum/nanite_program/sleepy
 	name = "Sleep Induction"
 	desc = "The nanites cause rapid narcolepsy when triggered."
+	can_trigger = TRUE
 	trigger_cost = 15
 	trigger_cooldown = 1200
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
@@ -10,7 +11,7 @@
 /datum/nanite_program/sleepy/on_trigger(comm_message)
 	to_chat(host_mob, "<span class='warning'>You start to feel very sleepy...</span>")
 	host_mob.blurEyes(10)
-	host_mob.drowsyness += min(host_mob.drowsyness, 20)
+	host_mob.drowsyness += max(host_mob.drowsyness + 1, 20)
 	addtimer(CALLBACK(host_mob, /mob/living.proc/Sleeping, 200), rand(60,200))
 
 /datum/nanite_program/paralyzing
@@ -20,7 +21,7 @@
 	rogue_types = list(/datum/nanite_program/nerve_decay)
 
 /datum/nanite_program/paralyzing/active_effect()
-	host_mob.Stun(40)
+	host_mob.Stun(20)
 
 /datum/nanite_program/paralyzing/enable_passive_effect()
 	. = ..()
@@ -33,6 +34,7 @@
 /datum/nanite_program/shocking
 	name = "Electric Shock"
 	desc = "The nanites shock the host when triggered. Destroys a large amount of nanites!"
+	can_trigger = TRUE
 	trigger_cost = 10
 	trigger_cooldown = 300
 	program_flags = NANITE_SHOCK_IMMUNE
@@ -44,6 +46,7 @@
 /datum/nanite_program/stun
 	name = "Neural Shock"
 	desc = "The nanites pulse the host's nerves when triggered, inapacitating them for a short period."
+	can_trigger = TRUE
 	trigger_cost = 4
 	trigger_cooldown = 300
 	rogue_types = list(/datum/nanite_program/shocking, /datum/nanite_program/nerve_decay)
@@ -112,17 +115,18 @@
 
 //Can receive transmissions from a nanite communication remote for customized messages
 /datum/nanite_program/comm
-	var/comm_code = 0
+	can_trigger = TRUE
 	var/comm_message = ""
 
 /datum/nanite_program/comm/register_extra_settings()
 	extra_settings[NES_COMM_CODE] = new /datum/nanite_extra_setting/number(0, 0, 9999)
 
 /datum/nanite_program/comm/proc/receive_comm_signal(signal_comm_code, comm_message, comm_source)
-	if(!activated || !comm_code)
+	var/datum/nanite_extra_setting/comm_code = extra_settings[NES_COMM_CODE]
+	if(!activated || !comm_code.get_value())
 		return
-	if(signal_comm_code == comm_code)
-		trigger(comm_message)
+	if(signal_comm_code == comm_code.get_value())
+		trigger(FALSE, comm_message)
 
 /datum/nanite_program/comm/speech
 	name = "Forced Speech"
@@ -144,7 +148,6 @@
 		sent_message = sentence.get_value()
 	if(sent_message in blacklist)
 		return
-
 	if(host_mob.stat == DEAD)
 		return
 	to_chat(host_mob, "<span class='warning'>You feel compelled to speak...</span>")
@@ -158,9 +161,6 @@
 	trigger_cooldown = 20
 	rogue_types = list(/datum/nanite_program/brain_misfire, /datum/nanite_program/brain_decay)
 
-	extra_settings = list(NES_MESSAGE, NES_COMM_CODE)
-	var/message = ""
-
 /datum/nanite_program/comm/voice/register_extra_settings()
 	. = ..()
 	extra_settings[NES_MESSAGE] = new /datum/nanite_extra_setting/text("")
@@ -172,4 +172,4 @@
 		sent_message = message_setting.get_value()
 	if(host_mob.stat == DEAD)
 		return
-	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> \"<span class='robot'>[sent_message]</span>\"")
+	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> <span class='warning'>[html_encode(sent_message)]</span>")
