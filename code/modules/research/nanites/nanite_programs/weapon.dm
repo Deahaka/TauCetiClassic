@@ -8,11 +8,7 @@
 	rogue_types = list(/datum/nanite_program/necrotic)
 
 /datum/nanite_program/flesh_eating/active_effect()
-	if(iscarbon(host_mob))
-		var/mob/living/carbon/C = host_mob
-		C.take_bodypart_damage(1, 0)
-	else
-		host_mob.adjustBruteLoss(1)
+	host_mob.take_bodypart_damage(1)
 	if(prob(3))
 		to_chat(host_mob, "<span class='warning'>You feel a stab of pain from somewhere inside you.</span>")
 
@@ -50,8 +46,8 @@
 
 /datum/nanite_program/aggressive_replication/active_effect()
 	var/extra_regen = round(nanites.nanite_volume / 200, 0.1)
-	nanites.adjust_nanites(extra_regen)
-	host_mob.adjustBruteLoss(extra_regen / 2)
+	nanites.adjust_nanites(null, extra_regen)
+	host_mob.adjustBruteLoss(extra_regen / 2, TRUE)
 
 /datum/nanite_program/meltdown
 	name = "Meltdown"
@@ -75,6 +71,7 @@
 /datum/nanite_program/explosive
 	name = "Chain Detonation"
 	desc = "Detonates all the nanites inside the host in a chain reaction when triggered."
+	can_trigger = TRUE
 	trigger_cost = 25 //plus every idle nanite left afterwards
 	trigger_cooldown = 100 //Just to avoid double-triggering
 	rogue_types = list(/datum/nanite_program/toxic)
@@ -89,7 +86,7 @@
 	var/dev_range = FLOOR(nanite_amount/200, 1) - 1
 	var/heavy_range = FLOOR(nanite_amount/100, 1) - 1
 	var/light_range = FLOOR(nanite_amount/50, 1) - 1
-	explosion(host_mob, dev_range, heavy_range, light_range)
+	explosion(get_turf(host_mob), dev_range, heavy_range, light_range)
 	qdel(nanites)
 
 //TG comment - TODO make it defuse if triggered again
@@ -97,6 +94,7 @@
 /datum/nanite_program/heart_stop
 	name = "Heart-Stopper"
 	desc = "Stops the host's heart when triggered; restarts it if triggered again."
+	can_trigger = TRUE
 	trigger_cost = 12
 	trigger_cooldown = 10
 	rogue_types = list(/datum/nanite_program/nerve_decay)
@@ -119,7 +117,7 @@
 	rogue_types = list(/datum/nanite_program/toxic)
 
 /datum/nanite_program/emp/on_trigger(comm_message)
-	empulse(host_mob, 1, 2)
+	empulse(get_turf(host_mob), 1, 2)
 
 /datum/nanite_program/pyro
 	name = "Sub-Dermal Combustion"
