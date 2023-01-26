@@ -60,15 +60,11 @@
 
 /datum/nanite_program/pacifying/enable_passive_effect()
 	. = ..()
-	/*TODO: TRAIT
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		H.mutations.Add(CLUMSY)
-		*/
+	ADD_TRAIT(host_mob, TRAIT_CLUMSY, NANITE_TRAIT)
 
 /datum/nanite_program/pacifying/disable_passive_effect()
 	. = ..()
-	//host_mob.remove_trait(TRAIT_PACIFISM, "nanites")
+	REMOVE_TRAIT(host_mob, TRAIT_CLUMSY, NANITE_TRAIT)
 
 /datum/nanite_program/blinding
 	name = "Blindness"
