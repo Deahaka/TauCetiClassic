@@ -78,8 +78,9 @@
 	return ..()
 
 /datum/nanite_program/brain_heal/active_effect()
-	host_mob.adjustBrainLoss(-1, TRUE)
+	host_mob.adjustBrainLoss(-1)
 
+//TODO: DELETE?
 /datum/nanite_program/blood_restoring
 	name = "Blood Regeneration"
 	desc = "The nanites stimulate and boost blood cell production in the host."
@@ -175,11 +176,10 @@
 		if(!parts.len)
 			return
 		for(var/obj/item/organ/external/BP in parts)
-			if(BP.heal_damage(3/parts.len, 3/parts.len))
-				host_mob.UpdateDamageIcon(BP)
+			BP.heal_damage(3/parts.len, 3/parts.len)
 	else
-		host_mob.adjustBruteLoss(-3, TRUE)
-		host_mob.adjustFireLoss(-3, TRUE)
+		host_mob.adjustBruteLoss(-3)
+		host_mob.adjustFireLoss(-3)
 
 /datum/nanite_program/brain_heal_advanced
 	name = "Neural Reimaging"
