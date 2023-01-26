@@ -58,7 +58,7 @@
 	if(isliving(parent))
 		RegisterSignal(parent, COMSIG_ATOM_EMP_ACT, .proc/on_emp)
 		RegisterSignal(parent, COMSIG_MOB_DIED, .proc/on_death)
-		RegisterSignal(parent, COMSIG_MOB_ALLOWED, .proc/check_access)
+		RegisterSignal(parent, COMSIG_MOB_TRIED_ACCESS, .proc/check_access)
 		RegisterSignal(parent, COMSIG_ATOM_ELECTROCUTE_ACT, .proc/on_shock)
 		RegisterSignal(parent, COMSIG_LIVING_MINOR_SHOCK, .proc/on_minor_shock)
 		RegisterSignal(parent, COMSIG_SPECIES_GAIN, .proc/check_viable_biotype)
@@ -81,7 +81,7 @@
 								COMSIG_NANITE_SYNC,
 								COMSIG_ATOM_EMP_ACT,
 								COMSIG_MOB_DIED,
-								COMSIG_MOB_ALLOWED,
+								COMSIG_MOB_TRIED_ACCESS,
 								COMSIG_ATOM_ELECTROCUTE_ACT,
 								COMSIG_LIVING_MINOR_SHOCK,
 								COMSIG_MOVABLE_HEAR,
@@ -289,10 +289,8 @@
 	SIGNAL_HANDLER
 	for(var/datum/nanite_program/access/access_program in programs)
 		if(access_program.activated)
-			return O.check_access_list(access_program.access)
-		else
-			return FALSE
-	return FALSE
+			if(O.check_access_list(access_program.access))
+				return COMSIG_ACCESS_ALLOWED
 
 /datum/component/nanites/proc/set_volume(datum/source, amount)
 	SIGNAL_HANDLER
@@ -348,6 +346,9 @@
 		if(!stealth)
 			to_chat(user, "<span class='notice'><b>Nanites Detected</b></span>")
 			to_chat(user, "<span class='notice'>Saturation: [nanite_volume]/[max_nanites]</span>")
+		else
+			//Stealth should be stealth?
+			to_chat(user, "<span class='info'>No nanites detected in the subject.</span>")
 	else
 		to_chat(user, "<span class='info'>NANITES DETECTED</span>")
 		to_chat(user, "<span class='info'>================</span>")
