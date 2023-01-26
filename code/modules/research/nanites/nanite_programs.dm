@@ -67,6 +67,9 @@
 		on_mob_remove()
 	if(nanites)
 		nanites.programs -= src
+	for(var/datum/nanite_rule/rule as anything in rules)
+		rule.remove()
+	rules.Cut()
 	return ..()
 
 /datum/nanite_program/proc/copy()
@@ -94,8 +97,9 @@
 	if(istype(target,src))
 		copy_extra_settings_to(target)
 
-///Register extra settings by overriding this.
-///extra_settings[name] = new typepath() for each extra setting
+/// Register extra settings by overriding this.
+///
+/// `extra_settings[name] = new typepath()` for each extra setting.
 /datum/nanite_program/proc/register_extra_settings()
 	return
 
@@ -164,14 +168,17 @@
 	if(timer_shutdown_next && world.time > timer_shutdown_next)
 		deactivate()
 		timer_shutdown_next = 0
+		return
 
 	if(timer_trigger && world.time > timer_trigger_next)
 		trigger()
 		timer_trigger_next = world.time + timer_trigger
+		return
 
 	if(timer_trigger_delay_next && world.time > timer_trigger_delay_next)
 		trigger(delayed = TRUE)
 		timer_trigger_delay_next = 0
+		return
 
 	if(check_conditions() && consume_nanites(use_rate))
 		if(!passive_enabled)
@@ -212,6 +219,8 @@
 		timer_trigger_delay_next = world.time + timer_trigger_delay
 		return
 	if(world.time < next_trigger)
+		return
+	if(!check_conditions())
 		return
 	if(!consume_nanites(trigger_cost))
 		return
