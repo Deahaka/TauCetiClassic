@@ -25,36 +25,26 @@
 	var/data[0]
 	var/turf/monitor_turf = get_turf(src)
 	var/list/crewmembers = list()
-	for(var/atom/tracked_atom in src.tracked)
-		var/obj/item/clothing/under/C = tracked_atom
+
+	for(var/tracked_atom in src.tracked)
 		var/mob/living/carbon/human/H = null
-
-		var/turf/atom_position = null
-		var/tracking_sensor = 0
-
-		var/is_atom_cloth = istype(C)
-		if(is_atom_cloth)
-			atom_position = get_turf(C)
-			if(C.has_sensor && C.sensor_mode != SUIT_SENSOR_OFF && atom_position)
-				if(ishuman(C.loc))
-					var/mob/living/carbon/human/who_weared_suit = C.loc
-					if(who_weared_suit.w_uniform == C)
-						tracking_sensor = C.sensor_mode
-						H = who_weared_suit
-
-		if(!H)
+		var/tracking_sensor = SUIT_SENSOR_TRACKING
+		if(isunder(tracked_atom))
+			var/obj/item/clothing/under/C = tracked_atom
+			if(C.sensor_mode == SUIT_SENSOR_OFF)
+				continue
+			var/mob/living/carbon/human/who_weared_suit = C.loc
+			if(who_weared_suit)
+				tracking_sensor = C.sensor_mode
+				H = who_weared_suit
+		if(ishuman(tracked_atom))
 			H = tracked_atom
-			//it can be?
-			if(!istype(H))
-				continue
-		if(!atom_position)
-			atom_position = get_turf(H)
-			//nullspace? other z-level?
-			if(!(atom_position && (monitor_turf && atom_position.z == monitor_turf.z)))
-				continue
-		if(!tracking_sensor)
-			//nanites sensor
-			tracking_sensor = SUIT_SENSOR_TRACKING
+		if(!istype(H))
+			continue
+		var/turf/atom_position = get_turf(H)
+		//nullspace? other z-level?
+		if(!atom_position || atom_position.z != monitor_turf.z)
+			continue
 
 		var/list/crewmemberData = list("dead"=0, "oxy"=-1, "tox"=-1, "fire"=-1, "brute"=-1, "area"="", "x"=-1, "y"=-1)
 
@@ -101,12 +91,18 @@
 
 /obj/nano_module/crew_monitor/proc/scan()
 	for(var/mob/living/carbon/human/H as anything in human_list)
+		var/obj/item/clothing/under/C
 		if(istype(H.w_uniform, /obj/item/clothing/under))
-			var/obj/item/clothing/under/C = H.w_uniform
-			if (C.has_sensor)
+			C = H.w_uniform
+			if(C.has_sensor)
 				tracked |= C
+				//remove nanite record
+				tracked -= H
 		if(H in SSnanites.nanite_monitored_mobs)
 			tracked |= H
+			//remove non nanite record
+			if(C)
+				tracked -= C
 	return 1
 /*
 for(var/mob/living/carbon/human/H in SSnanites.nanite_monitored_mobs)
