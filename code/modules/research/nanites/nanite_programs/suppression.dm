@@ -60,7 +60,11 @@
 
 /datum/nanite_program/pacifying/enable_passive_effect()
 	. = ..()
-	//host_mob.add_trait(TRAIT_PACIFISM, "nanites")
+	/*TODO: TRAIT
+	if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		H.mutations.Add(CLUMSY)
+		*/
 
 /datum/nanite_program/pacifying/disable_passive_effect()
 	. = ..()
@@ -71,16 +75,14 @@
 	desc = "The nanites suppress the host's ocular nerves, blinding them while they're active."
 	use_rate = 1.5
 	rogue_types = list(/datum/nanite_program/nerve_decay)
-/* TODO AFTER https://github.com/TauCetiStation/TauCetiClassic/pull/10556
+
 /datum/nanite_program/blinding/enable_passive_effect()
 	. = ..()
-	host_mob.eye_blind += max(host_mob.eye_blind, 2)
-	host_mob.blurEyes(40)
+	ADD_TRAIT(host_mob, TRAIT_BLIND, NANITE_TRAIT)
 
 /datum/nanite_program/blinding/disable_passive_effect()
 	. = ..()
-	host_mob.cure_blind("nanites")
-*/
+	REMOVE_TRAIT(host_mob, TRAIT_BLIND, NANITE_TRAIT)
 
 /datum/nanite_program/mute
 	name = "Mute"
@@ -175,32 +177,3 @@
 	if(host_mob.stat == DEAD)
 		return
 	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> \"<span class='robot'>[sent_message]</span>\"")
-
-/*
-//Removed because of hardcode in Hallucination.dm
-/datum/nanite_program/hallucination
-	name = "Hallucination"
-	desc = "The nanites make the host hallucinate something when triggered."
-	trigger_cost = 4
-	trigger_cooldown = 80
-	unique = FALSE
-	rogue_types = list(/datum/nanite_program/brain_misfire)
-*/
-/*
-//Removed because mood used with a specific assignment that nanites should not deal with
-/datum/nanite_program/good_mood
-	name = "Happiness Enhancer"
-	desc = "The nanites synthesize serotonin inside the host's brain, creating an artificial sense of happiness."
-	use_rate = 0.1
-	rogue_types = list(/datum/nanite_program/brain_decay)
-	extra_settings = list(NES_MOOD_MESSAGE)
-	var/message = "HAPPINESS ENHANCEMENT"
-
-/datum/nanite_program/bad_mood
-	name = "Happiness Suppressor"
-	desc = "The nanites suppress the production of serotonin inside the host's brain, creating an artificial state of depression."
-	use_rate = 0.1
-	rogue_types = list(/datum/nanite_program/brain_decay)
-	extra_settings = list(NES_MOOD_MESSAGE)
-	var/message = "HAPPINESS SUPPRESSION"
-*/
