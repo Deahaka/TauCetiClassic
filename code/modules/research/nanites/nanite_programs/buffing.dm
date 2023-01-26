@@ -102,19 +102,11 @@
 
 /datum/nanite_program/conductive/enable_passive_effect()
 	. = ..()
-	/* FUCKING SHIT NOT WORKING
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		H.dna.SetSEState(SHOCKIMMUNITYBLOCK, 1)
-		H.dna.SetSEValueRange(MONKEYBLOCK, 0xDAC, 0xFFF)
-		domutcheck(H, null)*/
+	ADD_TRAIT(host_mob, TRAIT_SHOCKIMMUNE, NANITE_TRAIT)
 
 /datum/nanite_program/conductive/disable_passive_effect()
 	. = ..()
-	/*if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		H.dna.SetSEState(SHOCKIMMUNITYBLOCK, 0)
-		domutcheck(H, null)*/
+	REMOVE_TRAIT(host_mob, TRAIT_SHOCKIMMUNE, NANITE_TRAIT)
 
 /datum/nanite_program/mindshield
 	name = "Imitation Mental Barrier"

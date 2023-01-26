@@ -173,6 +173,7 @@
 #define TRAIT_REFLECT_SKIN        "reflect_skin"
 #define TRAIT_REINFORCING_NANITES "reinforcing_nanites"
 #define TRAIT_CLUMSY              "clumsy"
+#define TRAIT_SHOCKIMMUNE         "shockimmune"
 
 /*
  * Used for movables that need to be updated, via COMSIG_ENTER_AREA and COMSIG_EXIT_AREA, when transitioning areas.
