@@ -18,7 +18,7 @@
 	rogue_types = list(/datum/nanite_program/glitch)
 
 /datum/nanite_program/necrotic/active_effect()
-	host_mob.adjustBruteLoss(0.75, TRUE)
+	host_mob.adjustBruteLoss(0.75)
 	if(prob(1))
 		to_chat(host_mob, "<span class='warning'>You feel a mild ache from somewhere inside you.</span>")
 
@@ -58,7 +58,7 @@
 
 /datum/nanite_program/brain_decay/active_effect()
 	if(prob(4))
-		host_mob.hallucination = min(15, host_mob.hallucination)
+		host_mob.hallucination += min(15, host_mob.hallucination)
 	host_mob.adjustBrainLoss(1)
 
 //Generic brain-affecting programs can also decay into this
@@ -73,7 +73,7 @@
 	if(prob(10))
 		switch(rand(1,4))
 			if(1)
-				host_mob.hallucination += max(host_mob.hallucination, 10)
+				host_mob.hallucination += max(host_mob.hallucination + 1, 10)
 			if(2)
 				host_mob.AdjustConfused(5)
 			if(3)
