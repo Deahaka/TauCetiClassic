@@ -45,16 +45,14 @@
 
 /datum/nanite_program/hardening/enable_passive_effect()
 	. = ..()
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		ADD_TRAIT(H, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
+	ADD_TRAIT(host_mob, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
+	ADD_TRAIT(host_mob, TRAIT_LOW_PAIN_THRESHOLD, NANITE_TRAIT)
 
 
 /datum/nanite_program/hardening/disable_passive_effect()
 	. = ..()
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		REMOVE_TRAIT(H, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
+	REMOVE_TRAIT(host_mob, TRAIT_REINFORCING_NANITES, NANITE_TRAIT)
+	REMOVE_TRAIT(host_mob, TRAIT_LOW_PAIN_THRESHOLD, NANITE_TRAIT)
 
 /datum/nanite_program/refractive
 	name = "Dermal Refractive Surface"
