@@ -243,3 +243,4 @@
 /mob/proc/IsClumsy()
 	if(HAS_TRAIT(src, TRAIT_CLUMSY))
 		return TRUE
+	return FALSE
