@@ -104,21 +104,3 @@
 			if(C)
 				tracked -= C
 	return 1
-/*
-for(var/mob/living/carbon/human/H in SSnanites.nanite_monitored_mobs)
-		var/area/A = get_area(H)
-		var/list/crewmemberData = list("dead"=0, "oxy"=-1, "tox"=-1, "fire"=-1, "brute"=-1, "area"="", "x"=-1, "y"=-1)
-		crewmemberData["sensor_type"] = SUIT_SENSOR_TRACKING
-		crewmemberData["name"] = H.get_authentification_name(if_no_id="Unknown")
-		crewmemberData["rank"] = H.get_authentification_rank(if_no_id="Unknown", if_no_job="No Job")
-		crewmemberData["assignment"] = H.get_assignment(if_no_id="Unknown", if_no_job="No Job")
-		crewmemberData["dead"] = H.stat > UNCONSCIOUS
-		crewmemberData["oxy"] = round(H.getOxyLoss(), 1)
-		crewmemberData["tox"] = round(H.getToxLoss(), 1)
-		crewmemberData["fire"] = round(H.getFireLoss(), 1)
-		crewmemberData["brute"] = round(H.getBruteLoss(), 1)
-		crewmemberData["area"] = html_encode(A.name)
-		crewmemberData["x"] = pos.x
-		crewmemberData["y"] = pos.y
-		crewmembers[++crewmembers.len] = crewmemberData
-*/
