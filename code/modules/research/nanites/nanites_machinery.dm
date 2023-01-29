@@ -58,6 +58,7 @@
 	density = TRUE
 	idle_power_usage = 50
 	active_power_usage = 300
+	layer = ABOVE_WINDOW_LAYER
 	var/obj/machinery/computer/nanite_chamber_control/console
 	var/locked = FALSE
 	var/breakout_time = 1200
@@ -82,6 +83,11 @@
 	scan_level = 0
 	for(var/obj/item/weapon/stock_parts/scanning_module/P in component_parts)
 		scan_level += P.rating
+
+/obj/machinery/nanite_chamber/examine(mob/user)
+	. = ..()
+	if(isobserver(user))
+		to_chat(user, "<span_class='notice'>The status display reads: Scanning module has been upgraded to level <b>[scan_level]</b>.</span")
 
 /obj/machinery/nanite_chamber/proc/set_busy(status, message, working_icon)
 	busy = status
@@ -231,7 +237,7 @@
 
 	return TRUE
 
-/obj/machinery/nanite_chamber/relaymove(mob/user as mob)
+/obj/machinery/nanite_chamber/relaymove(mob/living/user, direction)
 	if(user.stat || locked)
 		if(message_cooldown <= world.time)
 			message_cooldown = world.time + 50
@@ -258,7 +264,8 @@
 /obj/machinery/nanite_chamber/MouseDrop_T(mob/target, mob/user)
 	if(user.stat || user.lying || !Adjacent(user) || !user.Adjacent(target) || !iscarbon(target) || !user.IsAdvancedToolUser())
 		return
-	close_machine(target)
+	if(close_machine(target))
+		add_fingerprint(user)
 
 //Nanite Chamber Computer
 /obj/machinery/computer/nanite_chamber_control
@@ -279,8 +286,8 @@
 		var/C = locate(/obj/machinery/nanite_chamber, get_step(src, direction))
 		if(C)
 			var/obj/machinery/nanite_chamber/NC = C
-			chamber = NC
 			NC.console = src
+			set_connected_chamber(NC)
 
 /obj/machinery/computer/nanite_chamber_control/interact()
 	if(!chamber)
@@ -298,6 +305,15 @@
 		data += "No occupant detected<br>"
 		data += "<A href='?src=\ref[src];connect_chamber=1'>Try Connect Chamber</A><br>"
 		return data
+	if(issilicon(chamber.occupant))
+		data += "Occupant not compatible with nanites."
+		return data
+	if(ishuman(chamber.occupant))
+		var/mob/living/carbon/human/H = chamber.occupant
+		if(H.species)
+			if(H.species.flags[NO_BLOOD])
+				data += "Occupant not compatible with nanites."
+				return data
 	if(chamber.busy)
 		data += "[chamber.busy_message]"
 		return data
@@ -411,7 +427,6 @@
 	var/data = get_data()
 	popup(user, data, name)
 
-//TODO: Updating
 /obj/machinery/computer/nanite_chamber_control/Topic(href, href_list)
 	..()
 	if(href_list["toggle_lock"])
@@ -447,6 +462,17 @@
 		else
 			detail_menu_view = href_list["details"]
 	updateUsrDialog()
+
+/obj/machinery/computer/nanite_chamber_control/proc/set_connected_chamber(new_chamber)
+	if(chamber)
+		UnregisterSignal(chamber, COMSIG_PARENT_QDELETING)
+	chamber = new_chamber
+	if(chamber)
+		RegisterSignal(chamber, COMSIG_PARENT_QDELETING, .proc/react_to_chamber_del)
+
+/obj/machinery/computer/nanite_chamber_control/proc/react_to_chamber_del(datum/source)
+	SIGNAL_HANDLER
+	set_connected_chamber(null)
 
 //Nanite Cloud Controller
 /obj/machinery/computer/nanite_cloud_controller
@@ -630,7 +656,7 @@
 			if(cloud_programs.len)
 				data += "<dd>"
 				for(var/associative_program_list in cloud_programs)
-					data += "[associative_program_list["id"]]. <A href='?src=\ref[src];details=[associative_program_list["name"]]'>[associative_program_list["name"]]</A> <A href='?src=\ref[src];remove_program=[associative_program_list["name"]]'>—</A> [associative_program_list["activated"] ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br>"
+					data += "[associative_program_list["id"]]. <A href='?src=\ref[src];details=[associative_program_list["name"]]'>[associative_program_list["name"]]</A> <A href='?src=\ref[src];remove_program=[associative_program_list["id"]]'>—</A> [associative_program_list["activated"] ? "<span class='green'>Activated</span>" : "<span class='red'>Deactivated</span>"]<br>"
 					if(detail_menu_view == associative_program_list["name"])
 						data += "<table border='1' width='100%'>"
 						data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
@@ -739,36 +765,30 @@
 		current_view = 0
 	if(href_list["update_new_backup_value"])
 		var/backup_value = input("Set new ID for backup", name, null) as null|num
-		new_backup_id = backup_value
+		if(!isnull(backup_value))
+			new_backup_id = backup_value
 	if(href_list["create_backup"])
 		var/cloud_id = new_backup_id
 		if(!isnull(cloud_id))
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 			cloud_id = clamp(round(cloud_id, 1),1,100)
 			generate_backup(cloud_id, usr)
 	if(href_list["delete_backup"])
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 			qdel(backup)
 	if(href_list["upload_program"])
 		if(disk && disk.program)
 			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 			if(backup)
-				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				var/datum/component/nanites/nanites = backup.nanites
 				nanites.add_program(null, disk.program.copy())
 	if(href_list["remove_program"])
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
-			var/nanite_program_name = href_list["remove_program"]
+			var/nanite_program_id = text2num(href_list["remove_program"])
 			var/datum/component/nanites/nanites = backup.nanites
-			for(var/datum/nanite_program/program in nanites.programs)
-				if(program.name == nanite_program_name)
-					qdel(program)
-			//var/datum/nanite_program/P = nanites.programs[nanite_program_id]
-			//qdel(P)
+			var/datum/nanite_program/P = nanites.programs[nanite_program_id]
+			qdel(P)
 	if(href_list["add_rule"])
 		if(disk && disk.program && istype(disk.program, /datum/nanite_program/sensor))
 			var/datum/nanite_program/sensor/rule_template = disk.program
@@ -776,7 +796,6 @@
 				return
 			var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 			if(backup)
-				//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 				var/datum/component/nanites/nanites = backup.nanites
 				var/num = text2num(href_list["add_rule"])
 				var/datum/nanite_program/P = nanites.programs[num]
@@ -784,7 +803,6 @@
 	if(href_list["remove_rule"])
 		var/datum/nanite_cloud_backup/backup = get_backup(current_view)
 		if(backup)
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 			var/datum/component/nanites/nanites = backup.nanites
 			var/num_P = text2num(href_list["remove_rule"])
 			var/datum/nanite_program/P = nanites.programs[num_P]
@@ -813,159 +831,6 @@
 	SSnanites.cloud_backups -= src
 	return ..()
 
-/*/Nanite Hijacker REMOVED WHY?
-/obj/item/nanite_hijacker
-	name = "nanite remote control" //fake name
-	desc = "A device that can load nanite programming disks, edit them at will, and imprint them to nanites remotely."
-	w_class = SIZE_SMALL
-	icon = 'icons/obj/device.dmi'
-	icon_state = "nanite_remote"
-	flags = NOBLUDGEON
-	var/obj/item/disk/nanite_program/disk
-	var/datum/nanite_program/program
-
-/obj/item/nanite_hijacker/AltClick(mob/user)
-	. = ..()
-	if(!CanUseTopic(user))
-		return
-	if(disk)
-		eject()
-
-/obj/item/nanite_hijacker/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/disk/nanite_program))
-		var/obj/item/disk/nanite_program/N = I
-		if(disk)
-			eject()
-		if(user.drop_from_inventory(N, src))
-			to_chat(user, "<span class='notice'>You insert [N] into [src]</span>")
-			disk = N
-			program = N.program
-	else
-		..()
-
-/obj/item/nanite_hijacker/proc/eject(mob/living/user)
-	if(!disk)
-		return
-	if(!istype(user) || !Adjacent(user) || !user.put_in_any_hand_if_possible(disk))
-		disk.forceMove(loc)
-	disk = null
-	program = null
-
-/obj/item/nanite_hijacker/afterattack(atom/target, mob/user, etc)
-	if(!disk || !disk.program)
-		return
-	if(isliving(target))
-		var/success = SEND_SIGNAL(target, COMSIG_NANITE_ADD_PROGRAM, program.copy())
-		switch(success)
-			if(NONE)
-				to_chat(user, "<span class='notice'>You don't detect any nanites in [target].</span>")
-			if(COMPONENT_PROGRAM_INSTALLED)
-				to_chat(user, "<span class='notice'>You insert the currently loaded program into [target]'s nanites.</span>")
-			if(COMPONENT_PROGRAM_NOT_INSTALLED)
-				to_chat(user, "<span class='warning'>You try to insert the currently loaded program into [target]'s nanites, but the installation fails.</span>")
-
-//Same UI as the nanite programmer, as it pretty much does the same
-/obj/item/nanite_hijacker/tgui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "NaniteProgrammer", "Internal Nanite Programmer")
-		ui.open()
-
-/obj/item/nanite_hijacker/tgui_data(mob/user)
-	var/list/data = list()
-	data["has_disk"] = istype(disk)
-	data["has_program"] = istype(program)
-	if(program)
-		data["name"] = program.name
-		data["desc"] = program.desc
-		data["use_rate"] = program.use_rate
-		data["can_trigger"] = program.can_trigger
-		data["trigger_cost"] = program.trigger_cost
-		data["trigger_cooldown"] = program.trigger_cooldown / 10
-
-		data["activated"] = program.activated
-		data["activation_delay"] = program.activation_delay
-		data["timer"] = program.timer
-		data["activation_code"] = program.activation_code
-		data["deactivation_code"] = program.deactivation_code
-		data["kill_code"] = program.kill_code
-		data["trigger_code"] = program.trigger_code
-		data["timer_type"] = program.get_timer_type_text()
-
-		var/list/extra_settings = list()
-		for(var/X in program.extra_settings)
-			var/list/setting = list()
-			setting["name"] = X
-			setting["value"] = program.get_extra_setting(X)
-			extra_settings += list(setting)
-		data["extra_settings"] = extra_settings
-		if(extra_settings.len)
-			data["has_extra_settings"] = TRUE
-
-	return data
-
-/obj/item/nanite_hijacker/tgui_act(action, list/params)
-	if(..())
-		return
-	switch(action)
-		if("eject")
-			eject(usr)
-			. = TRUE
-		if("toggle_active")
-			program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
-			if(program.activated)
-				program.activation_delay = 0
-			. = TRUE
-		if("set_code")
-			var/new_code = input("Set code (0000-9999):", name, null) as null|num
-			if(!isnull(new_code))
-				new_code = clamp(round(new_code, 1),0,9999)
-			else
-				return
-
-			var/target_code = params["target_code"]
-			switch(target_code)
-				if("activation")
-					program.activation_code = clamp(round(new_code, 1),0,9999)
-				if("deactivation")
-					program.deactivation_code = clamp(round(new_code, 1),0,9999)
-				if("kill")
-					program.kill_code = clamp(round(new_code, 1),0,9999)
-				if("trigger")
-					program.trigger_code = clamp(round(new_code, 1),0,9999)
-			. = TRUE
-		if("set_extra_setting")
-			program.set_extra_setting(usr, params["target_setting"])
-			. = TRUE
-		if("set_activation_delay")
-			var/delay = input("Set activation delay in seconds (0-1800):", name, program.activation_delay) as null|num
-			if(!isnull(delay))
-				delay = clamp(round(delay, 1),0,1800)
-				program.activation_delay = delay
-				if(delay)
-					program.activated = FALSE
-			. = TRUE
-		if("set_timer")
-			var/timer = input("Set timer in seconds (10-3600):", name, program.timer) as null|num
-			if(!isnull(timer))
-				if(!timer == 0)
-					timer = clamp(round(timer, 1),10,3600)
-				program.timer = timer
-			. = TRUE
-		if("set_timer_type")
-			var/new_type = input("Choose the timer effect","Timer Effect") as null|anything in list("Deactivate","Self-Delete","Trigger","Reset Activation Timer")
-			if(new_type)
-				switch(new_type)
-					if("Deactivate")
-						program.timer_type = NANITE_TIMER_DEACTIVATE
-					if("Self-Delete")
-						program.timer_type = NANITE_TIMER_SELFDELETE
-					if("Trigger")
-						program.timer_type = NANITE_TIMER_TRIGGER
-					if("Reset Activation Timer")
-						program.timer_type = NANITE_TIMER_RESET
-			. = TRUE
-*/
 //Nanite Program Hub
 /obj/machinery/nanite_program_hub
 	name = "nanite program hub"
@@ -995,8 +860,7 @@
 	component_parts += new /obj/item/weapon/stock_parts/manipulator(null)
 
 	for(var/obj/machinery/computer/rdconsole/RD in RDcomputer_list)
-		//Robo console have id 2
-		if(RD.id == 2)
+		if(RD.id == DEFAULT_ROBOT_CONSOLE_ID)
 			linked_techweb = RD.files
 
 /obj/machinery/nanite_program_hub/attackby(obj/item/I, mob/user)
@@ -1006,7 +870,6 @@
 			eject(user)
 		if(user.drop_from_inventory(N, src))
 			to_chat(user, "<span class='notice'>You insert [N] into [src]</span>")
-			//playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
 			disk = N
 	else
 		..()
@@ -1040,8 +903,6 @@
 		data += "<dd>"
 		var/list/program_list = list()
 		for(var/datum/design/nanites/D in linked_techweb.known_designs)
-			if(!istype(D))
-				continue
 			if(current_category in D.category)
 				program_list[D.name] = D
 		for(var/program_name in program_list)
@@ -1065,8 +926,6 @@
 			return
 		var/list/program_list = list()
 		for(var/datum/design/nanites/D in linked_techweb.known_designs)
-			if(!istype(D))
-				continue
 			if(current_category in D.category)
 				program_list[D.name] = D
 		var/new_prog = input(usr, "Choose program for download", "Program Hub") as null|anything in program_list + "Cancel"
@@ -1074,20 +933,17 @@
 			var/datum/design/nanites/downloaded = program_list[new_prog]
 			if(!istype(downloaded))
 				return
-			if(disk.program)
-				qdel(disk.program)
+			QDEL_NULL(disk.program)
 			disk.program = new downloaded.program_type
 			disk.name = "[initial(disk.name)] \[[disk.program.name]\]"
-			//playsound(src, 'sound/machines/terminal_prompt.ogg', 25, 0)
 	if(href_list["category"])
 		var/new_category = input(usr, "Choose category of program", "Select Type") as null|anything in categories + "Cancel"
 		if(!new_category || new_category == "Cancel")
 			new_category = "Main Menu"
 		current_category = new_category
 	if(href_list["clear"])
-		if(disk && disk.program)
-			qdel(disk.program)
-			disk.program = null
+		if(disk)
+			QDEL_NULL(disk.program)
 			disk.name = initial(disk.name)
 	updateUsrDialog()
 
@@ -1116,11 +972,10 @@
 /obj/machinery/nanite_programmer/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
 		var/obj/item/disk/nanite_program/N = I
-		if(disk)
-			eject(user)
 		if(user.drop_from_inventory(N, src))
+			if(disk)
+				eject(user)
 			to_chat(user, "<span class='notice'>You insert [N] into [src]</span>")
-			//playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
 			disk = N
 			program = N.program
 		return
@@ -1198,13 +1053,13 @@
 	for(var/setting in extra_settings)
 		switch(setting["type"])
 			if(NESTYPE_TEXT)
-				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=text'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=[setting["name"]]'>[setting["value"] ? setting["value"] : "None"]</A><br>"
 			if(NESTYPE_NUMBER)
-				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=number'>[setting["value"] ? setting["value"] : 1]</A> [setting["unit"] ? setting["unit"] : ""]<br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=[setting["name"]]'>[setting["value"] ? setting["value"] : 1]</A> [setting["unit"] ? setting["unit"] : ""]<br>"
 			if(NESTYPE_BOOLEAN)
-				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=bool'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=[setting["name"]]'>[setting["value"] ? setting["true_text"] : setting["false_text"]]</A><br>"
 			if(NESTYPE_TYPE)
-				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=type'>[setting["value"] ? setting["value"] : "None"]</A><br>"
+				data += "[setting["name"]]: <A href='?src=\ref[src];set_extra_setting=[setting["name"]]'>[setting["value"] ? setting["value"] : "None"]</A><br>"
 	data += "</dd>"
 	return data
 
@@ -1234,33 +1089,23 @@
 				if("trigger")
 					program.trigger_code = clamp(round(new_code, 1),0,9999)
 	if(href_list["set_extra_setting"])
-		switch(href_list["set_extra_setting"])
-			if("text")
-				var/list/extra_settings = program.get_extra_settings_frontend()
-				for(var/setting in extra_settings)
-					if(setting["type"] == NESTYPE_TEXT)
+		var/list/extra_settings = program.get_extra_settings_frontend()
+		for(var/setting in extra_settings)
+			if(href_list["set_extra_setting"] == setting["name"])
+				switch(setting["type"])
+					if(NESTYPE_TEXT)
 						var/input_text = input(usr, "Set extra setting's text:", name, null) as anything
 						program.set_extra_setting(setting["name"], input_text)
-			if("number")
-				var/list/extra_settings = program.get_extra_settings_frontend()
-				for(var/setting in extra_settings)
-					if(setting["type"] == NESTYPE_NUMBER)
+					if(NESTYPE_NUMBER)
 						var/number = input(usr, "Set extra setting's number in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
 						var/clamp_number = clamp(number, setting["min"], setting["max"])
 						program.set_extra_setting(setting["name"], clamp_number)
-			if("bool")
-				var/list/extra_settings = program.get_extra_settings_frontend()
-				for(var/setting in extra_settings)
-					if(setting["type"] == NESTYPE_BOOLEAN)
+					if(NESTYPE_BOOLEAN)
 						program.set_extra_setting(setting["name"], !setting["value"])
-			if("type")
-				var/list/extra_settings = program.get_extra_settings_frontend()
-				for(var/setting in extra_settings)
-					if(setting["type"] == NESTYPE_TYPE)
+					if(NESTYPE_TYPE)
 						var/new_type = input(usr, "Choose extra setting's new type", "Select Type") as null|anything in setting["types"] + "Cancel"
 						if(new_type && new_type != "Cancel")
 							program.set_extra_setting(setting["name"], new_type)
-		playsound(src, "terminal_type", 25, 0)
 	if(href_list["set_restart_timer"])
 		var/timer = input("Set restart timer in seconds (0-3600):", name, program.timer_restart / 10) as null|num
 		if(!isnull(timer))
@@ -1426,10 +1271,15 @@
 /obj/machinery/public_nanite_chamber/proc/try_inject_nanites()
 	if(occupant)
 		var/mob/living/L = occupant
-		if(SEND_SIGNAL(L, COMSIG_HAS_NANITES))
+		if(SEND_SIGNAL(L, COMSIG_HAS_NANITES) & COMPONENT_NANITES_DETECTED)
 			return
-		/*if((MOB_ORGANIC in L.mob_biotypes) || (MOB_UNDEAD in L.mob_biotypes))
-		*/
+		if(issilicon(L))
+			return
+		if(ishuman(L))
+			var/mob/living/carbon/human/H = L
+			if(H.species)
+				if(H.species.flags[NO_BLOOD])
+					return
 		inject_nanites()
 
 /obj/machinery/public_nanite_chamber/open_machine()
