@@ -26,8 +26,7 @@
 		if(!parts.len)
 			return
 		for(var/obj/item/organ/external/BP in parts)
-			if(BP.heal_damage(1/parts.len, 1/parts.len))
-				host_mob.UpdateDamageIcon(BP)
+			BP.heal_damage(1/parts.len, 1/parts.len)
 	else
 		host_mob.adjustBruteLoss(-1)
 		host_mob.adjustFireLoss(-1)
@@ -38,16 +37,35 @@
 	use_rate = 3.5
 	rogue_types = list(/datum/nanite_program/skin_decay)
 
+//TODO: rework in RESIST_HEAT trait with visuals ?
 /datum/nanite_program/temperature/check_conditions()
-	if(host_mob.bodytemperature > (BODYTEMP_NORMAL - 30) && host_mob.bodytemperature < (BODYTEMP_NORMAL + 30))
-		return FALSE
+	var/normal_temperature = BODYTEMP_NORMAL
+	if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		if(H.species)
+			normal_temperature = H.species.body_temperature
+			if(H.bodytemperature < H.species.heat_level_1 && H.bodytemperature > H.species.cold_level_1)
+				return FALSE
+	else
+		if(host_mob.bodytemperature > (normal_temperature - 30) && host_mob.bodytemperature < (normal_temperature + 30))
+			return FALSE
 	return ..()
 
 /datum/nanite_program/temperature/active_effect()
-	if(host_mob.bodytemperature > BODYTEMP_NORMAL)
-		host_mob.adjust_bodytemperature(-40 * TEMPERATURE_DAMAGE_COEFFICIENT, BODYTEMP_NORMAL)
-	else if(host_mob.bodytemperature < (BODYTEMP_NORMAL + 1))
-		host_mob.adjust_bodytemperature(40 * TEMPERATURE_DAMAGE_COEFFICIENT, 0, BODYTEMP_NORMAL)
+	var/normal_temperature = BODYTEMP_NORMAL
+	var/upper_limit_temp = normal_temperature - 10
+	var/lower_limit_temp = normal_temperature + 10
+	if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		if(H.species)
+			normal_temperature = H.species.body_temperature
+			lower_limit_temp = H.species.cold_level_1 + 10
+			upper_limit_temp = H.species.heat_level_1 - 10
+	if(host_mob.bodytemperature > upper_limit_temp)
+		host_mob.adjust_bodytemperature(-15 * TEMPERATURE_DAMAGE_COEFFICIENT, upper_limit_temp)
+		host_mob.adjust_fire_stacks(-0.5)
+	else if(host_mob.bodytemperature < lower_limit_temp)
+		host_mob.adjust_bodytemperature(15 * TEMPERATURE_DAMAGE_COEFFICIENT, 0, lower_limit_temp)
 
 /datum/nanite_program/purging
 	name = "Blood Purification"
@@ -80,25 +98,6 @@
 /datum/nanite_program/brain_heal/active_effect()
 	host_mob.adjustBrainLoss(-1)
 
-//TODO: DELETE?
-/datum/nanite_program/blood_restoring
-	name = "Blood Regeneration"
-	desc = "The nanites stimulate and boost blood cell production in the host."
-	use_rate = 1
-	rogue_types = list(/datum/nanite_program/suffocating)
-
-/datum/nanite_program/blood_restoring/check_conditions()
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		if(H.blood_amount() >= BLOOD_VOLUME_NORMAL)
-			return FALSE
-	return ..()
-
-/datum/nanite_program/blood_restoring/active_effect()
-	if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		H.blood_add(2)
-
 /datum/nanite_program/repairing
 	name = "Mechanical Repair"
 	desc = "The nanites fix damage in the host's mechanical limbs."
@@ -106,9 +105,6 @@
 	rogue_types = list(/datum/nanite_program/necrotic)
 
 /datum/nanite_program/repairing/check_conditions()
-	if(!host_mob.getBruteLoss() && !host_mob.getFireLoss())
-		return FALSE
-
 	var/count_of_damaged_parts = 0
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
@@ -132,8 +128,6 @@
 			return
 		for(var/obj/item/organ/external/BP in parts)
 			BP.heal_damage(1/parts.len, 1/parts.len, robo_repair = TRUE)
-			H.UpdateDamageIcon(BP)
-		H.updatehealth()
 	else
 		host_mob.adjustBruteLoss(-1)
 		host_mob.adjustFireLoss(-1)
