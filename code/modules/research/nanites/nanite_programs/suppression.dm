@@ -21,15 +21,12 @@
 	rogue_types = list(/datum/nanite_program/nerve_decay)
 
 /datum/nanite_program/paralyzing/active_effect()
-	host_mob.Stun(20)
+	host_mob.Stun(2)
 
 /datum/nanite_program/paralyzing/enable_passive_effect()
 	. = ..()
-	to_chat(host_mob, "<span class='warning'>Your muscles seize! You can't move!</span>")
-
-/datum/nanite_program/paralyzing/disable_passive_effect()
-	. = ..()
-	to_chat(host_mob, "<span class='notice'>Your muscles relax, and you can move again.</span>")
+	// Add negative feedback to player
+	host_mob.adjustHalLoss(5)
 
 /datum/nanite_program/shocking
 	name = "Electric Shock"
@@ -54,6 +51,8 @@
 /datum/nanite_program/stun/on_trigger(comm_message)
 	playsound(host_mob, pick(SOUNDIN_SPARKS), VOL_EFFECTS_MASTER)
 	host_mob.AdjustWeakened(20)
+	if(!host_mob.lying)
+		to_chat(host_mob, "<i>You collapse!</i>")
 
 /datum/nanite_program/pacifying
 	name = "Pacification"
