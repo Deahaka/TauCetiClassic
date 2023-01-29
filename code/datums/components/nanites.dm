@@ -30,9 +30,14 @@
 	//Nanites without hosts are non-interactive through normal means
 	if(isliving(parent))
 		host_mob = parent
-
-		//if(!(MOB_ORGANIC in host_mob.mob_biotypes) && !(MOB_UNDEAD in host_mob.mob_biotypes)) //Shouldn't happen, but this avoids HUD runtimes in case a silicon gets them somehow.
-		//	return COMPONENT_INCOMPATIBLE
+		//Shouldn't happen, but this avoids HUD runtimes in case a silicon gets them somehow.
+		if(issilicon(host_mob))
+			return COMPONENT_INCOMPATIBLE
+		if(ishuman(host_mob))
+			var/mob/living/carbon/human/H = host_mob
+			if(H.species)
+				if(H.species.flags[NO_BLOOD])
+					return COMPONENT_INCOMPATIBLE
 
 		host_mob.hud_set_nanite_indicator()
 		START_PROCESSING(SSnanites, src)
@@ -167,11 +172,17 @@
 		source_program.copy_programming(new_program)
 	programs += new_program
 	new_program.on_add(src)
-	return COMPONENT_PROGRAM_INSTALLED
 
 /datum/component/nanites/proc/consume_nanites(amount, force = FALSE)
-	if(!force && safety_threshold && (nanite_volume - amount < safety_threshold))
-		return FALSE
+	if(!force)
+		if(safety_threshold && (nanite_volume - amount < safety_threshold))
+			return FALSE
+		//bloodloss = nanite loss. Programs suspended
+		if(host_mob && ishuman(host_mob))
+			var/mob/living/carbon/human/H = host_mob
+			var/probability_denied = clamp(BLOOD_VOLUME_OKAY - H.blood_amount(), 0, 100)
+			if(probability_denied)
+				return FALSE
 	adjust_nanites(null, -amount)
 	return (nanite_volume > 0)
 
@@ -259,7 +270,8 @@
 
 /datum/component/nanites/proc/check_stealth(datum/source)
 	SIGNAL_HANDLER
-	return stealth
+	if(stealth)
+		return NANITE_STEALTH_ENABLED
 
 /datum/component/nanites/proc/on_death(datum/source, gibbed)
 	SIGNAL_HANDLER
@@ -280,10 +292,14 @@
 
 /datum/component/nanites/proc/check_viable_biotype()
 	SIGNAL_HANDLER
-	/*
-	if(!(host_mob.mob_biotypes & (MOB_ORGANIC|MOB_UNDEAD)))
-		qdel(src) //bodytype no longer sustains nanites
-	*/
+	//bodytype no longer sustains nanites
+	if(issilicon(host_mob))
+		qdel(src)
+	else if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		if(H.species)
+			if(H.species.flags[NO_BLOOD])
+				qdel(src)
 
 /datum/component/nanites/proc/check_access(datum/source, obj/O)
 	SIGNAL_HANDLER
@@ -356,7 +372,7 @@
 		to_chat(user, "<span class='info'>Safety Threshold: [safety_threshold]</span>")
 		to_chat(user, "<span class='info'>Cloud ID: [cloud_id ? cloud_id : "None"]</span>")
 		to_chat(user, "<span class='info'>Cloud Sync: [cloud_active ? "Active" : "Disabled"]</span>")
-		to_chat(user, "<span class='info'>================</span>")
+		to_chat(user, "<span class='info'>----------------</span>")
 		to_chat(user, "<span class='info'>Program List:</span>")
 		if(!diagnostics)
 			to_chat(user, "<span class='alert'>Diagnostics Disabled</span>")
