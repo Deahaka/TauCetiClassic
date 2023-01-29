@@ -83,15 +83,15 @@
 	. = ..()
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
+		ADD_TRAIT(H, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
 		for(var/obj/item/organ/external/BP in H.bodyparts)
-			ADD_TRAIT(BP, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
+			BP.status &= ~ORGAN_ARTERY_CUT
 
 /datum/nanite_program/coagulating/disable_passive_effect()
 	. = ..()
 	if(ishuman(host_mob))
 		var/mob/living/carbon/human/H = host_mob
-		for(var/obj/item/organ/external/BP in H.bodyparts)
-			REMOVE_TRAIT(BP, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
+		REMOVE_TRAIT(H, TRAIT_HEMOCOAGULATION, NANITE_TRAIT)
 
 /datum/nanite_program/conductive
 	name = "Electric Conduction"
