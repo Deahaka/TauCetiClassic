@@ -146,6 +146,7 @@
 	Doing so uses some power, slightly decreasing their replication speed."
 	id = "debugging_nanites"
 	program_type = /datum/nanite_program/nanite_debugging
+	category = list("Utility Nanites")
 
 /datum/design/nanites/access
 	name = "Subdermal ID"
@@ -262,13 +263,6 @@
 	desc = "The nanites are able to backup and restore the host's neural connections, potentially replacing entire chunks of missing or damaged brain matter."
 	id = "brainheal_plus_nanites"
 	program_type = /datum/nanite_program/brain_heal_advanced
-	category = list("Medical Nanites")
-
-/datum/design/nanites/blood_restoring
-	name = "Blood Regeneration"
-	desc = "The nanites stimulate and boost blood cell production in the host."
-	id = "bloodheal_nanites"
-	program_type = /datum/nanite_program/blood_restoring
 	category = list("Medical Nanites")
 
 /datum/design/nanites/repairing
