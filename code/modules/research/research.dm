@@ -1463,31 +1463,15 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_utility_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.6
-	y = 0.4
+	x = 0.7
+	y = 0.6
 	icon = "mechrcd"
 
 	required_technologies = list("advanced_robotics")
 	required_tech_levels = list()
-	cost = 1000
+	cost = 2500
 
-	unlocks_designs = list("mech_wormhole_gen", "mech_rcd", "mech_gravcatapult", "mech_repair_droid", "mech_energy_relay", "mech_syringe_gun", "mech_diamond_drill", "mech_generator_nuclear")
-
-/datum/technology/mech_teleporter_modules
-	name = "Exosuit Teleporter Module"
-	desc = "Exosuit Teleporter Module"
-	id = "mech_teleporter_modules"
-	tech_type = RESEARCH_ROBOTICS
-
-	x = 0.85
-	y = 0.4
-	icon = "mechteleporter"
-
-	required_technologies = list("mech_utility_modules")
-	required_tech_levels = list()
-	cost = 5000
-
-	unlocks_designs = list("mech_teleporter")
+	unlocks_designs = list("mech_wormhole_gen", "mech_rcd", "mech_gravcatapult", "mech_repair_droid", "mech_energy_relay", "mech_syringe_gun", "mech_diamond_drill", "mech_generator_nuclear", "mech_teleporter")
 
 /datum/technology/mech_armor_modules
 	name = "Exosuit Armor Modules"
@@ -1495,8 +1479,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_armor_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.75
-	y = 0.25
+	x = 0.7
+	y = 0.8
 	icon = "mecharmor"
 
 	required_technologies = list("mech_utility_modules")
@@ -1511,8 +1495,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_weaponry_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.75
-	y = 0.5
+	x = 0.85
+	y = 0.6
 	icon = "mechgrenadelauncher"
 
 	required_technologies = list("advanced_robotics")
@@ -1527,7 +1511,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "mech_heavy_weaponry_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.75
+	x = 0.85
 	y = 0.8
 	icon = "mechlaser"
 
@@ -1543,8 +1527,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "basic_hardsuit_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.65
-	y = 0.1
+	x = 0.7
+	y = 0.15
 	icon = "rigscanner"
 
 	required_technologies = list()
@@ -1559,8 +1543,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	id = "advanced_hardsuit_modules"
 	tech_type = RESEARCH_ROBOTICS
 
-	x = 0.75
-	y = 0.1
+	x = 0.7
+	y = 0.35
 	icon = "rigtaser"
 
 	required_technologies = list("basic_hardsuit_modules")
@@ -1576,7 +1560,7 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	x = 0.85
-	y = 0.1
+	y = 0.35
 	icon = "rignuclearreactor"
 
 	required_technologies = list("advanced_hardsuit_modules")
@@ -1675,14 +1659,26 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	icon = "nanitbase"
-	x = 0.2
-	y = 0.1
+	x = 0.19
+	y = 0.15
 
 	cost = 2500
 
-	unlocks_designs = list("nanite_disk","nanite_remote","nanite_comm_remote","nanite_scanner",\
-						"nanite_chamber","public_nanite_chamber","nanite_chamber_control","nanite_programmer","nanite_program_hub","nanite_cloud_control",\
-						"relay_nanites", "monitoring_nanites", "access_nanites", "repairing_nanites","sensor_nanite_volume", "repeater_nanites", "relay_repeater_nanites","debugging_nanites")
+	unlocks_designs = list("nanite_disk",
+							"nanite_remote",
+							"nanite_comm_remote",
+							"nanite_scanner",
+							"nanite_chamber",
+							"public_nanite_chamber",
+							"nanite_chamber_control",
+							"nanite_programmer",
+							"nanite_program_hub",
+							"nanite_cloud_control",
+							"relay_nanites",
+							"repeater_nanites",
+							"relay_repeater_nanites",
+							"debugging_nanites"
+							)
 
 /datum/technology/nanite_smart
 	name = "Smart Nanite Programming"
@@ -1691,13 +1687,21 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	icon = "nanitsmart"
-	x = 0.1
+	x = 0.09
 	y = 0.25
 
 	required_technologies = list("nanite_base")
 	cost = 2000
 
-	unlocks_designs = list("purging_nanites", "metabolic_nanites", "stealth_nanites", "memleak_nanites","sensor_voice_nanites", "voice_nanites")
+	unlocks_designs = list("purging_nanites",
+							"metabolic_nanites",
+							"stealth_nanites",
+							"memleak_nanites",
+							"sensor_voice_nanites",
+							"voice_nanites",
+							"access_nanites",
+							"sensor_nanite_volume"
+							)
 
 /datum/technology/nanite_mesh
 	name = "Mesh Nanite Programming"
@@ -1706,13 +1710,21 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	icon = "nanitmesh"
-	x = 0.2
-	y = 0.25
+	x = 0.09
+	y = 0.4
 
-	required_technologies = list("nanite_base")
+	required_technologies = list("nanite_smart")
 	cost = 2500
 
-	unlocks_designs = list("hardening_nanites", "dermal_button_nanites", "refractive_nanites", "cryo_nanites", "conductive_nanites", "shock_nanites", "emp_nanites", "temperature_nanites")
+	unlocks_designs = list("dermal_button_nanites",
+							"cryo_nanites",
+							"conductive_nanites",
+							"shock_nanites",
+							"emp_nanites",
+							"temperature_nanites",
+							"stun_nanites",
+							"repairing_nanites",
+							)
 
 /datum/technology/nanite_bio
 	name = "Biological Nanite Programming"
@@ -1727,9 +1739,17 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_base")
 	cost = 2500
 
-	unlocks_designs = list("regenerative_nanites", "bloodheal_nanites", "coagulating_nanites","poison_nanites","flesheating_nanites",\
-					"sensor_crit_nanites","sensor_death_nanites", "sensor_health_nanites", "sensor_damage_nanites", "sensor_species_nanites",\
-					"nervous_nanites", "brainheal_nanites", "paralyzing_nanites", "stun_nanites", "selfscan_nanites")
+	unlocks_designs = list("regenerative_nanites",
+							"coagulating_nanites",
+							"flesheating_nanites",
+							"sensor_crit_nanites",
+							"sensor_death_nanites",
+							"sensor_health_nanites",
+							"sensor_damage_nanites",
+							"sensor_species_nanites",
+							"selfscan_nanites",
+							"monitoring_nanites"
+							)
 
 /datum/technology/nanite_synaptic
 	name = "Synaptic Nanite Programming"
@@ -1744,7 +1764,16 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_bio")
 	cost = 2500
 
-	unlocks_designs = list("mindshield_nanites", "pacifying_nanites", "blinding_nanites", "sleep_nanites", "mute_nanites", "speech_nanites")
+	unlocks_designs = list("mindshield_nanites",
+							"pacifying_nanites",
+							"blinding_nanites",
+							"sleep_nanites",
+							"mute_nanites",
+							"speech_nanites",
+							"brainheal_nanites",
+							"paralyzing_nanites",
+							"nervous_nanites"
+							)
 
 /datum/technology/nanite_harmonic
 	name = "Harmonic Nanite Programming"
@@ -1753,13 +1782,20 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	icon = "nanitharmonic"
-	x = 0.2
+	x = 0.19
 	y = 0.5
 
-	required_technologies = list("nanite_bio", "nanite_smart", "nanite_mesh")
+	required_technologies = list("nanite_bio", "nanite_smart")
 	cost = 4000
 
-	unlocks_designs = list("fakedeath_nanites", "aggressive_nanites", "defib_nanites", "regenerative_plus_nanites", "brainheal_plus_nanites", "purging_plus_nanites", "adrenaline_nanites")
+	unlocks_designs = list("fakedeath_nanites",
+							"aggressive_nanites",
+							"defib_nanites",
+							"regenerative_plus_nanites",
+							"brainheal_plus_nanites",
+							"purging_plus_nanites",
+							"poison_nanites"
+							)
 
 /datum/technology/nanite_combat
 	name = "Military Nanite Programming"
@@ -1768,13 +1804,19 @@ The tech datums are the actual "tech trees" that you improve through researching
 	tech_type = RESEARCH_ROBOTICS
 
 	icon = "nanitcombat"
-	x = 0.1
+	x = 0.09
 	y = 0.7
 
 	required_technologies = list("nanite_harmonic")
 	cost = 7500
 
-	unlocks_designs = list("explosive_nanites", "pyro_nanites", "meltdown_nanites", "viral_nanites", "nanite_sting_nanites")
+	unlocks_designs = list("explosive_nanites",
+							"pyro_nanites",
+							"meltdown_nanites",
+							"adrenaline_nanites",
+							"hardening_nanites",
+							"refractive_nanites"
+							)
 
 /datum/technology/nanite_hazard
 	name = "Hazard Nanite Programs"
@@ -1789,4 +1831,8 @@ The tech datums are the actual "tech trees" that you improve through researching
 	required_technologies = list("nanite_harmonic")
 	cost = 10000
 
-	unlocks_designs = list("spreading_nanites","mitosis_nanites")
+	unlocks_designs = list("spreading_nanites",
+							"mitosis_nanites",
+							"viral_nanites",
+							"nanite_sting_nanites"
+							)
