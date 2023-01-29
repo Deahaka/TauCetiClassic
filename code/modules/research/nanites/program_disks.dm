@@ -59,9 +59,6 @@
 /obj/item/disk/nanite_program/brain_heal_advanced
 	program_type = /datum/nanite_program/brain_heal_advanced
 
-/obj/item/disk/nanite_program/blood_restoring
-	program_type = /datum/nanite_program/blood_restoring
-
 /obj/item/disk/nanite_program/repairing
 	program_type = /datum/nanite_program/repairing
 
