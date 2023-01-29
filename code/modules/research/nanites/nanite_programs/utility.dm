@@ -17,7 +17,7 @@
 	var/datum/nanite_extra_setting/program = extra_settings[NES_PROGRAM_OVERWRITE]
 	var/datum/nanite_extra_setting/cloud = extra_settings[NES_CLOUD_OVERWRITE]
 	for(var/mob/M in orange(host_mob, 5))
-		if(SEND_SIGNAL(M, COMSIG_NANITE_IS_STEALTHY))
+		if(SEND_SIGNAL(M, COMSIG_NANITE_IS_STEALTHY) & NANITE_STEALTH_ENABLED)
 			continue
 		switch(program.get_value())
 			if("Overwrite")
@@ -52,7 +52,7 @@
 	rogue_types = list(/datum/nanite_program/toxic)
 
 /datum/nanite_program/self_scan/register_extra_settings()
-	extra_settings[NES_SCAN_TYPE] = new /datum/nanite_extra_setting/type("Medical", list("Medical", "Chemical", "Nanite"))
+	extra_settings[NES_SCAN_TYPE] = new /datum/nanite_extra_setting/type("Medical", list("Medical", "Nanite"))
 
 /datum/nanite_program/self_scan/on_trigger(comm_message)
 	if(host_mob.stat == DEAD)
@@ -161,28 +161,26 @@
 
 //Syncs the nanites with the cumulative current mob's access level. Can potentially wipe existing access.
 /datum/nanite_program/access/on_trigger(comm_message)
+
+	var/list/potential_items = list()
+
+	potential_items += host_mob.get_active_hand()
+	potential_items += host_mob.get_inactive_hand()
+	potential_items += host_mob.pulling
+
+	if(ishuman(host_mob))
+		var/mob/living/carbon/human/H = host_mob
+		potential_items += H.get_slot_ref(SLOT_WEAR_ID)
+	else if(isIAN(host_mob))
+		var/mob/living/carbon/ian/D = host_mob
+		potential_items += D.get_slot_ref(SLOT_NECK)
+
 	var/list/new_access = list()
-	var/obj/item/current_item
-	current_item = host_mob.get_active_hand()
-	if(current_item)
-		new_access += current_item.GetAccess()
-	current_item = host_mob.get_inactive_hand()
-	if(current_item)
-		new_access += current_item.GetAccess()
-	if(iscarbon(host_mob))
-		if(ishuman(host_mob))
-			var/mob/living/carbon/human/H = host_mob
-			current_item = H.get_slot_ref(SLOT_WEAR_ID)
-			if(current_item)
-				new_access += current_item.GetAccess()
-		else if(isIAN(host_mob))
-			var/mob/living/carbon/ian/D = host_mob
-			current_item = D.get_slot_ref(SLOT_NECK)
-			if(current_item)
-				new_access += current_item.GetAccess()
+	for(var/obj/item/I in potential_items)
+		new_access += I.GetAccess()
+
 	access = new_access
 
-// TODO: Delete because grief?
 /datum/nanite_program/spreading
 	name = "Infective Exo-Locomotion"
 	desc = "The nanites gain the ability to survive for brief periods outside of the human body, as well as the ability to start new colonies without an integration process; \
@@ -192,26 +190,32 @@
 	var/spread_cooldown = 0
 
 /datum/nanite_program/spreading/active_effect()
-/*	if(world.time < spread_cooldown)
+	if(world.time < spread_cooldown)
 		return
 	spread_cooldown = world.time + 50
 	var/list/mob/living/target_hosts = list()
 	for(var/mob/living/L in oview(5, host_mob))
 		if(!prob(25))
 			continue
-		if(!(L.mob_biotypes & (MOB_ORGANIC|MOB_UNDEAD)))
+		if(issilicon(L))
 			continue
+		if(ishuman(L))
+			var/mob/living/carbon/human/H = L
+			if(H.species)
+				if(H.species.flags[NO_BLOOD])
+					continue
 		target_hosts += L
 	if(!target_hosts.len)
 		return
 	var/mob/living/infectee = pick(target_hosts)
-	if(prob(100 - (infectee.get_permeability_protection() * 100)))
+	if(prob(100 - infectee.getarmor(host_mob.get_targetzone(), BIO)))
 		//this will potentially take over existing nanites!
 		infectee.AddComponent(/datum/component/nanites, 10)
 		SEND_SIGNAL(infectee, COMSIG_NANITE_SYNC, nanites)
 		SEND_SIGNAL(infectee, COMSIG_NANITE_SET_CLOUD, nanites.cloud_id)
-		infectee.investigate_log("was infected by spreading nanites by [key_name(host_mob)] at [AREACOORD(infectee)].", INVESTIGATE_NANITES)
-*/
+		//griefing virus
+		SEND_SIGNAL(infectee, NANITE_CLOUD_DISABLE, NANITE_CLOUD_DISABLE)
+
 /datum/nanite_program/nanite_sting
 	name = "Nanite Sting"
 	desc = "When triggered, projects a nearly invisible spike of nanites that attempts to infect a nearby non-host with a copy of the host's nanites cluster."
@@ -223,19 +227,30 @@
 /datum/nanite_program/nanite_sting/on_trigger(comm_message)
 	var/list/mob/living/target_hosts = list()
 	for(var/mob/living/L in oview(1, host_mob))
-		if(SEND_SIGNAL(L, COMSIG_HAS_NANITES) || !L.Adjacent(host_mob))
-			continue	//!(L.mob_biotypes & (MOB_ORGANIC|MOB_UNDEAD))
+		if(SEND_SIGNAL(L, COMSIG_HAS_NANITES & COMPONENT_NANITES_DETECTED))
+			continue
+		if(!L.Adjacent(host_mob))
+			continue
+		if(issilicon(L))
+			continue
+		if(ishuman(L))
+			var/mob/living/carbon/human/H = L
+			if(H.species)
+				if(H.species.flags[NO_BLOOD])
+					continue
 		target_hosts += L
 	if(!target_hosts.len)
 		consume_nanites(-5)
 		return
 	var/mob/living/infectee = pick(target_hosts)
-	//if(prob(100 - (infectee.get_permeability_protection() * 100)))
+	if(prob(100 - infectee.getarmor(host_mob.get_targetzone(), BIO)))
 		//unlike with Infective Exo-Locomotion, this can't take over existing nanites, because Nanite Sting only targets non-hosts.
-	infectee.AddComponent(/datum/component/nanites, 5)
-	SEND_SIGNAL(infectee, COMSIG_NANITE_SYNC, nanites)
-	SEND_SIGNAL(infectee, COMSIG_NANITE_SET_CLOUD, nanites.cloud_id)
-	to_chat(infectee, "<span class='warning'>You feel a tiny prick.</span>")
+		infectee.AddComponent(/datum/component/nanites, 5)
+		SEND_SIGNAL(infectee, COMSIG_NANITE_SYNC, nanites)
+		SEND_SIGNAL(infectee, COMSIG_NANITE_SET_CLOUD, nanites.cloud_id)
+		to_chat(infectee, "<span class='warning'>You feel a tiny prick.</span>")
+		//griefing sting
+		SEND_SIGNAL(infectee, NANITE_CLOUD_DISABLE, NANITE_CLOUD_DISABLE)
 
 /datum/nanite_program/mitosis
 	name = "Mitosis"
