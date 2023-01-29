@@ -370,6 +370,7 @@
 	#define COMPONENT_NANITES_DETECTED 1
 //() returns TRUE if nanites have stealth
 #define COMSIG_NANITE_IS_STEALTHY "nanite_is_stealthy"
+	#define NANITE_STEALTH_ENABLED 1
 //(list/nanite_programs) - makes the input list a copy the nanites' program list
 #define COMSIG_NANITE_GET_PROGRAMS	"nanite_get_programs"
 //(amount) Sets current nanite volume to the given amount
@@ -392,10 +393,8 @@
 #define COMSIG_NANITE_UI_DATA "nanite_ui_data"
 //(datum/nanite_program/new_program, datum/nanite_program/source_program) Called when adding a program to a nanite component
 #define COMSIG_NANITE_ADD_PROGRAM "nanite_add_program"
-	///Installation successful
-	#define COMPONENT_PROGRAM_INSTALLED (1<<0)
 	///Installation failed, but there are still nanites
-	#define COMPONENT_PROGRAM_NOT_INSTALLED (1<<1)
+	#define COMPONENT_PROGRAM_NOT_INSTALLED 1
 //(datum/component/nanites, full_overwrite, copy_activation) Called to sync the target's nanites to a given nanite component
 #define COMSIG_NANITE_SYNC "nanite_sync"
 //() deletes the nanite component
