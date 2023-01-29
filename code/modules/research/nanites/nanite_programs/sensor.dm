@@ -246,7 +246,7 @@
 	RegisterSignal(host_mob, COMSIG_MOVABLE_HEAR, .proc/on_hear)
 
 /datum/nanite_program/sensor/voice/on_mob_remove()
-	UnregisterSignal(host_mob, COMSIG_MOVABLE_HEAR, .proc/on_hear)
+	UnregisterSignal(host_mob, COMSIG_MOVABLE_HEAR)
 
 /datum/nanite_program/sensor/voice/proc/on_hear(datum/source, msg, mob/speaker)
 	SIGNAL_HANDLER
@@ -285,7 +285,6 @@
 	var/list/species_types = list()
 	for(var/name in allowed_species)
 		species_types += name
-	species_types += "Other"
 	extra_settings[NES_RACE] = new /datum/nanite_extra_setting/type("Human", species_types)
 	extra_settings[NES_MODE] = new /datum/nanite_extra_setting/boolean(TRUE, "Is", "Is Not")
 
@@ -297,13 +296,6 @@
 	if(species)
 		if(istype(host_mob.get_species(), species))
 			species_match = TRUE
-	else	//this is the check for the "Other" option
-		species_match = TRUE
-		for(var/name in allowed_species)
-			var/species_other = allowed_species[name]
-			if(istype(host_mob.get_species(), species_other))
-				species_match = FALSE
-				break
 
 	var/datum/nanite_extra_setting/mode = extra_settings[NES_MODE]
 	if(mode.get_value())
