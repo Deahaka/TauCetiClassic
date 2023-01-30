@@ -168,8 +168,6 @@
 	else if(!(stat & (NOPOWER|BROKEN)))
 		if(busy || locked)
 			add_overlay("red")
-			if(locked)
-				add_overlay("bolted")
 		else
 			add_overlay("green")
 
@@ -342,7 +340,7 @@
 		data += "</table>"
 		data += "<br>"
 		data += "Programs:<hr>"
-		for(var/datum/nanite_program/P in data_handler.programs)
+		for(var/datum/nanite_program/P as anything in data_handler.programs)
 			data += "<A href='?src=\ref[src];details=[P.name]'>[P.name]</A><br>"
 			if(detail_menu_view == P.name)
 				data += "<table border='1' width='100%'>"
@@ -614,7 +612,7 @@
 			var/datum/component/nanites/nanites = backup.nanites
 			var/list/cloud_programs = list()
 			var/id = 1
-			for(var/datum/nanite_program/P in nanites.programs)
+			for(var/datum/nanite_program/P as anything in nanites.programs)
 				var/list/cloud_program = list()
 				cloud_program["name"] = P.name
 				cloud_program["desc"] = P.desc
@@ -952,7 +950,6 @@
 	name = "nanite programmer"
 	desc = "A device that can edit nanite program disks to adjust their functionality."
 	var/obj/item/disk/nanite_program/disk
-	var/datum/nanite_program/program
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "nanite_programmer"
 	use_power = IDLE_POWER_USE
@@ -977,7 +974,6 @@
 				eject(user)
 			to_chat(user, "<span class='notice'>You insert [N] into [src]</span>")
 			disk = N
-			program = N.program
 		return
 	return ..()
 
@@ -987,7 +983,6 @@
 	if(!istype(user) || !Adjacent(user) || !user.put_in_active_hand(disk))
 		disk.forceMove(loc)
 	disk = null
-	program = null
 
 /obj/machinery/nanite_programmer/proc/get_data()
 	var/data = ""
@@ -995,61 +990,61 @@
 	if(!istype(disk))
 		data += "Insert a nanite program disk"
 		return data
-	if(!istype(program))
+	if(!istype(disk.program))
 		data += "Blank Disk. Insert disk with downloaded program<br><hr>"
 		data += "<A href='?src=\ref[src];eject=1'>Eject</A>"
 		return data
 
-	data += "<h1><div align='center'>[program.name] <A href='?src=\ref[src];eject=1'>Eject</A></div></h1><hr>"
+	data += "<h1><div align='center'>[disk.program.name] <A href='?src=\ref[src];eject=1'>Eject</A></div></h1><hr>"
 	data += "<div align='center'>Info:</div>"
 
 	data += "<table border='1' width='100%'>"
 	data += "<tr><th width = '60%'>Description</th><td width='40%'>Nanite Volume</th></tr>"
 	data += "<tr>"
-	data += "<td width = '60%'>[program.desc]</td>"
+	data += "<td width = '60%'>[disk.program.desc]</td>"
 	data += "<td width='40%'>"
 	data += "<div align='left'>"
-	data += "Use Rate: [program.use_rate]<br>"
-	var/is_can_be_triggered = program.can_trigger
+	data += "Use Rate: [disk.program.use_rate]<br>"
+	var/is_can_be_triggered = disk.program.can_trigger
 	if(is_can_be_triggered)
-		data += "Trigger Cost: [program.trigger_cost]<br>"
-		data += "Trigger Cooldown: [program.trigger_cooldown / 10]<br>"
+		data += "Trigger Cost: [disk.program.trigger_cost]<br>"
+		data += "Trigger Cooldown: [disk.program.trigger_cooldown / 10]<br>"
 	data += "<div>"
 	data += "</td>"
 	data += "</tr>"
 	data += "</table>"
 
 	data += "<hr>"
-	data += "Settings <A href='?src=\ref[src];toggle_active=1'>[program.activated ? "<span class='green'>Active</span>" : "<span class='red'>Inactive</span>"]</A><br><hr>"
+	data += "Settings <A href='?src=\ref[src];toggle_active=1'>[disk.program.activated ? "<span class='green'>Active</span>" : "<span class='red'>Inactive</span>"]</A><br><hr>"
 
 	data += "<table border='1' width='100%'>"
 	data += "<tr><th width = '40%'>Codes</th><td width='60%'>Delays</th></tr>"
 	data += "<tr>"
 	data += "<td width = '40%'>"
-	data += "Activation: <A href='?src=\ref[src];set_code=activation'>[program.activation_code]</A><br>"
-	data += "Deactivation: <A href='?src=\ref[src];set_code=deactivation'>[program.deactivation_code]</A><br>"
-	data += "Kill: <A href='?src=\ref[src];set_code=kill'>[program.kill_code]</A><br>"
+	data += "Activation: <A href='?src=\ref[src];set_code=activation'>[disk.program.activation_code]</A><br>"
+	data += "Deactivation: <A href='?src=\ref[src];set_code=deactivation'>[disk.program.deactivation_code]</A><br>"
+	data += "Kill: <A href='?src=\ref[src];set_code=kill'>[disk.program.kill_code]</A><br>"
 	data += "</td>"
 	data += "<td width='60%'>"
-	data += "Restart timer: <A href='?src=\ref[src];set_restart_timer=1'>[program.timer_restart / 10]</A><br>"
-	data += "Shutdown timer: <A href='?src=\ref[src];set_shutdown_timer=1'>[program.timer_shutdown / 10]</A><br>"
+	data += "Restart timer: <A href='?src=\ref[src];set_restart_timer=1'>[disk.program.timer_restart / 10]</A><br>"
+	data += "Shutdown timer: <A href='?src=\ref[src];set_shutdown_timer=1'>[disk.program.timer_shutdown / 10]</A><br>"
 	data += "</td>"
 	data += "</tr>"
 	if(is_can_be_triggered)
 		data += "<tr>"
 		data += "<td width = '35%'>"
-		data += "Trigger: <A href='?src=\ref[src];set_code=trigger'>[program.trigger_code]</A><br>"
+		data += "Trigger: <A href='?src=\ref[src];set_code=trigger'>[disk.program.trigger_code]</A><br>"
 		data += "</td>"
 		data += "<td width='65%'>"
-		data += "Trigger Repeat Timer: <A href='?src=\ref[src];set_trigger_timer=1'>[program.timer_trigger / 10]</A><br>"
-		data += "Trigger Delay: <A href='?src=\ref[src];set_timer_trigger_delay=1'>[program.timer_trigger_delay / 10]</A><br>"
+		data += "Trigger Repeat Timer: <A href='?src=\ref[src];set_trigger_timer=1'>[disk.program.timer_trigger / 10]</A><br>"
+		data += "Trigger Delay: <A href='?src=\ref[src];set_timer_trigger_delay=1'>[disk.program.timer_trigger_delay / 10]</A><br>"
 		data += "</td>"
 		data += "</tr>"
 	data += "</table>"
 	data += "<hr>"
 	data += "Special:<br>"
 	data += "<dd>"
-	var/list/extra_settings = program.get_extra_settings_frontend()
+	var/list/extra_settings = disk.program.get_extra_settings_frontend()
 	for(var/setting in extra_settings)
 		switch(setting["type"])
 			if(NESTYPE_TEXT)
@@ -1072,68 +1067,77 @@
 	if(href_list["eject"])
 		eject(usr)
 	if(href_list["toggle_active"])
-		playsound(src, "terminal_type", 25, 0)
-		program.activated = !program.activated //we don't use the activation procs since we aren't in a mob
+		if(disk && disk.program)
+			playsound(src, "terminal_type", 25, 0)
+			disk.program.activated = !disk.program.activated //we don't use the activation procs since we aren't in a mob
 	if(href_list["set_code"])
-		var/new_code = input("Set code (0000-9999):", name, null) as null|num
-		if(!isnull(new_code))
-			playsound(src, "terminal_type", 25, FALSE)
-			new_code = clamp(round(new_code, 1),0,9999)
-			switch(href_list["set_code"])
-				if("activation")
-					program.activation_code = clamp(round(new_code, 1),0,9999)
-				if("deactivation")
-					program.deactivation_code = clamp(round(new_code, 1),0,9999)
-				if("kill")
-					program.kill_code = clamp(round(new_code, 1),0,9999)
-				if("trigger")
-					program.trigger_code = clamp(round(new_code, 1),0,9999)
+		if(disk && disk.program)
+			var/new_code = input("Set code (0000-9999):", name, null) as null|num
+			if(!isnull(new_code))
+				playsound(src, "terminal_type", 25, FALSE)
+				new_code = clamp(round(new_code, 1),0,9999)
+				switch(href_list["set_code"])
+					if("activation")
+						disk.program.activation_code = clamp(round(new_code, 1),0,9999)
+					if("deactivation")
+						disk.program.deactivation_code = clamp(round(new_code, 1),0,9999)
+					if("kill")
+						disk.program.kill_code = clamp(round(new_code, 1),0,9999)
+					if("trigger")
+						disk.program.trigger_code = clamp(round(new_code, 1),0,9999)
 	if(href_list["set_extra_setting"])
-		var/list/extra_settings = program.get_extra_settings_frontend()
-		for(var/setting in extra_settings)
-			if(href_list["set_extra_setting"] == setting["name"])
-				switch(setting["type"])
-					if(NESTYPE_TEXT)
-						var/input_text = input(usr, "Set extra setting's text:", name, null) as anything
-						program.set_extra_setting(setting["name"], input_text)
-					if(NESTYPE_NUMBER)
-						var/number = input(usr, "Set extra setting's number in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
-						var/clamp_number = clamp(number, setting["min"], setting["max"])
-						program.set_extra_setting(setting["name"], clamp_number)
-					if(NESTYPE_BOOLEAN)
-						program.set_extra_setting(setting["name"], !setting["value"])
-					if(NESTYPE_TYPE)
-						var/new_type = input(usr, "Choose extra setting's new type", "Select Type") as null|anything in setting["types"] + "Cancel"
-						if(new_type && new_type != "Cancel")
-							program.set_extra_setting(setting["name"], new_type)
+		if(disk && disk.program)
+			var/list/extra_settings = disk.program.get_extra_settings_frontend()
+			for(var/setting in extra_settings)
+				if(href_list["set_extra_setting"] == setting["name"])
+					switch(setting["type"])
+						if(NESTYPE_TEXT)
+							var/input_text = sanitize(input(usr, "Set extra [setting["name"]]:", name, "") as null|text)
+							if(!isnull(input_text))
+								disk.program.set_extra_setting(setting["name"], input_text)
+						if(NESTYPE_NUMBER)
+							var/number = input(usr, "Set [setting["name"]] in seconds ([setting["min"]]-[setting["max"]]):", name, 0) as null|num
+							if(!isnull(number))
+								var/clamp_number = clamp(number, setting["min"], setting["max"])
+								disk.program.set_extra_setting(setting["name"], clamp_number)
+						if(NESTYPE_BOOLEAN)
+							disk.program.set_extra_setting(setting["name"], !setting["value"])
+						if(NESTYPE_TYPE)
+							var/new_type = input(usr, "Choose [setting["name"]]:", "Select Type") as null|anything in setting["types"] + "Cancel"
+							if(!isnull(new_type) && new_type != "Cancel")
+								disk.program.set_extra_setting(setting["name"], new_type)
 	if(href_list["set_restart_timer"])
-		var/timer = input("Set restart timer in seconds (0-3600):", name, program.timer_restart / 10) as null|num
-		if(!isnull(timer))
-			playsound(src, "terminal_type", 25, 0)
-			timer = clamp(round(timer, 1), 0, 3600)
-			timer *= 10 //convert to deciseconds
-			program.timer_restart = timer
+		if(disk && disk.program)
+			var/timer = input("Set restart timer in seconds (0-3600):", name, disk.program.timer_restart / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, 0)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				disk.program.timer_restart = timer
 	if(href_list["set_shutdown_timer"])
-		var/timer = input("Set shutdown timer in seconds (0-3600):", name, program.timer_shutdown / 10) as null|num
-		if(!isnull(timer))
-			playsound(src, "terminal_type", 25, 0)
-			timer = clamp(round(timer, 1), 0, 3600)
-			timer *= 10 //convert to deciseconds
-			program.timer_shutdown = timer
+		if(disk && disk.program)
+			var/timer = input("Set shutdown timer in seconds (0-3600):", name, disk.program.timer_shutdown / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, 0)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				disk.program.timer_shutdown = timer
 	if(href_list["set_trigger_timer"])
-		var/timer = input("Set trigger repeat timer in seconds (0-3600):", name, program.timer_trigger / 10) as null|num
-		if(!isnull(timer))
-			playsound(src, "terminal_type", 25, FALSE)
-			timer = clamp(round(timer, 1), 0, 3600)
-			timer *= 10 //convert to deciseconds
-			program.timer_trigger = timer
+		if(disk && disk.program)
+			var/timer = input("Set trigger repeat timer in seconds (0-3600):", name, disk.program.timer_trigger / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, FALSE)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				disk.program.timer_trigger = timer
 	if(href_list["set_timer_trigger_delay"])
-		var/timer = input("Set trigger delay in seconds (0-3600):", name, program.timer_trigger_delay / 10) as null|num
-		if(!isnull(timer))
-			playsound(src, "terminal_type", 25, FALSE)
-			timer = clamp(round(timer, 1), 0, 3600)
-			timer *= 10 //convert to deciseconds
-			program.timer_trigger_delay = timer
+		if(disk && disk.program)
+			var/timer = input("Set trigger delay in seconds (0-3600):", name, disk.program.timer_trigger_delay / 10) as null|num
+			if(!isnull(timer))
+				playsound(src, "terminal_type", 25, FALSE)
+				timer = clamp(round(timer, 1), 0, 3600)
+				timer *= 10 //convert to deciseconds
+				disk.program.timer_trigger_delay = timer
 	updateUsrDialog()
 
 //Public Chamber
@@ -1202,8 +1206,6 @@
 	else if(!(stat & (NOPOWER|BROKEN)))
 		if(busy || locked)
 			add_overlay("red")
-			if(locked)
-				add_overlay("bolted")
 		else
 			add_overlay("green")
 
