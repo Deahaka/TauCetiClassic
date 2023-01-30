@@ -21,7 +21,7 @@
 
 /obj/mecha/combat/gygax/atom_init()
 	. = ..()
-	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 2600, DIAGNOSTIC_EXTRA_CHECK)
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 3000, DIAGNOSTIC_EXTRA_CHECK)
 
 /obj/mecha/combat/gygax/Destroy()
 	QDEL_NULL(overload_action)
@@ -48,7 +48,7 @@
 	wreckage = /obj/effect/decal/mecha_wreckage/gygax/ultra
 	animated = 1
 
-/obj/mecha/combat/gygax/atom_init()
+/obj/mecha/combat/gygax/ultra/atom_init()
 	. = ..()
 	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 4600, DIAGNOSTIC_EXTRA_CHECK)
 
