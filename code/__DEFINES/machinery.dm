@@ -18,8 +18,6 @@
 #define AUTOLATHE	4	//Uses glass/metal only.
 #define MINEFAB		8	//Uses for mining fabrricator
 #define MECHFAB		16 //Remember, objects utilising this flag should have construction_time and construction_cost vars.
-//Note: More then one of these can be added to a design but imprinter and lathe designs are incompatable.
-#define NANITE_COMPILER  32 //Prints nanite disks
 
 // bitflags for machine stat variable
 #define BROKEN		1
