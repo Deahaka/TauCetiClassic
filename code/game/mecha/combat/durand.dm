@@ -32,7 +32,7 @@
 
 /obj/mecha/combat/durand/atom_init()
 	. = ..()
-	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 2600, DIAGNOSTIC_EXTRA_CHECK)
+	AddComponent(/datum/component/examine_research, DEFAULT_ROBOT_CONSOLE_ID, 3000, DIAGNOSTIC_EXTRA_CHECK)
 /*	weapons += new /datum/mecha_weapon/ballistic/lmg(src)
 	weapons += new /datum/mecha_weapon/ballistic/scattershot(src)
 	selected_weapon = weapons[1]
