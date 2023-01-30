@@ -26,6 +26,7 @@
 	RegisterSignal(parent, COMSIG_PARENT_EXAMINE, .proc/begin_scan)
 
 /datum/component/examine_research/proc/begin_scan(datum/source, mob/user)
+	SIGNAL_HANDLER
 	if(user.is_busy())
 		return
 	if(!success_check(extra_check, user))
@@ -42,8 +43,7 @@
 	global.spented_examined_objects += parent
 
 /datum/component/examine_research/proc/calculate_research_value()
-	SIGNAL_HANDLER
-	for(var/obj/object in global.spented_examined_objects)
+	for(var/obj/object as anything in global.spented_examined_objects)
 		if(object.type == parent.type)
 			return 0
 	return points_value
@@ -53,12 +53,12 @@
 		if(DIAGNOSTIC_EXTRA_CHECK)
 			var/mob/living/carbon/human/H = user
 			if(H?.glasses)
-				if(istype(H.glasses, /obj/item/clothing/glasses/hud/diagnostic))
+				if(isdiagnostichud(H.glasses))
 					return TRUE
 		if(SCIENCE_EXTRA_CHECK)
 			var/mob/living/carbon/human/H = user
 			if(H?.glasses)
-				if(istype(H.glasses, /obj/item/clothing/glasses/science))
+				if(isscienceglasses(H.glasses))
 					return TRUE
 		else
 			return FALSE
