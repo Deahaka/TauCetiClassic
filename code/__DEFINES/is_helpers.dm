@@ -112,6 +112,14 @@
 
 #define ismachinery(A) (istype(A, /obj/machinery))
 
+#define isdiagnostichud(A) (istype(A, /obj/item/clothing/glasses/hud/diagnostic))
+
+#define isscienceglasses(A) (istype(A, /obj/item/clothing/glasses/science))
+
+#define isnanitebackup(A) (istype(A, /datum/nanite_cloud_backup))
+
+#define isprogramcomm(A) (istype(A, /datum/nanite_program/comm))
+
 // GOONCHAT PORT
 
 #define isatom(A) (istype(A, /atom))
