@@ -320,6 +320,8 @@
 	#define COMPONENT_BLOCK_SWAP 1
 ///sent by stuff like stunbatons and tasers: ()
 #define COMSIG_LIVING_MINOR_SHOCK "living_minor_shock"
+/// Called when a living vomits
+#define COMSIG_CARBON_VOMITED "carbon_vomited"
 
 /// from /datum/action/changeling/transform/sting_action(): (mob/living/carbon/human/user)
 #define COMSIG_CHANGELING_TRANSFORM "changeling_transform"
@@ -389,8 +391,6 @@
 #define COMSIG_NANITE_SIGNAL "nanite_signal"
 //(mob/user, full_scan) - sends to chat a scan of the nanites to the user, returns TRUE if nanites are detected
 #define COMSIG_NANITE_SCAN "nanite_scan"
-//(list/data, scan_level) - adds nanite data to the given data list - made for ui_data procs
-#define COMSIG_NANITE_UI_DATA "nanite_ui_data"
 //(datum/nanite_program/new_program, datum/nanite_program/source_program) Called when adding a program to a nanite component
 #define COMSIG_NANITE_ADD_PROGRAM "nanite_add_program"
 	///Installation failed, but there are still nanites
