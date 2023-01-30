@@ -1,5 +1,6 @@
 #define NANITE_SYNC_DELAY 300
 
+// It should be bitflags like (1 << 1) (1 << 2)?
 #define NANITE_SHOCK_IMMUNE 1
 #define NANITE_EMP_IMMUNE 2
 
