@@ -123,7 +123,11 @@
 
 ///Copy of the list instead of direct reference for obvious reasons
 /datum/nanite_program/proc/copy_extra_settings_to(datum/nanite_program/target)
-	target.extra_settings = extra_settings.Copy()
+	var/list/copy_list = list()
+	for(var/ns_name in extra_settings)
+		var/datum/nanite_extra_setting/extra_setting = extra_settings[ns_name]
+		copy_list[ns_name] = extra_setting.get_copy()
+	target.extra_settings = copy_list
 
 /datum/nanite_program/proc/on_add(datum/component/nanites/_nanites)
 	nanites = _nanites
