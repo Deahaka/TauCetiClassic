@@ -17,7 +17,7 @@
 	var/diagnostics = FALSE //if TRUE, displays program list when scanned by nanite scanners
 
 /datum/component/nanites/Initialize(amount = 100, cloud = 0)
-	if(!isliving(parent) && !istype(parent, /datum/nanite_cloud_backup))
+	if(!isliving(parent) && !isnanitebackup(parent))
 		return COMPONENT_INCOMPATIBLE
 
 	nanite_volume = amount
@@ -163,7 +163,7 @@
 ///Adds a nanite program, replacing existing unique programs of the same type. A source program can be specified to copy its programming onto the new one.
 /datum/component/nanites/proc/add_program(datum/source, datum/nanite_program/new_program, datum/nanite_program/source_program)
 	SIGNAL_HANDLER
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		if(NP.unique && NP.type == new_program.type)
 			qdel(NP)
 	if(programs.len >= max_programs)
@@ -181,7 +181,7 @@
 		if(host_mob && ishuman(host_mob))
 			var/mob/living/carbon/human/H = host_mob
 			var/probability_denied = clamp(BLOOD_VOLUME_OKAY - H.blood_amount(), 0, 100)
-			if(probability_denied)
+			if(prob(probability_denied))
 				return FALSE
 	adjust_nanites(null, -amount)
 	return (nanite_volume > 0)
@@ -214,10 +214,10 @@
 		if((NANITE_EXCESS_VOMIT + 0.1) to NANITE_EXCESS_BURST)
 			if(iscarbon(host_mob))
 				var/mob/living/carbon/C = host_mob
-				C.vomit()
+				C.vomit(vomit_type = VOMIT_NANITE)
 		//Way too many nanites, they just leave through the closest exit before they harm/poison the host
 		if((NANITE_EXCESS_BURST + 0.1) to INFINITY)
-			host_mob.visible_message("<span class='warning'>A torrent of metallic grey slurry violently bursts out of [host_mob]'s face and floods out of [host_mob] skin!</span>",
+			host_mob.visible_message("<span class='userdanger'>A torrent of metallic grey slurry violently bursts out of [host_mob]'s face and floods out of [host_mob] skin!</span>",
 								"<span class='userdanger'>A torrent of metallic grey slurry violently bursts out of your eyes, ears, and mouth, and floods out of your skin!</span>")
 			//nanites coming out of your eyes
 			host_mob.eye_blind = 5
@@ -230,7 +230,7 @@
 				//nanites coming out of your ears
 				C.ear_deaf += 30
 				//nanites coming out of your mouth
-				C.vomit()
+				C.vomit(vomit_type = VOMIT_NANITE)
 
 ///Updates the nanite volume bar visible in diagnostic HUDs
 /datum/component/nanites/proc/set_nanite_bar(remove = FALSE)
@@ -250,7 +250,7 @@
 	adjust_nanites(null, -(rand(5, 50))) //Lose 5-50 flat nanite volume
 	if(prob(40/severity))
 		cloud_id = 0
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		NP.on_emp(severity)
 
 /datum/component/nanites/proc/on_shock(datum/source, shock_damage, siemens_coeff = 1, flags = NONE)
@@ -259,13 +259,13 @@
 		return
 	nanite_volume *= (rand(45, 80) * 0.01) //Lose 20-55% of nanites
 	adjust_nanites(null, -(rand(5, 50)))  //Lose 5-50 flat nanite volume
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		NP.on_shock(shock_damage)
 
 /datum/component/nanites/proc/on_minor_shock(datum/source)
 	SIGNAL_HANDLER
 	adjust_nanites(null, -(rand(5, 15)))	//Lose 5-15 flat nanite volume
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		NP.on_minor_shock()
 
 /datum/component/nanites/proc/check_stealth(datum/source)
@@ -275,31 +275,30 @@
 
 /datum/component/nanites/proc/on_death(datum/source, gibbed)
 	SIGNAL_HANDLER
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		NP.on_death(gibbed)
 
 /datum/component/nanites/proc/receive_signal(datum/source, code, source = "an unidentified source")
 	SIGNAL_HANDLER
-	for(var/datum/nanite_program/NP in programs)
+	for(var/datum/nanite_program/NP as anything in programs)
 		NP.receive_signal(code, source)
 
 /datum/component/nanites/proc/receive_comm_signal(datum/source, comm_code, comm_message, comm_source = "an unidentified source")
 	SIGNAL_HANDLER
 	for(var/X in programs)
-		if(istype(X, /datum/nanite_program/comm))
+		if(isprogramcomm(X))
 			var/datum/nanite_program/comm/NP = X
 			NP.receive_comm_signal(comm_code, comm_message, comm_source)
 
-/datum/component/nanites/proc/check_viable_biotype()
+/datum/component/nanites/proc/check_viable_biotype(datum/source, species)
 	SIGNAL_HANDLER
 	//bodytype no longer sustains nanites
 	if(issilicon(host_mob))
 		qdel(src)
 	else if(ishuman(host_mob))
-		var/mob/living/carbon/human/H = host_mob
-		if(H.species)
-			if(H.species.flags[NO_BLOOD])
-				qdel(src)
+		var/datum/species/S = species
+		if(S.flags[NO_BLOOD])
+			qdel(src)
 
 /datum/component/nanites/proc/check_access(datum/source, obj/O)
 	SIGNAL_HANDLER
@@ -377,6 +376,6 @@
 		if(!diagnostics)
 			to_chat(user, "<span class='alert'>Diagnostics Disabled</span>")
 		else
-			for(var/datum/nanite_program/NP in programs)
+			for(var/datum/nanite_program/NP as anything in programs)
 				to_chat(user, "<span class='info'><b>[NP.name]</b> | [NP.activated ? "Active" : "Inactive"]</span>")
 	return COMPONENT_NANITES_DETECTED
