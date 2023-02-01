@@ -13,11 +13,12 @@
 #define ACTIVE_POWER_USE 2
 
 //used in design to specify which machine can build it
-#define IMPRINTER	1	//For circuits. Uses glass/chemicals.
-#define PROTOLATHE	2	//New stuff. Uses glass/metal/chemicals
-#define AUTOLATHE	4	//Uses glass/metal only.
-#define MINEFAB		8	//Uses for mining fabrricator
-#define MECHFAB		16 //Remember, objects utilising this flag should have construction_time and construction_cost vars.
+#define IMPRINTER	     1	//For circuits. Uses glass/chemicals.
+#define PROTOLATHE	     2	//New stuff. Uses glass/metal/chemicals
+#define AUTOLATHE	     4	//Uses glass/metal only.
+#define MINEFAB		     8	//Uses for mining fabrricator
+#define MECHFAB		     16 //Remember, objects utilising this flag should have construction_time and construction_cost vars.
+#define NANITE_COMPILER  32 //Used for disable design printing in machinery
 
 // bitflags for machine stat variable
 #define BROKEN		1
