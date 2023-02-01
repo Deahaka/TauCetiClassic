@@ -13,6 +13,8 @@
 	var/heat_gen = 100
 	var/heating_power = 40000
 	var/delay = 10
+	var/research_datum_type = /datum/research
+	var/list/blacklisted_techs_list = list()
 	req_access = list(access_rd) //Only the R&D can change server settings.
 
 /obj/machinery/r_n_d/server/atom_init()
@@ -39,7 +41,7 @@
 /obj/machinery/r_n_d/server/atom_init()
 	. = ..()
 	if(!files)
-		files = new /datum/research(src)
+		files = new research_datum_type(src, blacklisted_tech = blacklisted_techs_list)
 	var/list/temp_list
 	if(!id_with_upload.len)
 		temp_list = list()
@@ -190,7 +192,7 @@
 				break
 		if(href_list["access"])
 			screen = 1
-			for(var/obj/machinery/computer/rdconsole/C in computer_list)
+			for(var/obj/machinery/computer/rdconsole/C as anything in global.RDcomputer_list)
 				if(C.sync)
 					consoles += C
 		else if(href_list["data"])
@@ -311,16 +313,18 @@
 	id_with_upload_string = "1;2"
 	id_with_download_string = "1;2"
 	server_id = 2
-
+	research_datum_type = /datum/research/robotics
 
 /obj/machinery/r_n_d/server/core
 	name = "Core R&D Server"
 	id_with_upload_string = "1"
 	id_with_download_string = "1"
 	server_id = 1
+	blacklisted_techs_list = list(RESEARCH_ROBOTICS)
 
 /obj/machinery/r_n_d/server/mining
 	name = "Mining R&D Server"
 	id_with_upload_string = "1;3"
 	id_with_download_string = "1;3"
 	server_id = 3
+	blacklisted_techs_list = list(RESEARCH_ROBOTICS)
