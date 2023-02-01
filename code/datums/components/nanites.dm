@@ -191,6 +191,16 @@
 	SIGNAL_HANDLER
 
 	nanite_volume += amount
+	//a large loss of nanites is accompanied by a small amount of blood loss in humans
+	if(amount <= -5)
+		if(ishuman(host_mob))
+			var/mob/living/carbon/human/H = host_mob
+			/* Normal blood value is 560, value when nanites can deactivate is 336
+			/Max possible nanites purge is ~50 per action
+			/4,5 (~5) actions is too much for balancing by blood
+			/~2-3 actions should good
+			/so just multiply value to 2 */
+			H.blood_remove(2 * abs(amount))
 	if(nanite_volume > max_nanites)
 		reject_excess_nanites()
 	if(nanite_volume <= 0) //oops we ran out
@@ -220,11 +230,9 @@
 			host_mob.visible_message("<span class='userdanger'>A torrent of metallic grey slurry violently bursts out of [host_mob]'s face and floods out of [host_mob] skin!</span>",
 								"<span class='userdanger'>A torrent of metallic grey slurry violently bursts out of your eyes, ears, and mouth, and floods out of your skin!</span>")
 			//nanites coming out of your eyes
-			host_mob.eye_blind = 5
-			host_mob.adjustBlurriness(5)
 			host_mob.become_nearsighted(EYE_DAMAGE_TEMPORARY_TRAIT)
-			addtimer(CALLBACK(host_mob, /mob.proc/cure_nearsighted, EYE_DAMAGE_TEMPORARY_TRAIT), 10 SECONDS, TIMER_STOPPABLE)
-			host_mob.apply_effect(60, PARALYZE)
+			addtimer(CALLBACK(host_mob, /mob.proc/cure_nearsighted, EYE_DAMAGE_TEMPORARY_TRAIT), 60 SECONDS, TIMER_STOPPABLE)
+			host_mob.apply_effects(stun = 10, weaken = 15, paralyze = 5, eyeblur = 5, agony = 25)
 			if(iscarbon(host_mob))
 				var/mob/living/carbon/C = host_mob
 				//nanites coming out of your ears
@@ -295,10 +303,8 @@
 	//bodytype no longer sustains nanites
 	if(issilicon(host_mob))
 		qdel(src)
-	else if(ishuman(host_mob))
-		var/datum/species/S = species
-		if(S.flags[NO_BLOOD])
-			qdel(src)
+	if(species.flags[NO_BLOOD])
+		qdel(src)
 
 /datum/component/nanites/proc/check_access(datum/source, obj/O)
 	SIGNAL_HANDLER
