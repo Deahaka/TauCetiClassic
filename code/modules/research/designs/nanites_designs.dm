@@ -98,7 +98,7 @@
 	name = "None"
 	desc = "Warn a coder if you see this."
 	id = "default_nanites"
-	build_type = PROTOLATHE
+	build_type = NANITE_COMPILER
 	construction_time = 50
 	category = list()
 	materials = list(MAT_GLASS = 100, MAT_METAL = 100)
