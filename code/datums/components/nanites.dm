@@ -303,7 +303,8 @@
 	//bodytype no longer sustains nanites
 	if(issilicon(host_mob))
 		qdel(src)
-	if(species.flags[NO_BLOOD])
+	var/datum/species/S = species
+	if(S.flags[NO_BLOOD])
 		qdel(src)
 
 /datum/component/nanites/proc/check_access(datum/source, obj/O)
