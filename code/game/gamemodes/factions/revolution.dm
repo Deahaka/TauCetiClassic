@@ -268,22 +268,30 @@
 	return TRUE
 
 /process()
+	var/list/acceptable_targets = list()
+	var/needed_candidats = 1
 	if(last_command_report == 0 && world.time > time_of_first_announce)
 		last_command_report++
-		var/list/acceptable_targets = list()
+		needed_candidats = 3
 		for(var/mob/living/carbon/human/H in global.human_list)
 			if(IsTargetAcceptable(H, possible_pos_first))
 				acceptable_targets += H
 	if(last_command_report == 1 && world.time > time_of_second_announce)
 		last_command_report++
-		var/list/acceptable_targets = list()
+		needed_candidats = 5
 		for(var/mob/living/carbon/human/H in global.human_list)
 			if(IsTargetAcceptable(H, possible_pos_second))
 				acceptable_targets += H
 	if(last_command_report == 2 && world.time > time_of_last_announce)
 		last_command_report++
-		var/list/acceptable_targets = list()
+		needed_candidats = 7
 		for(var/mob/living/carbon/human/H in global.human_list)
 			if(IsTargetAcceptable(H, possible_pos_last))
 				acceptable_targets += H
+	if(acceptable_targets.len)
+		for(var/i in 1 to needed_candidats)
+			var/mob/living/carbon/human/M = pick(acceptable_targets)
+			do_something_bad(M)
+			acceptable_targets -= M
 
+/proc/do_something_bad(/mob/living/carbon/human/H)
