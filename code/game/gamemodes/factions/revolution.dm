@@ -237,3 +237,53 @@
 	<B>All Revolution Heads Arrested:</B> [SSStatistics.score.allarrested ? "Yes" : "No"] (Score tripled)<BR>"}
 
 	return dat
+
+/OnPostSetup()
+	time_of_first_announce = rand(10 MINUTES, 20 MINUTES)
+	// Headstuff immune to experiments
+	var/list/possible_pos_first = engineering_positions + medical_positions + civilian_positions - command_positions
+	time_of_second_announce = rand(30 MINUTES, 40 MINUTES)
+	// Do not continue to nightmare those who must take up arms to fight (civilians)
+	var/list/possible_pos_second = engineering_positions + medical_positions - command_positions
+	time_of_last_announce = rand(1 HOUR, 1 HOUR + 10 MINUTES)
+	// Now, its time turn of the officers
+	var/list/possible_pos_last = engineering_positions + medical_positions + civilian_positions + security_positions - command_positions
+
+/proc/IsTargetAcceptable(/mob/living/carbon/human/H, list/positions)
+	if(!H.client)
+		return FALSE
+	if(!H.mind)
+		return FALSE
+	if(H.client.is_afk())
+		return FALSE
+	//Let the newcomers oppose the security without having to think about their survival
+	if(H.client.player_ingame_age < 10000)
+		return FALSE
+	if(H.stat == DEAD)
+		return FALSE
+	if(!positions.len)
+		return TRUE
+	if(H.mind.assigned_role in positions)
+		return TRUE
+	return TRUE
+
+/process()
+	if(last_command_report == 0 && world.time > time_of_first_announce)
+		last_command_report++
+		var/list/acceptable_targets = list()
+		for(var/mob/living/carbon/human/H in global.human_list)
+			if(IsTargetAcceptable(H, possible_pos_first))
+				acceptable_targets += H
+	if(last_command_report == 1 && world.time > time_of_second_announce)
+		last_command_report++
+		var/list/acceptable_targets = list()
+		for(var/mob/living/carbon/human/H in global.human_list)
+			if(IsTargetAcceptable(H, possible_pos_second))
+				acceptable_targets += H
+	if(last_command_report == 2 && world.time > time_of_last_announce)
+		last_command_report++
+		var/list/acceptable_targets = list()
+		for(var/mob/living/carbon/human/H in global.human_list)
+			if(IsTargetAcceptable(H, possible_pos_last))
+				acceptable_targets += H
+
