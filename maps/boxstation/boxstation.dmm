@@ -1124,7 +1124,7 @@
 /turf/simulated/floor/airless{
 	icon_state = "solarpanel"
 	},
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "abZ" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on{
 	dir = 8
@@ -2792,7 +2792,7 @@
 	icon_state = "0-4"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "afa" = (
 /obj/structure/window/reinforced,
 /obj/structure/closet/wardrobe/red,
@@ -3713,7 +3713,7 @@
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "agJ" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 8
@@ -5624,7 +5624,7 @@
 "ajN" = (
 /obj/structure/cable,
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "ajO" = (
 /obj/machinery/computer/prisoner{
 	dir = 8
@@ -6137,10 +6137,10 @@
 	icon_state = "0-8"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "akE" = (
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "akF" = (
 /obj/structure/grille,
 /obj/structure/window/reinforced{
@@ -7271,7 +7271,7 @@
 	icon_state = "1-4"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "amq" = (
 /obj/machinery/light/small{
 	dir = 8
@@ -9868,7 +9868,7 @@
 	icon_state = "2-4"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "aqK" = (
 /obj/structure/disposalpipe/sortjunction{
 	dir = 2;
@@ -11964,7 +11964,7 @@
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "auK" = (
 /obj/machinery/kitchen_machine/oven,
 /turf/simulated/floor{
@@ -14053,7 +14053,7 @@
 /turf/simulated/floor/airless{
 	icon_state = "solarpanel"
 	},
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "ayK" = (
 /obj/machinery/firealarm{
 	dir = 4;
@@ -14947,7 +14947,7 @@
 	icon_state = "0-2"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "aAp" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
@@ -46539,7 +46539,7 @@
 	req_access = list(13)
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "bFw" = (
 /turf/simulated/floor{
 	dir = 6;
@@ -57145,7 +57145,7 @@
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/plating/airless/catwalk,
-/area/station/maintenance/auxsolarport)
+/area/station/solar/auxport)
 "ceO" = (
 /turf/simulated/floor/plating/airless,
 /area/station/rnd/test_area)
