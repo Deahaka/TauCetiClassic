@@ -73191,6 +73191,9 @@
 	d2 = 2;
 	icon_state = "0-2"
 	},
+/obj/machinery/light/small{
+	dir = 1
+	},
 /turf/simulated/floor/plating,
 /area/station/maintenance/auxsolarport)
 "hOV" = (
