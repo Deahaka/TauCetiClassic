@@ -113,7 +113,7 @@
 	passive_enabled = FALSE
 
 //Checks conditions then fires the nanite trigger effect
-/datum/nanite_program/proc/trigger(delayed = FALSE, comm_message)
+/datum/nanite_program/proc/trigger(delayed = FALSE)
 	if(!can_trigger)
 		return
 	if(!activated)
@@ -128,32 +128,14 @@
 	if(!consume_nanites(trigger_cost))
 		return
 	next_trigger = world.time + trigger_cooldown
-	on_trigger(comm_message)
+	on_trigger()
 
 //Nanite trigger effect, requires can_trigger to be used
-/datum/nanite_program/proc/on_trigger(comm_message)
+/datum/nanite_program/proc/on_trigger()
 	return
 
 /datum/nanite_program/proc/consume_nanites(amount, force = FALSE)
 	return nanites.consume_nanites(amount, force)
-
-/datum/nanite_program/proc/on_emp(severity)
-	if(program_flags & NANITE_EMP_IMMUNE)
-		return
-	if(prob(80 / severity))
-		software_error()
-
-/datum/nanite_program/proc/on_shock(shock_damage)
-	if(!program_flags & NANITE_SHOCK_IMMUNE)
-		if(prob(10))
-			software_error()
-		else if(prob(33))
-			qdel(src)
-
-/datum/nanite_program/proc/on_minor_shock()
-	if(!program_flags & NANITE_SHOCK_IMMUNE)
-		if(prob(10))
-			software_error()
 
 /datum/nanite_program/proc/on_death()
 	return
