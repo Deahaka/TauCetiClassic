@@ -65538,13 +65538,6 @@
 	icon_state = "platebot"
 	},
 /area/station/engineering/engine)
-"cAu" = (
-/obj/machinery/camera{
-	c_tag = "Incinerator";
-	dir = 8
-	},
-/turf/simulated/floor/plating,
-/area/station/maintenance/engineering)
 "cAx" = (
 /obj/machinery/door/airlock/maintenance{
 	name = "Break Room Maintenance";
@@ -69159,6 +69152,10 @@
 /area/station/maintenance/engineering)
 "cMa" = (
 /obj/structure/closet/emcloset,
+/obj/machinery/camera{
+	c_tag = "Escape Pod 4";
+	dir = 5
+	},
 /turf/simulated/floor/plating,
 /area/station/maintenance/engineering)
 "cMb" = (
@@ -109376,7 +109373,7 @@ cgQ
 aOG
 cjc
 coV
-cAu
+bQl
 ckB
 bdU
 mty
