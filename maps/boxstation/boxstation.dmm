@@ -55402,15 +55402,14 @@
 /turf/simulated/floor,
 /area/station/hallway/primary/aft)
 "bWY" = (
+/obj/machinery/atmospherics/pipe/simple/visible/cyan{
+	dir = 4
+	},
 /obj/machinery/camera{
-	c_tag = "Atmospherics Waste Tank";
+	c_tag = "Atmospherics North East";
 	network = list("SS13","Engineering")
 	},
-/turf/simulated/floor/engine{
-	name = "vacuum floor";
-	nitrogen = 0.01;
-	oxygen = 0.01
-	},
+/turf/simulated/floor,
 /area/station/engineering/atmos)
 "bWZ" = (
 /turf/simulated/floor/engine{
@@ -60265,11 +60264,6 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/machinery/camera{
-	c_tag = "Atmospherics West";
-	dir = 5;
-	network = list("SS13","Engineering")
-	},
 /turf/simulated/floor{
 	icon_state = "bot"
 	},
@@ -61093,10 +61087,6 @@
 /area/station/aisat)
 "coF" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/blue,
-/obj/machinery/camera{
-	c_tag = "Atmospherics North East";
-	network = list("SS13","Engineering")
-	},
 /turf/simulated/floor{
 	dir = 1;
 	icon_state = "blue"
@@ -68583,6 +68573,11 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 10
 	},
+/obj/machinery/camera{
+	c_tag = "Atmospherics North West";
+	network = list("SS13","Engineering");
+	dir = 8
+	},
 /turf/simulated/floor{
 	dir = 1;
 	icon_state = "warning"
@@ -72132,6 +72127,17 @@
 	dir = 4
 	},
 /turf/simulated/floor,
+/area/station/engineering/atmos)
+"fYM" = (
+/obj/machinery/portable_atmospherics/canister/oxygen,
+/obj/machinery/camera{
+	c_tag = "Atmospherics West";
+	dir = 5;
+	network = list("SS13","Engineering")
+	},
+/turf/simulated/floor{
+	icon_state = "bot"
+	},
 /area/station/engineering/atmos)
 "fZb" = (
 /obj/machinery/firealarm{
@@ -77929,10 +77935,6 @@
 	},
 /area/station/medical/hallway)
 "mwb" = (
-/obj/machinery/camera{
-	c_tag = "Atmospherics North West";
-	network = list("SS13","Engineering")
-	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 5
 	},
@@ -78078,13 +78080,15 @@
 /turf/simulated/floor/plating,
 /area/station/maintenance/medbay)
 "mIn" = (
-/obj/machinery/light{
-	dir = 8
-	},
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on{
 	dir = 4
 	},
 /obj/structure/closet/firecloset,
+/obj/machinery/camera{
+	c_tag = "Atmospherics South West";
+	dir = 4;
+	network = list("SS13","Engineering")
+	},
 /turf/simulated/floor{
 	dir = 8;
 	icon_state = "caution"
@@ -79214,11 +79218,6 @@
 	},
 /area/station/engineering/break_room)
 "odb" = (
-/obj/machinery/camera{
-	c_tag = "Atmospherics South West";
-	dir = 4;
-	network = list("SS13","Engineering")
-	},
 /turf/simulated/floor{
 	dir = 8;
 	icon_state = "caution"
@@ -79766,6 +79765,9 @@
 /obj/machinery/firealarm{
 	dir = 8;
 	pixel_x = -24
+	},
+/obj/machinery/light{
+	dir = 8
 	},
 /turf/simulated/floor{
 	dir = 8;
@@ -119376,7 +119378,7 @@ bQQ
 ctd
 cgH
 bRT
-bNO
+fYM
 cAG
 cAG
 bVP
@@ -122201,7 +122203,7 @@ cdA
 cce
 bQa
 bSV
-bQQ
+bWY
 bVD
 bUw
 bYu
@@ -123488,7 +123490,7 @@ cAi
 cdA
 aah
 bVI
-bWY
+bWZ
 bWZ
 bWZ
 bVI
