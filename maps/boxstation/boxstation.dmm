@@ -66177,9 +66177,8 @@
 	},
 /obj/machinery/camera/emp_proof{
 	c_tag = "Singularity North-West";
-	dir = 3;
-	network = list("Singularity");
-	pixel_x = 20
+	dir = 6;
+	network = list("Singularity")
 	},
 /turf/simulated/floor/plating/airless{
 	dir = 5;
@@ -83207,9 +83206,8 @@
 	},
 /obj/machinery/camera/emp_proof{
 	c_tag = "Singularity Observation";
-	dir = 1;
-	network = list("Singularity");
-	pixel_x = 20
+	dir = 10;
+	network = list("Singularity")
 	},
 /obj/structure/cable,
 /turf/simulated/floor/plating/airless{
