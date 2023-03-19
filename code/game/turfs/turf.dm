@@ -81,7 +81,7 @@
 	if(Adjacent(user))
 		return attack_hand(user)
 
-/turf/ex_act(severity)
+/turf/ex_act(severity, making_hole = TRUE)
 	return 0
 
 /turf/bullet_act(obj/item/projectile/Proj, def_zone)

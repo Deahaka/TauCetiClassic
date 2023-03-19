@@ -692,8 +692,9 @@ steam.start() -- spawns the effect
 	var/amount 						// TNT equivalent
 	var/flashing = 0			// does explosion creates flash effect?
 	var/flashing_factor = 0		// factor of how powerful the flash effect relatively to the explosion
+	var/destroy_turfs = TRUE
 
-/datum/effect/effect/system/reagents_explosion/set_up (amt, loc, flash = 0, flash_fact = 0)
+/datum/effect/effect/system/reagents_explosion/set_up (amt, loc, flash = 0, flash_fact = 0, make_hole = TRUE)
 	amount = amt
 	if(istype(loc, /turf))
 		location = loc
@@ -702,6 +703,7 @@ steam.start() -- spawns the effect
 
 	flashing = flash
 	flashing_factor = flash_fact
+	destroy_turfs = make_hole
 
 	return
 
@@ -739,8 +741,7 @@ steam.start() -- spawns the effect
 
 		for(var/mob/M in viewers(world.view, location))
 			to_chat(M, "<span class='red'>The solution violently explodes.</span>")
-
-		explosion(location, devastation, heavy, light, flash)
+		explosion(location, devastation, heavy, light, flash, make_hole = destroy_turfs)
 
 /datum/effect/effect/system/reagents_explosion/proc/holder_damage(atom/holder)
 	if(holder)

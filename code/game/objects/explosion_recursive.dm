@@ -3,7 +3,7 @@
 
 var/global/list/explosion_turfs = list()
 
-/proc/explosion_rec(turf/epicenter, power)
+/proc/explosion_rec(turf/epicenter, power, make_hole = TRUE)
 	var/explosion_in_progress = 0
 	var/loopbreak = 0
 	while(explosion_in_progress)
@@ -48,7 +48,7 @@ var/global/list/explosion_turfs = list()
 		var/x = T.x
 		var/y = T.y
 		var/z = T.z
-		T.ex_act(severity)
+		T.ex_act(severity, make_hole)
 		if(!T)
 			T = locate(x,y,z)
 		for(var/atom/A in T)
