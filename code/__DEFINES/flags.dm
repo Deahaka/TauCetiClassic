@@ -67,6 +67,7 @@ var/global/list/bitflags = list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define AA_MATCH_TARGET_OVERLAYS (1<<1)
 
 //Species flags.
+#define NO_EYES            "no_eyes"
 #define NO_BLOOD           "no_blood"
 #define NO_BREATHE         "no_breathe"
 #define NO_SCAN            "no_scan"
@@ -95,7 +96,6 @@ var/global/list/bitflags = list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define FACEHUGGABLE       "facehuggable"
 #define NO_EMOTION         "no_emotion"
 #define NO_DNA             "no_dna"
-#define NO_EYES            "no_eyes"
 
 //Species Diet Flags
 #define DIET_MEAT		1 // Meat.
