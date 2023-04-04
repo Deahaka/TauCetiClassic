@@ -112,6 +112,10 @@
 		M.virus2["[D.uniqueID]"] = D
 		M.med_hud_set_status()
 
+/obj/machinery/hydroponics/proc/infect_plant_virus2(datum/disease2/disease/source)
+	var/datum/disease2/disease/D = source.getcopy()
+	virus2["[D.uniqueID]"] = D
+
 //Infects mob M with random lesser disease, if he doesn't have one
 /proc/infect_mob_random_lesser(mob/living/carbon/M)
 	var/datum/disease2/disease/D = new /datum/disease2/disease
