@@ -28,6 +28,8 @@
 	var/obj/item/seeds/myseed = null //The currently planted seed
 	var/rating = 1
 	var/unwrenchable = TRUE
+	var/list/datum/disease2/disease/virus2 = list()
+	var/antibodies = 0
 
 /obj/machinery/hydroponics/constructable
 	name = "hydroponics tray"
@@ -189,7 +191,27 @@
 			needs_update = TRUE
 		if (needs_update)
 			update_icon()
-	return
+
+		handle_virus_updates()
+
+/obj/machinery/hydroponics/proc/handle_virus_updates()
+	if(antibodies >= 0)
+		antibodies--
+	if(prob(antibodies * 10))
+		for(var/id in virus2)
+			var/datum/disease2/disease/V = virus2[id]
+			if(!V)
+				continue
+			V.deactivate(src)
+		virus2 = list()
+		return
+	if(virus2.len)
+		for(var/id in virus2)
+			var/datum/disease2/disease/V = virus2[id]
+			if(isnull(V)) // copypasting
+				CRASH("virus2 nulled before calling activate()")
+			else
+				V.activate(src)
 
 /obj/machinery/hydroponics/proc/ripen()
 	harvest = TRUE
@@ -564,6 +586,7 @@
 		if(S.has_reagent("radium", 1))
 			adjustHealth(-round(S.get_reagent_amount("radium")*1.5))
 			adjustToxic(round(S.get_reagent_amount("radium")*2))
+			antibodies++
 		if(S.has_reagent("radium", 10))
 			switch(rand(100))
 				if(91 to 100)
@@ -582,7 +605,7 @@
 					mutatepest()
 				else
 					to_chat(user, "Nothing happens...")
-
+			antibodies += 10
 		// The best stuff there is. For testing/debugging.
 		if(S.has_reagent("adminordrazine", 1))
 			adjustWater(round(S.get_reagent_amount("adminordrazine")*1))
@@ -858,67 +881,45 @@
 
 /// Tray Setters - The following procs adjust the tray or plants variables, and make sure that the stat doesn't go out of bounds.///
 /obj/machinery/hydroponics/proc/adjustNutri(adjustamt)
-	nutrilevel += adjustamt
-	nutrilevel = max(nutrilevel, 0)
-	nutrilevel = min(nutrilevel, maxnutri)
+	nutrilevel = clamp(nutrilevel + adjustamt, 0, maxnutri)
 
 /obj/machinery/hydroponics/proc/adjustWater(adjustamt)
-	waterlevel += adjustamt
-	waterlevel = max(waterlevel, 0)
-	waterlevel = min(waterlevel, maxwater)
+	waterlevel = clamp(waterlevel + adjustamt, 0, maxwater)
 	if(adjustamt > 0)
 		adjustToxic(-round(adjustamt / 4))//Toxicity dilutation code. The more water you put in, the lesser the toxin concentration.
 
 /obj/machinery/hydroponics/proc/adjustHealth(adjustamt)
 	if(planted && !dead)
-		health += adjustamt
-		health = max(health, 0)
-		health = min(health, myseed.endurance)
+		health = clamp(health + adjustamt, 0, myseed.endurance)
 
 /obj/machinery/hydroponics/proc/adjustToxic(adjustamt)
-	toxic += adjustamt
-	toxic = max(toxic, 0)
-	toxic = min(toxic, 100)
+	toxic = clamp(toxic + adjustamt, 0, 100)
 
 /obj/machinery/hydroponics/proc/adjustPests(adjustamt)
-	pestlevel += adjustamt
-	pestlevel = max(pestlevel, 0)
-	pestlevel = min(pestlevel, 10)
+	pestlevel = clamp(pestlevel + adjustamt, 0, 10)
 
 /obj/machinery/hydroponics/proc/adjustWeeds(adjustamt)
-	weedlevel += adjustamt
-	weedlevel = max(weedlevel, 0)
-	pestlevel = min(pestlevel, 10)
+	weedlevel = clamp(weedlevel + adjustamt, 0, 10)
 
 /// Seed Setters ///
 /obj/machinery/hydroponics/proc/adjustSYield(adjustamt)//0,10
 	if(myseed.yield != -1) // Unharvestable shouldn't suddenly turn harvestable
-		myseed.yield += adjustamt
-		myseed.yield = max(myseed.yield, 0)
-		myseed.yield = min(myseed.yield, 10)
+		myseed.yield = clamp(myseed.yield + adjustamt, 0, 10)
 		if(myseed.yield <= 0 && myseed.plant_type == 2)
 			myseed.yield = 1 // Mushrooms always have a minimum yield of 1.
 
-/obj/machinery/hydroponics/proc/adjustSLife(adjustamt)//10,100
-	myseed.lifespan += adjustamt
-	myseed.lifespan = max(myseed.lifespan, 10)
-	myseed.lifespan = min(myseed.lifespan, 100)
+/obj/machinery/hydroponics/proc/adjustSLife(adjustamt)
+	myseed.lifespan = clamp(myseed.lifespan + adjustamt, 10, 100)
 
-/obj/machinery/hydroponics/proc/adjustSEnd(adjustamt)//10,100
-	myseed.endurance += adjustamt
-	myseed.endurance = max(myseed.endurance, 10)
-	myseed.endurance = min(myseed.endurance, 100)
+/obj/machinery/hydroponics/proc/adjustSEnd(adjustamt)
+	myseed.endurance = clamp(myseed.endurance + adjustamt, 10, 100)
 
-/obj/machinery/hydroponics/proc/adjustSProduct(adjustamt)//2,10
-	myseed.production += adjustamt
-	myseed.production = max(myseed.endurance, 2)
-	myseed.production = min(myseed.endurance, 10)
+/obj/machinery/hydroponics/proc/adjustSProduct(adjustamt)
+	myseed.production = clamp(myseed.production + adjustamt, 2, 10)
 
 /obj/machinery/hydroponics/proc/adjustSPot(adjustamt)//0,100
 	if(myseed.potency != -1) //Not all plants have a potency
-		myseed.potency += adjustamt
-		myseed.potency = max(myseed.potency, 0)
-		myseed.potency = min(myseed.potency, 100)
+		myseed.potency = clamp(myseed.potency + adjustamt, 0, 100)
 
 ///////////////////////////////////////////////////////////////////////////////
 /obj/machinery/hydroponics/soil
