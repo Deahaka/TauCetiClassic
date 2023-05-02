@@ -333,6 +333,10 @@
 	#define COMPONENT_BLOCK_SWAP 1
 ///from mob/living/vomit(): (/mob)
 #define COMSIG_LIVING_VOMITED "living_vomited"
+///from base of /mob/living/proc/apply_damage(): (damage, damagetype, def_zone, blocked)
+#define COMSIG_MOB_APPLY_DAMAGE "mob_apply_damage"
+///from /mob/living/proc/apply_damage(), works like above but after the damage is actually inflicted: (damage, damagetype, def_zone, blocked)
+#define COMSIG_MOB_AFTER_APPLY_DAMAGE "mob_after_apply_damage"
 
 /// from /datum/action/changeling/transform/sting_action(): (mob/living/carbon/human/user)
 #define COMSIG_CHANGELING_TRANSFORM "changeling_transform"

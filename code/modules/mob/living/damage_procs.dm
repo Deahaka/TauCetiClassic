@@ -9,24 +9,26 @@
 	standard 0 if fail
 */
 /mob/living/proc/apply_damage(damage = 0, damagetype = BRUTE, def_zone = null, blocked = 0, damage_flags = 0, used_weapon = null)
+	SEND_SIGNAL(src, COMSIG_MOB_APPLY_DAMAGE, damage, damagetype, def_zone, blocked)
 	if(!damage || (blocked >= 100))
 		return FALSE
-
+	var/damage_amount = damage * blocked_mult(blocked)
 	switch(damagetype)
 		if(BRUTE)
-			adjustBruteLoss(damage * blocked_mult(blocked))
+			adjustBruteLoss(damage_amount)
 		if(BURN)
-			adjustFireLoss(damage * blocked_mult(blocked))
+			adjustFireLoss(damage_amount)
 		if(TOX)
-			adjustToxLoss(damage * blocked_mult(blocked))
+			adjustToxLoss(damage_amount)
 		if(OXY)
-			adjustOxyLoss(damage * blocked_mult(blocked))
+			adjustOxyLoss(damage_amount)
 		if(CLONE)
-			adjustCloneLoss(damage * blocked_mult(blocked))
+			adjustCloneLoss(damage_amount)
 		if(HALLOSS)
-			adjustHalLoss(damage * blocked_mult(blocked))
-
+			adjustHalLoss(damage_amount)
 	updatehealth()
+	SEND_SIGNAL(src, COMSIG_MOB_AFTER_APPLY_DAMAGE, damage, damagetype, def_zone, blocked)
+	to_chat(world, "31 ME")
 	return TRUE
 
 

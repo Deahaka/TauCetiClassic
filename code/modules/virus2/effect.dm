@@ -741,16 +741,50 @@
 			to_chat(mob, "<span class='warning'>[pick("Your stomach hurts a lot.", "Your skin seems to become more pale.", "You feel confused.", "Your breathing is hot and irregular.")]</span>")
 			mob.adjustToxLoss(10)
 
-/datum/disease2/effect/nerve_support
-	name = "Nerve Support"
-	desc = "The virus injects nanites into the host's body, which act as a secondary nervous system, protecting against nerve palsies."
-	level = 3
+/datum/disease2/effect/trait_based
+	name = "Trait Based Effect (does nothing)"
+	desc = "You should not be seeing this."
+	level = 0
 	max_stage = 3
 	cooldown = 7
 	var/trait_added = FALSE
+	var/trait_define = TRAIT_STEEL_NERVES
+
+/datum/disease2/effect/trait_based/proc/is_trait_enabled(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	return TRUE
+
+/datum/disease2/effect/trait_based/proc/remove_virus_trait(mob/mob)
+	REMOVE_TRAIT(mob, trait_define, VIRUS_TRAIT)
+	trait_added = FALSE
+
+/datum/disease2/effect/trait_based/proc/can_activate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	if(trait_added)
+		return FALSE
+	if(!is_trait_enabled(mob, holder, disease))
+		return FALSE
+	return TRUE
+
+/datum/disease2/effect/trait_based/activate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	if(!can_activate())
+		return
+	ADD_TRAIT(mob, trait_define, VIRUS_TRAIT)
+	trait_added = TRUE
+
+/datum/disease2/effect/trait_based/deactivate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	remove_virus_trait(mob)
+
+/datum/disease2/effect/trait_based/nerve_support
+	name = "Nerve Support"
+	desc = "The virus injects nanites into the host's body, which act as a secondary nervous system, protecting against nerve palsies."
+	level = 3
 	COOLDOWN_DECLARE(senses_message)
 
-/datum/disease2/effect/nerve_support/activate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+/datum/disease2/effect/trait_based/nerve_support/is_trait_enabled(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	if(holder.stage != 3)
+		return FALSE
+	return ..()
+
+/datum/disease2/effect/trait_based/nerve_support/activate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
 	switch(holder.stage)
 		if(1)
 			if(COOLDOWN_FINISHED(src, senses_message))
@@ -759,15 +793,47 @@
 		if(2)
 			mob.make_dizzy(min(mob.dizziness + 10, 15))
 			mob.adjustHalLoss(-3)
-		if(3)
-			if(trait_added)
-				return
-			ADD_TRAIT(mob, TRAIT_STEEL_NERVES, VIRUS_TRAIT)
-			trait_added = TRUE
+		else
+			return ..()
 
-/datum/disease2/effect/nerve_support/deactivate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
-	REMOVE_TRAIT(mob, TRAIT_STEEL_NERVES, VIRUS_TRAIT)
-	trait_added = FALSE
+/datum/disease2/effect/trait_based/impulse
+	name = "Impulse"
+	desc = "The virus injects nanites into the host's body, which bring the host out of a state of paralysis when threatened."
+	level = 3
+	cooldown = 120
+	trait_define = TRAIT_IMPULSE
+
+/datum/disease2/effect/trait_based/impulse/activate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	if(can_activate())
+		. = ..()
+		RegisterSignal(mob, COMSIG_MOB_AFTER_APPLY_DAMAGE, PROC_REF(try_to_impulse))
+		to_chat(world, "ABOB")
+	else
+		to_chat(world, "ABB")
+
+/datum/disease2/effect/trait_based/impulse/deactivate(mob/living/carbon/mob, datum/disease2/effectholder/holder, datum/disease2/disease/disease)
+	UnregisterSignal(mob, COMSIG_MOB_AFTER_APPLY_DAMAGE)
+	to_chat(world, "ABIB")
+	return ..()
+
+/datum/disease2/effect/trait_based/impulse/proc/try_to_impulse(datum/source, damage, damagetype, def_zone, blocked)
+	SIGNAL_HANDLER
+	to_chat(world, "ABEB")
+	var/damage_taken = damage * blocked_mult(blocked)
+	if(damage_taken <= 0)
+		return
+	if(!iscarbon(source))
+		return
+	var/mob/living/carbon/M = source
+	if(!M.IsStun())
+		return
+	to_chat(world, "ABOBUS")
+	M.SetStunned(0)
+	M.setHalLoss(0)
+	//some slowdown
+	M.shock_stage = 15
+	UnregisterSignal(M, COMSIG_MOB_AFTER_APPLY_DAMAGE)
+	remove_virus_trait(M)
 
 /*/datum/disease2/effect/shakey
 	name = "World Shaking Syndrome"
