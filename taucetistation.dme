@@ -304,6 +304,7 @@
 #include "code\datums\atom_huds\atom_hud_antag.dm"
 #include "code\datums\atom_huds\atom_hud_data.dm"
 #include "code\datums\components\_component.dm"
+#include "code\datums\components\acid_deposit.dm"
 #include "code\datums\components\altcraft.dm"
 #include "code\datums\components\attack_self_effect.dm"
 #include "code\datums\components\aura_healing.dm"
