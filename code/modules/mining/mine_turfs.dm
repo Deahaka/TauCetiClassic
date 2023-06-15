@@ -137,6 +137,8 @@
 		name = "[mineral.display_name] rich deposit"
 		cut_overlays()
 		add_overlay("rock_[mineral.name]")
+		for(var/turf/simulated/T in range(src, 5))
+			T.AddComponent(/datum/component/acid_deposit)
 	else
 		name = "Rock"
 		icon_state = "rock"
@@ -151,8 +153,12 @@
 				if(prob(2))
 					if(SSticker.current_state > GAME_STATE_SETTING_UP)
 						ChangeTurf(/turf/simulated/floor/plating/airless/asteroid/cave)
+						for(var/turf/simulated/T in range(src, 5))
+							T.AddComponent(/datum/component/acid_deposit)
 					else
-						new/turf/simulated/floor/plating/airless/asteroid/cave(src)
+						var/turf/simulated/floor/plating/airless/asteroid/cave/A = new/turf/simulated/floor/plating/airless/asteroid/cave(src)
+						for(var/turf/simulated/T in range(A, 5))
+							T.AddComponent(/datum/component/acid_deposit)
 
 //Not even going to touch this pile of spaghetti
 /turf/simulated/mineral/attackby(obj/item/weapon/W, mob/user)
