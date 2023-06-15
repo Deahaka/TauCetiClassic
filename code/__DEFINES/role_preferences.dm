@@ -23,6 +23,45 @@
 #define ROLE_ERT               "Emergency Response Team"
 #define ROLE_DRONE             "Maintenance Drone"
 
+
+#define GROUP_REVOLUTION "group_revolution"
+#define GROUP_TRAITOR "group_traitor"
+#define GROUP_NUCLEAR "group_nuclear"
+#define GROUP_CHANGELING "group_changeling"
+#define GROUP_WIZARD "group_wizard"
+#define GROUP_MALFUNCTION "group_malfunction"
+#define GROUP_REIDER "group_reider"
+#define GROUP_REPLICATION "group_replication"
+#define GROUP_ABDUCTION "group_abduction"
+#define GROUP_CULT "group_cult"
+#define GROUP_ALIEN "group_alien"
+#define GROUP_BLOB "group_blob"
+#define GROUP_SHADOWLING "group_shadowling"
+#define GROUP_NINJA "group_ninja"
+#define GROUP_FAMILIES "group_families"
+#define GROUP_GHOST "group_ghost"
+
+var/list/role_groups = list(
+	GROUP_REVOLUTION = list(ROLE_REV),
+	GROUP_TRAITOR = list(ROLE_TRAITOR),
+	GROUP_NUCLEAR = list(ROLE_OPERATIVE),
+	GROUP_CHANGELING = list(ROLE_CHANGELING),
+	GROUP_WIZARD = list(ROLE_WIZARD),
+	GROUP_MALFUNCTION = list(ROLE_MALF),
+	GROUP_REIDER = list(ROLE_RAIDER),
+	GROUP_REPLICATION = list(ROLE_REPLICATOR),
+	GROUP_ABDUCTION = list(ROLE_ABDUCTOR),
+	GROUP_CULT = list(ROLE_CULTIST),
+	GROUP_ALIEN = list(ROLE_ALIEN),
+	GROUP_BLOB = list(ROLE_BLOB),
+	GROUP_SHADOWLING = list(ROLE_SHADOWLING),
+	GROUP_NINJA = list(ROLE_NINJA),
+	GROUP_FAMILIES = list(ROLE_FAMILIES),
+	GROUP_GHOST = list(ROLE_GHOSTLY)
+)
+
+#define is_role_in_group(prefs, role_group)
+
 //Prefs for ignore a question which give special_roles
 #define IGNORE_PAI          "Pai"
 #define IGNORE_TSTAFF       "Religion staff"
