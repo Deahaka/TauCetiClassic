@@ -136,3 +136,15 @@
 	. = ..()
 	var/mob/living/carbon/human/H = antag.current
 	H.equip_or_collect(new /obj/item/device/encryptionkey/syndicate(antag.current), SLOT_R_STORE)
+
+//Without steal objectives. Born to kill
+/datum/role/traitor/auto
+
+/datum/role/traitor/auto/add_one_objective(datum/mind/traitor)
+	switch(rand(1,120))
+		if(1 to 79)
+			AppendObjective(/datum/objective/target/assassinate, TRUE)
+		if(80 to 109)
+			AppendObjective(/datum/objective/target/harm, TRUE)
+		else
+			AppendObjective(/datum/objective/target/dehead, TRUE)

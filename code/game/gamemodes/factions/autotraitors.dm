@@ -2,7 +2,11 @@
 
 /datum/faction/traitor/auto
 	name = "AutoTraitors"
+	accept_latejoiners = TRUE
+	roletype = /datum/role/traitor/auto
+	initroletype = /datum/role/traitor/auto
 	var/next_try = 0
+	var/list/traitors_disqualified = list()
 
 /datum/faction/traitor/auto/can_setup(num_players)
 	var/max_traitors = 1
@@ -53,7 +57,7 @@
 
 	var/max_traitors = 1
 	var/traitor_prob = 0
-	max_traitors = round(playercount / 10) + 1
+	max_traitors = round(playercount / 10) + 1 + traitors_disqualified.len
 	traitor_prob = (playercount - (max_traitors - 1) * 10) * 5
 	if(traitorcount < max_traitors - 1)
 		traitor_prob += 50
@@ -76,18 +80,36 @@
 	return ..()
 
 /datum/faction/traitor/auto/latespawn(mob/M)
-	var/list/list_of_traitors = list()
+	to_chat(world, "Latespawn go")
+	var/list/list_of_all_traitors = list()
+	//Catch roles from current traitor gamemode
 	var/datum/faction/traitor/T = find_faction_by_type(/datum/faction/traitor)
 	if(T)
+		to_chat(world, "No faction")
 		for(var/datum/role/members in members)
-			list_of_traitors += members.antag.current
+			list_of_all_traitors += members.antag.current
+	//Count roles from current early created faction
 	for(var/datum/role/R in members)
-		list_of_traitors += R.antag.current
-	for(var/mob/M in list_of_traitors)
+		list_of_all_traitors += R.antag.current
+	to_chat(world, "traitors [list_of_all_traitors.len]")
+	var/list/disqualified = list()
+	for(var/mob/agents in list_of_all_traitors)
 		if(iscarbon(M))
-			var/mob/living/carbon/C = M
-				if(C.handcuffed)
-		if(!ishuman(M))
+			var/mob/living/carbon/C = agents
+			if(C.handcuffed)
+				disqualified += C
+				continue
+		if(!ishuman(agents))
+			disqualified += agents
+			continue
 		if(M.stat == DEAD)
-		//TODO сохранить в фракции нужные задания для трейторов тут, в HandleRecriit или add_faction_member(F, mob, TRUE) как-то иначе добавлять кастомное задание
+			disqualified += agents
+	to_chat(world, "discq [disqualified.len]")
+	for(var/failed_agent in disqualified)
+		if(!(failed_agent in traitors_disqualified))
+			traitors_disqualified += failed_agent
+	to_chat(world, "max_roles now [max_roles]")
+	//Signal that you need agents from game_mode/latespawn() or traitorcheckloop()
+	max_roles = list_of_all_traitors.len + traitors_disqualified.len
+	to_chat(world, "max_roles after [max_roles]")
 #undef SPAWN_CD
