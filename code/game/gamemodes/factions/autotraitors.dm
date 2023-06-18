@@ -75,4 +75,19 @@
 	addtimer(CALLBACK(src, .proc/traitorcheckloop), SPAWN_CD)
 	return ..()
 
+/datum/faction/traitor/auto/latespawn(mob/M)
+	var/list/list_of_traitors = list()
+	var/datum/faction/traitor/T = find_faction_by_type(/datum/faction/traitor)
+	if(T)
+		for(var/datum/role/members in members)
+			list_of_traitors += members.antag.current
+	for(var/datum/role/R in members)
+		list_of_traitors += R.antag.current
+	for(var/mob/M in list_of_traitors)
+		if(iscarbon(M))
+			var/mob/living/carbon/C = M
+				if(C.handcuffed)
+		if(!ishuman(M))
+		if(M.stat == DEAD)
+		//TODO сохранить в фракции нужные задания для трейторов тут, в HandleRecriit или add_faction_member(F, mob, TRUE) как-то иначе добавлять кастомное задание
 #undef SPAWN_CD
