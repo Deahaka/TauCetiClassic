@@ -1,58 +1,64 @@
-var/global/meteor_danger_active = FALSE //Enable meteor in ticker or whenever you need
+#define METEOR_COOLDOWN 30 MINUTES
+#define SHIELD_COOLDOWN 30 SECONDS
+
+#define DIRECTION_NORTH "North"
+#define DIRECTION_SOUTH "South"
+#define DIRECTION_EAST "East"
+#define DIRECTION_WEST "West"
+#define DIRECTION_ALL "360"
+#define DIRECTION_NONE "None"
+
+var/global/meteor_danger_active = TRUE
+var/global/list/radars = list()
+var/global/list/shielders = list()
+
+ADD_TO_GLOBAL_LIST(/obj/machinery/computer/radar, radars)
+/obj/machinery/computer/radar
+	var/last_saved_time = 30
+
+/obj/machinery/computer/radar/atom_init()
+	. = ..()
+	START_PROCESSING(SSmachines, src)
+
+/obj/machinery/computer/radar/examine(mob/user)
+	to_chat(user, "<span class='warning'>[SSmeteorize.setup_message_for_crew()]! Направление: [SSmeteorize.meteor_direction].</span>")
+
+/obj/machinery/computer/radar/proc/announce_for_viewers()
+	audible_message("<span class='warning'>[SSmeteorize.setup_message_for_crew()]!</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "New message!")
+
+/obj/machinery/computer/radar/process()
+	var/awaiting_time = SSmeteorize.get_minutes()
+	if(awaiting_time < 1)
+		if(last_saved_time < awaiting_time)
+			return
+		announce_for_viewers()
+	else if(awaiting_time < 5)
+		if(last_saved_time < awaiting_time)
+			return
+		announce_for_viewers()
+	else if(awaiting_time < 10)
+		if(last_saved_time < awaiting_time)
+			return
+		announce_for_viewers()
+	last_saved_time = awaiting_time
+
+/obj/machinery/computer/radar/attack_hand(mob/user)
+	. = ..()
+	if(.)
+		return
+	examine(user)
 
 SUBSYSTEM_DEF(meteorize)
 	name = "Meteorize"
-	wait = 3 MINUTES
+	wait = METEOR_COOLDOWN
 	init_order = SS_INIT_DEFAULT
 	flags = SS_NO_INIT
 
 	var/endtime = 0
 	var/list/protected_areas = list()
-
-//First fire in roundstart
-/datum/controller/subsystem/meteorize/fire()
-	set_endtime()
-	if(!global.meteor_danger_active)
-		return
-
-	addtimer(CALLBACK(src, PROC_REF(announce_crew)), 20 MINUTES)
-	addtimer(CALLBACK(src, PROC_REF(announce_crew)), 25 MINUTES)
-	addtimer(CALLBACK(src, PROC_REF(announce_crew)), 29 MINUTES)
-
-	burn_them_out()
-
-/datum/controller/subsystem/meteorize/proc/burn_them_out()
-	SSincinerating.affected_areas.Cut()
-	for(var/area in protected_areas)
-		var/area/target_area = get_area_by_type(area)
-		SSincinerating.affected_areas += target_area
-		var/list/contents = target_area.GetAreaAllContents()
-		var/list/area_atoms = shuffle(contents)
-		for(var/atom/A as anything in area_atoms)
-			A.station_shield_effect()
-	addtimer(CALLBACK(src, PROC_REF(stop_burning)), 30 SECONDS)
-
-/datum/controller/subsystem/meteorize/proc/stop_burning()
-	SSincinerating.incinerating.Cut()
-
-/datum/controller/subsystem/meteorize/proc/announce_crew()
-	var/obj/item/device/radio/intercom/announcer = new /obj/item/device/radio/intercom(null)
-	announcer.config(list("Common" = 1))
-	announcer.autosay("[setup_message_for_crew()].", "Announcer", "Common", freq = radiochannels["Common"])
-	qdel(announcer)
-
-/datum/controller/subsystem/meteorize/proc/setup_message_for_crew()
-	var/data = "Возможное столкновение с метеором через: "
-	var/time = round((endtime - world.timeofday) / 600) * 10
-	data += "[time] "
-	switch(time)
-		if(1)
-			data += "минуту"
-		if(2 to 4)
-			data += "минуты"
-		else
-			data += "минут"
-	return data
+	var/protected_direction = DIRECTION_NONE
+	var/meteor_direction = DIRECTION_NONE
+	var/roundstart = TRUE
 
 /datum/controller/subsystem/meteorize/proc/set_endtime()
 	endtime = world.timeofday + wait
@@ -67,7 +73,40 @@ SUBSYSTEM_DEF(meteorize)
 /datum/controller/subsystem/meteorize/proc/clear_protected_areas()
 	protected_areas.Cut()
 
-//round((SSeconomy.endtime - world.timeofday) / 600) * 10
+/datum/controller/subsystem/meteorize/proc/setup_meteor_direction()
+	return pick(DIRECTION_NORTH, DIRECTION_SOUTH, DIRECTION_EAST, DIRECTION_WEST)
+
+/datum/controller/subsystem/meteorize/proc/get_minutes()
+	return round((endtime - world.timeofday) / 600)
+
+//First fire in roundstart
+/datum/controller/subsystem/meteorize/fire()
+	set_endtime()
+	if(!global.meteor_danger_active)
+		return
+	for(var/obj/machinery/computer/radar/R as anything in global.radars)
+		R.last_saved_time = wait / 10
+	if(roundstart)
+		roundstart = FALSE
+		meteor_direction = setup_meteor_direction()
+		return
+	if(meteor_direction != protected_direction)
+		if(protected_direction != DIRECTION_ALL)
+			spawn_meteors(10, meteors_catastrophic)
+	meteor_direction = setup_meteor_direction()
+
+/datum/controller/subsystem/meteorize/proc/setup_message_for_crew()
+	var/data = "Возможное столкновение с метеором через: "
+	var/time = get_minutes()
+	data += "[time] "
+	switch(time)
+		if(1)
+			data += "минуту"
+		if(2 to 4)
+			data += "минуты"
+		else
+			data += "минут"
+	return data
 
 /atom/proc/station_shield_effect()
 	return FALSE
@@ -102,7 +141,6 @@ SUBSYSTEM_DEF(incinerating)
 /datum/controller/subsystem/incinerating/fire(resumed = 0)
 	if(!resumed)
 		currentrun = incinerating.Copy()
-	//cache for sanic speed (lists are references anyways)
 	var/list/run_list = currentrun
 
 	while(run_list.len)
@@ -120,18 +158,20 @@ SUBSYSTEM_DEF(incinerating)
 			return
 
 /datum/controller/subsystem/incinerating/Recover()
-	if (istype(SSincinerating.incinerating))
+	if(istype(SSincinerating.incinerating))
 		incinerating = SSincinerating.incinerating
 
-
+ADD_TO_GLOBAL_LIST(/obj/machinery/computer/shield_activator, shielders)
 /obj/machinery/computer/shield_activator
+	var/selected_targetzone = DIRECTION_NONE
 	//Write your zones, selecting multiple would require a bit of rewriting
 	var/list/safespaces = list(
-		"North" = /area/station/maintenance/starboardsolar,
-		"South" = /area/station/maintenance/auxsolarport,
-		"East" = /area/station/maintenance/auxsolarstarboard,
-		"West" = /area/station/maintenance/portsolar
+		DIRECTION_NORTH = /area/station/maintenance/starboardsolar,
+		DIRECTION_SOUTH = /area/station/maintenance/auxsolarport,
+		DIRECTION_EAST = /area/station/maintenance/auxsolarstarboard,
+		DIRECTION_WEST = /area/station/maintenance/portsolar
 	)
+	COOLDOWN_DECLARE(activate_shield)
 
 /obj/machinery/computer/shield_activator/proc/setup_browsewindow(dat)
 	var/datum/browser/popup = new(usr, "computer", "Shield Activate", 400, 500)
@@ -140,22 +180,52 @@ SUBSYSTEM_DEF(incinerating)
 
 /obj/machinery/computer/shield_activator/proc/get_userwindow_content()
 	var/dat = ""
-	dat += "<A href='?src=\ref[src];select_target=1'>Select Targetzone</A><BR>"
+	dat += "<center>Selected Direction: [selected_targetzone].</center><BR>"
+	dat += "<center><A href='?src=\ref[src];select_target=1'>Select Targetzone</A></center><BR>"
+	if(COOLDOWN_FINISHED(src, activate_shield))
+		dat += "<center><A href='?src=\ref[src];activate=1'>Activate</A></center><BR>"
+	else
+		dat += "Recharging: [COOLDOWN_TIMELEFT(src, activate_shield) / 10] sec."
 	return dat
 
 /obj/machinery/computer/shield_activator/ui_interact(mob/user)
 	setup_browsewindow(get_userwindow_content())
 
+/obj/machinery/computer/shield_activator/proc/stop_burning()
+	SSincinerating.incinerating.Cut()
+	SSmeteorize.clear_protected_areas()
+	SSmeteorize.protected_direction = DIRECTION_NONE
+
+/obj/machinery/computer/shield_activator/proc/burn_them_out()
+	if(selected_targetzone == DIRECTION_ALL)
+		SSmeteorize.clear_protected_areas()
+		for(var/i in safespaces)
+			var/areatypefromlist = safespaces[i]
+			SSmeteorize.add_more_protected_areas(areatypefromlist)
+	else if(selected_targetzone == DIRECTION_NONE)
+		SSmeteorize.clear_protected_areas()
+	else
+		SSmeteorize.set_protected_area(safespaces[selected_targetzone])
+	SSincinerating.affected_areas.Cut()
+	for(var/area in SSmeteorize.protected_areas)
+		var/area/target_area = get_area_by_type(area)
+		SSincinerating.affected_areas += target_area
+		var/list/contents = target_area.GetAreaAllContents()
+		var/list/area_atoms = shuffle(contents)
+		for(var/atom/A as anything in area_atoms)
+			A.station_shield_effect()
+
 /obj/machinery/computer/shield_activator/Topic(href, href_list)
 	..()
 	if(href_list["select_target"])
-		var/choice = input(usr, "Select Target", "Changing") as null|anything in list("North", "South", "East", "West", "360")
+		var/choice = input(usr, "Select Target", "Changing") as null|anything in list(DIRECTION_NORTH, DIRECTION_SOUTH, DIRECTION_EAST, DIRECTION_WEST, DIRECTION_ALL)
 		if(choice)
-			if(choice == "360")
-				SSmeteorize.clear_protected_areas()
-				for(var/i in safespaces)
-					var/areatypefromlist = safespaces[i]
-					SSmeteorize.add_more_protected_areas(areatypefromlist)
-			else
-				SSmeteorize.set_protected_area(safespaces[choice])
+			selected_targetzone = choice
+	if(href_list["activate"])
+		if(COOLDOWN_FINISHED(src, activate_shield))
+			SSmeteorize.protected_direction = selected_targetzone
+			burn_them_out()
+			for(var/obj/machinery/computer/shield_activator/S as anything in shielders)
+				COOLDOWN_START(S, activate_shield, METEOR_COOLDOWN)
+			addtimer(CALLBACK(src, PROC_REF(stop_burning)), SHIELD_COOLDOWN)
 	setup_browsewindow(get_userwindow_content())
