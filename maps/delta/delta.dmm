@@ -70129,7 +70129,8 @@
 	pixel_x = -28
 	},
 /obj/structure/cable{
-	dir = 8
+	d2 = 4;
+	icon_state = "0-4"
 	},
 /turf/simulated/floor{
 	dir = 8;
