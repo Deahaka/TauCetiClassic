@@ -94597,7 +94597,8 @@
 /area/station/rnd/hallway)
 "wnY" = (
 /obj/machinery/door/window/brigdoor/northright{
-	req_one_access = list(19,20,57,61,109)
+	req_one_access = list(19,20,57,61,109);
+	req_access = list()
 	},
 /turf/simulated/floor{
 	icon_state = "grimy"
