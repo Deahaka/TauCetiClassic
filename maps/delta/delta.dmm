@@ -5342,7 +5342,7 @@
 	name = "doorway barricade"
 	},
 /turf/simulated/floor/plating,
-/area/station/engineering/atmos/supermatter)
+/area/station/maintenance/atmos)
 "bed" = (
 /obj/machinery/door/firedoor,
 /obj/machinery/door/airlock/glass{
@@ -45271,7 +45271,7 @@
 "kqh" = (
 /obj/structure/sign/warning/secure_area,
 /turf/simulated/wall/r_wall,
-/area/station/engineering/atmos/supermatter)
+/area/station/maintenance/atmos)
 "kqp" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/machinery/atmospherics/components/unary/portables_connector{
@@ -130809,16 +130809,16 @@ obm
 wwi
 wwi
 obm
-dyt
+tEF
 kqh
 bec
 kqh
-dyt
-dyt
-dyt
-dyt
-dyt
-dyt
+tEF
+tEF
+tEF
+tEF
+tEF
+tEF
 tEF
 lXL
 wwi
