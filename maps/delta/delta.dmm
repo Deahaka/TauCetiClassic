@@ -447,7 +447,7 @@
 "acF" = (
 /obj/machinery/door/firedoor,
 /obj/machinery/door/airlock/engineering/glass{
-	name = "Supermatter Engine Room";
+	name = "Engine Room";
 	req_access = list(10)
 	},
 /turf/simulated/floor,
@@ -5113,6 +5113,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/cyan{
 	dir = 10
 	},
+/obj/item/clothing/glasses/welding,
 /turf/simulated/floor{
 	icon_state = "dark"
 	},
@@ -47106,7 +47107,7 @@
 /area/station/medical/genetics)
 "kLE" = (
 /obj/machinery/door/airlock/engineering/glass{
-	name = "Supermatter Engine Room";
+	name = "Engine Room";
 	req_access = list(10)
 	},
 /obj/machinery/door/firedoor,
@@ -53999,6 +54000,9 @@
 	pixel_y = 5
 	},
 /obj/item/stack/cable_coil/red,
+/obj/item/clothing/glasses/welding,
+/obj/item/clothing/glasses/welding,
+/obj/item/clothing/glasses/welding,
 /turf/simulated/floor{
 	icon_state = "neutralfull"
 	},
@@ -99085,7 +99089,7 @@
 /area/station/security/lobby)
 "xta" = (
 /obj/machinery/door/airlock/engineering/glass{
-	name = "Supermatter Engine Room";
+	name = "Engine Room";
 	req_access = list(10)
 	},
 /obj/machinery/door/firedoor,
@@ -100504,7 +100508,7 @@
 /area/station/engineering/atmos)
 "xKm" = (
 /obj/machinery/door/airlock/engineering/glass{
-	name = "Supermatter Engine Room";
+	name = "Engine Room";
 	req_access = list(10)
 	},
 /obj/machinery/door/firedoor,
