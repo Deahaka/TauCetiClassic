@@ -5,7 +5,7 @@
 	uniform = /obj/item/clothing/under/rank/captain
 	shoes = /obj/item/clothing/shoes/brown
 	head = /obj/item/clothing/head/caphat
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 
 	l_ear = /obj/item/device/radio/headset/heads/captain
 	belt = /obj/item/weapon/melee/chainofcommand

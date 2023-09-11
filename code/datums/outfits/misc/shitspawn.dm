@@ -146,7 +146,7 @@
 	shoes = /obj/item/clothing/shoes/black
 	gloves = /obj/item/clothing/gloves/black
 	l_ear = /obj/item/device/radio/headset
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 	suit = /obj/item/clothing/suit/wcoat
 	l_pocket = /obj/item/weapon/melee/energy/sword
 	l_hand = /obj/item/weapon/storage/secure/briefcase
@@ -173,7 +173,7 @@
 
 	uniform = /obj/item/clothing/under/color/black
 	shoes = /obj/item/clothing/shoes/boots
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 	l_ear = /obj/item/device/radio/headset
 	back = /obj/item/weapon/storage/backpack/satchel/norm
 	l_pocket = /obj/item/device/flashlight
@@ -315,7 +315,7 @@
 	shoes = /obj/item/clothing/shoes/centcom
 	gloves = /obj/item/clothing/gloves/white
 
-	l_pocket = /obj/item/clothing/glasses/sunglasses
+	l_pocket = /obj/item/clothing/glasses/sunglasses/default
 	r_pocket = /obj/item/device/pda/heads
 	id = /obj/item/weapon/card/id/centcom
 
@@ -469,7 +469,7 @@
 	gloves = /obj/item/clothing/gloves/swat
 	l_ear = /obj/item/device/radio/headset/ert
 	belt = /obj/item/weapon/gun/energy/gun
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 	back = /obj/item/weapon/storage/backpack/satchel
 
 	id = /obj/item/weapon/card/id/centcom/ert
