@@ -138,7 +138,7 @@
 
 					var/list/allowed_types = list(
 						/obj/item/clothing/head/helmet,
-						/obj/item/clothing/glasses/sunglasses/default
+						/obj/item/clothing/glasses/sunglasses,
 						/obj/item/clothing/head/caphat,
 						/obj/item/clothing/head/collectable/captain,
 						/obj/item/clothing/head/that,

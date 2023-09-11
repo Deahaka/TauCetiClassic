@@ -1266,7 +1266,7 @@
 /area/space_structures/space_villa)
 "TZ" = (
 /obj/structure/table/woodentable,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses,
 /obj/item/clothing/head/collectable/paper{
 	pixel_y = 5
 	},

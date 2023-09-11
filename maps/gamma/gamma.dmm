@@ -51108,7 +51108,7 @@
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses,
 /turf/simulated/floor{
 	dir = 5;
 	icon_state = "darkredfull"
@@ -93546,7 +93546,7 @@
 /obj/effect/decal/cleanable/cobweb2,
 /obj/structure/rack,
 /obj/item/clothing/mask/gas/coloured,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor,
 /area/station/maintenance/medbay)
@@ -114084,7 +114084,7 @@
 /area/station/maintenance/brigright)
 "wHg" = (
 /obj/structure/rack,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses,
 /obj/item/weapon/packageWrap,
 /turf/simulated/floor/plating,
 /area/station/maintenance/brig)
