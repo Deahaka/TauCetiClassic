@@ -189,6 +189,9 @@
 	flash_protection = FLASHES_PARTIAL_PROTECTION
 	flash_protection_slots = list(SLOT_GLASSES)
 
+//Without parenting to others
+/obj/item/clothing/glasses/sunglasses/default
+
 /obj/item/clothing/glasses/welding
 	name = "welding goggles"
 	desc = "Protects the eyes from welders, approved by the mad scientist association."
