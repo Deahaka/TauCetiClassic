@@ -214,11 +214,11 @@
 	icon_state = "0-2"
 	},
 /obj/structure/table,
-/obj/item/clothing/glasses/sunglasses/default{
+/obj/item/clothing/glasses/sunglasses{
 	pixel_x = 3;
 	pixel_y = 3
 	},
-/obj/item/clothing/glasses/sunglasses/default{
+/obj/item/clothing/glasses/sunglasses{
 	pixel_x = 3;
 	pixel_y = 3
 	},
@@ -10375,7 +10375,7 @@
 "arN" = (
 /obj/structure/table/woodentable,
 /obj/item/device/flash,
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /obj/item/weapon/handcuffs,
 /obj/machinery/requests_console/detective{
 	pixel_y = -32
@@ -10761,7 +10761,7 @@
 /area/station/hallway/primary/fore)
 "ast" = (
 /obj/item/device/flash,
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /obj/structure/table/glass,
 /obj/item/device/radio/intercom{
 	broadcasting = 1;
@@ -67093,7 +67093,7 @@
 "cIQ" = (
 /obj/structure/rack,
 /obj/item/clothing/mask/gas/coloured,
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /obj/effect/decal/turf_decal/set_damaged,
 /turf/simulated/floor/plating,
 /area/station/maintenance/medbay)
