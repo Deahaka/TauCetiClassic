@@ -1410,6 +1410,14 @@
 	},
 /turf/simulated/floor/grass,
 /area/station/civilian/garden)
+"acs" = (
+/obj/effect/decal/cleanable/cobweb2,
+/obj/structure/rack,
+/obj/item/clothing/mask/gas/coloured,
+/obj/item/clothing/glasses/sunglasses/default,
+/obj/effect/decal/cleanable/dirt,
+/turf/simulated/floor,
+/area/station/maintenance/medbay)
 "act" = (
 /obj/machinery/vending/cigarette,
 /obj/effect/decal/turf_decal/metal{
@@ -44496,6 +44504,8 @@
 /obj/structure/disposalpipe/segment{
 	dir = 1
 	},
+/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor{
 	icon_state = "whitechoco"
 	},
@@ -51108,7 +51118,7 @@
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor{
 	dir = 5;
 	icon_state = "darkredfull"
@@ -63844,16 +63854,13 @@
 /turf/simulated/floor,
 /area/station/maintenance/brig)
 "mrT" = (
-/obj/structure/computerframe,
-/obj/item/weapon/paper{
-	info = "Привет, извините за задержку с Клонированием. Мы должны получить все необходимые детали к началу следующей смены. Все платы пока-что отложили в Хранилище Плат. Если забудем - просто напомните. Спасибо. -�?нженерный отдел";
-	name = "Cloning Status";
-	pixel_x = -4;
-	pixel_y = -4
+/obj/machinery/door/firedoor,
+/obj/structure/window/fulltile{
+	grilled = 1;
+	icon_state = "gr_window"
 	},
-/turf/simulated/floor{
-	icon_state = "vaultfull"
-	},
+/obj/item/clothing/glasses/sunglasses/default,
+/turf/simulated/floor/plating,
 /area/station/medical/genetics_cloning)
 "msi" = (
 /obj/machinery/door/poddoor{
@@ -93543,13 +93550,17 @@
 /turf/simulated/floor/plating,
 /area/station/maintenance/brig)
 "szN" = (
-/obj/effect/decal/cleanable/cobweb2,
-/obj/structure/rack,
-/obj/item/clothing/mask/gas/coloured,
-/obj/item/clothing/glasses/sunglasses,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor,
-/area/station/maintenance/medbay)
+/obj/structure/computerframe,
+/obj/item/weapon/paper{
+	info = "Привет, извините за задержку с Клонированием. Мы должны получить все необходимые детали к началу следующей смены. Все платы пока-что отложили в Хранилище Плат. Если забудем - просто напомните. Спасибо. -�?нженерный отдел";
+	name = "Cloning Status";
+	pixel_x = -4;
+	pixel_y = -4
+	},
+/turf/simulated/floor{
+	icon_state = "vaultfull"
+	},
+/area/station/medical/genetics_cloning)
 "sAj" = (
 /obj/structure/dispenser,
 /obj/machinery/light/smart,
@@ -114084,7 +114095,7 @@
 /area/station/maintenance/brigright)
 "wHg" = (
 /obj/structure/rack,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /obj/item/weapon/packageWrap,
 /turf/simulated/floor/plating,
 /area/station/maintenance/brig)
@@ -152213,7 +152224,7 @@ sIO
 uWd
 uWd
 pYX
-szN
+acs
 mtG
 qDZ
 qFV
@@ -158883,7 +158894,7 @@ apM
 woi
 umb
 yag
-iBM
+mrT
 tJj
 erK
 yag
@@ -159397,7 +159408,7 @@ irf
 xLK
 jBw
 iBM
-mrT
+szN
 kRm
 pkr
 cKP
