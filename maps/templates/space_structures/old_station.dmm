@@ -3306,7 +3306,7 @@
 /area/space)
 "vz" = (
 /obj/structure/table,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /turf/simulated/floor/plating,
 /area/space_structures/old_station/central)
 "vA" = (

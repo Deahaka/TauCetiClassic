@@ -14751,7 +14751,7 @@
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /turf/simulated/floor{
 	dir = 1;
 	icon_state = "darkred"

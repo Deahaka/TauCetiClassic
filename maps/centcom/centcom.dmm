@@ -20699,7 +20699,7 @@
 "aXA" = (
 /obj/structure/table,
 /obj/item/clothing/under/rainbow,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /obj/item/clothing/head/collectable/petehat{
 	pixel_y = 5
 	},

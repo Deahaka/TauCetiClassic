@@ -3832,7 +3832,7 @@
 /area/station/cargo/recycler)
 "aha" = (
 /obj/structure/closet,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /obj/item/clothing/under/color/orange,
 /obj/item/clothing/head/justice/yellow,
 /obj/effect/decal/turf_decal/set_burned,
@@ -27477,7 +27477,7 @@
 /obj/effect/decal/cleanable/blood/oil,
 /obj/structure/rack,
 /obj/effect/spawner/lootdrop/maintenance/two,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /obj/random/tools/tool,
 /turf/simulated/floor/plating,
 /area/station/maintenance/medbay)
