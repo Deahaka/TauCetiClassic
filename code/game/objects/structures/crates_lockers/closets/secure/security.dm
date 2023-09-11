@@ -76,7 +76,7 @@
 
 /obj/structure/closet/secure_closet/hop/PopulateContents()
 	new /obj/item/device/remote_device/head_of_personal(src)
-	new /obj/item/clothing/glasses/sunglasses(src)
+	new /obj/item/clothing/glasses/sunglasses/default(src)
 	new /obj/item/clothing/suit/armor/vest(src)
 	new /obj/item/clothing/head/helmet(src)
 	new /obj/item/weapon/cartridge/hop(src)
