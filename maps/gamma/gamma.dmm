@@ -51101,14 +51101,14 @@
 /turf/simulated/floor/carpet/green,
 /area/station/civilian/dormitories/dormtwo)
 "jHJ" = (
-/obj/item/clothing/glasses/sunglasses{
+/obj/item/clothing/glasses/sunglasses/default{
 	pixel_y = 4
 	},
 /obj/structure/rack,
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor{
 	dir = 5;
 	icon_state = "darkredfull"
@@ -63846,7 +63846,7 @@
 "mrT" = (
 /obj/structure/computerframe,
 /obj/item/weapon/paper{
-	info = "Привет, извините за задержку с Клонированием. Мы должны получить все необходимые детали к началу следующей смены. Все платы пока-что отложили в Хранилище Плат. Если забудем - просто напомните. Спасибо. -�?нженерный отдел";
+	info = "Привет, извините за задержку с Клонированием. Мы должны получить все необходимые детали к началу следующей смены. Все платы пока-что отложили в Хранилище Плат. Если забудем - просто напомните. Спасибо. -�?нженерный отдел";
 	name = "Cloning Status";
 	pixel_x = -4;
 	pixel_y = -4
@@ -76084,7 +76084,7 @@
 	pixel_x = -5;
 	pixel_y = 7
 	},
-/obj/item/clothing/glasses/sunglasses{
+/obj/item/clothing/glasses/sunglasses/default{
 	pixel_y = -6
 	},
 /obj/machinery/light/smart{
@@ -93546,7 +93546,7 @@
 /obj/effect/decal/cleanable/cobweb2,
 /obj/structure/rack,
 /obj/item/clothing/mask/gas/coloured,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor,
 /area/station/maintenance/medbay)
@@ -114084,7 +114084,7 @@
 /area/station/maintenance/brigright)
 "wHg" = (
 /obj/structure/rack,
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /obj/item/weapon/packageWrap,
 /turf/simulated/floor/plating,
 /area/station/maintenance/brig)
