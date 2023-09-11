@@ -51101,14 +51101,14 @@
 /turf/simulated/floor/carpet/green,
 /area/station/civilian/dormitories/dormtwo)
 "jHJ" = (
-/obj/item/clothing/glasses/sunglasses/default{
+/obj/item/clothing/glasses/sunglasses{
 	pixel_y = 4
 	},
 /obj/structure/rack,
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /turf/simulated/floor{
 	dir = 5;
 	icon_state = "darkredfull"
@@ -76084,7 +76084,7 @@
 	pixel_x = -5;
 	pixel_y = 7
 	},
-/obj/item/clothing/glasses/sunglasses/default{
+/obj/item/clothing/glasses/sunglasses{
 	pixel_y = -6
 	},
 /obj/machinery/light/smart{
@@ -93546,7 +93546,7 @@
 /obj/effect/decal/cleanable/cobweb2,
 /obj/structure/rack,
 /obj/item/clothing/mask/gas/coloured,
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor,
 /area/station/maintenance/medbay)
@@ -114084,7 +114084,7 @@
 /area/station/maintenance/brigright)
 "wHg" = (
 /obj/structure/rack,
-/obj/item/clothing/glasses/sunglasses/default,
+/obj/item/clothing/glasses/sunglasses,
 /obj/item/weapon/packageWrap,
 /turf/simulated/floor/plating,
 /area/station/maintenance/brig)
