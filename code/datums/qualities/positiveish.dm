@@ -147,7 +147,7 @@
 	requirement = "Нет."
 
 /datum/quality/positiveish/sunglasses/add_effect(mob/living/carbon/human/H, latespawn)
-	H.equip_or_collect(new /obj/item/clothing/glasses/sunglasses(H), SLOT_GLASSES)
+	H.equip_or_collect(new /obj/item/clothing/glasses/sunglasses/default(H), SLOT_GLASSES)
 
 
 /datum/quality/positiveish/hygiene
