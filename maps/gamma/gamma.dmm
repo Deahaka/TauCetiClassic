@@ -1443,6 +1443,18 @@
 	},
 /turf/simulated/floor/grass,
 /area/station/civilian/garden)
+"acw" = (
+/obj/item/weapon/paper{
+	info = "Привет, извините за задержку с Клонированием. Мы должны получить все необходимые детали к началу следующей смены. Все платы пока-что отложили в Хранилище Плат. Если забудем - просто напомните. Спасибо. -�?нженерный отдел";
+	name = "Cloning Status";
+	pixel_x = -4;
+	pixel_y = -4
+	},
+/turf/simulated/floor{
+	dir = 1;
+	icon_state = "whitepurplecorner"
+	},
+/area/station/rnd/hallway)
 "acx" = (
 /obj/structure/stool,
 /obj/effect/decal/turf_decal/wood{
@@ -161985,7 +161997,7 @@ cVr
 lJT
 lJT
 lJT
-lJT
+acw
 fwJ
 coq
 nxu
