@@ -62,7 +62,7 @@
 	},
 /area/station/civilian/holodeck/source_beach)
 "l" = (
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/defaul,
 /turf/simulated/floor/beach/sand{
 	icon_state = "desert0"
 	},
