@@ -137,7 +137,7 @@
 /area/awaymission/beach)
 "y" = (
 /obj/structure/table/woodentable,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/unsimulated/floor{
 	icon_state = "wood"
 	},

@@ -4416,7 +4416,7 @@
 /obj/item/weapon/reagent_containers/spray/extinguisher,
 /obj/structure/closet,
 /obj/effect/spawner/lootdrop/maintenance,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor/plating,
 /area/station/maintenance/medbay)
 "aBU" = (
@@ -15416,7 +15416,7 @@
 /area/station/hallway/primary/central)
 "cQt" = (
 /obj/item/device/flash,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses/default,
 /obj/structure/table/glass,
 /obj/item/device/mass_spectrometer,
 /obj/item/device/reagent_scanner,
@@ -58723,7 +58723,7 @@
 "mjM" = (
 /obj/structure/table/woodentable,
 /obj/item/device/flash,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses/default,
 /obj/item/weapon/handcuffs,
 /obj/machinery/firealarm{
 	dir = 4;
@@ -76263,7 +76263,7 @@
 /area/station/engineering/engine)
 "qca" = (
 /obj/structure/table/woodentable,
-/obj/item/clothing/glasses/sunglasses/defaul,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor/carpet/red,
 /area/station/security/vacantoffice)
 "qcD" = (
