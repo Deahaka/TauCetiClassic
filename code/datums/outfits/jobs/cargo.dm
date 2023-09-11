@@ -5,7 +5,7 @@
 	uniform = /obj/item/clothing/under/rank/cargo
 	uniform_f = /obj/item/clothing/under/rank/cargo_fem
 	shoes =  /obj/item/clothing/shoes/brown
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 
 	l_ear =  /obj/item/device/radio/headset/headset_cargo
 	belt = /obj/item/device/pda/quartermaster

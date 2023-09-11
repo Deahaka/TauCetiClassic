@@ -99,7 +99,7 @@
 		/obj/item/clothing/suit/jacket/leather/overcoat = 2,
 		/obj/item/clothing/under/pants/mustangjeans = 2,
 		/obj/item/clothing/glasses/sunglasses/gar = 1,
-		/obj/item/clothing/glasses/sunglasses = 1,
+		/obj/item/clothing/glasses/sunglasses/default = 1,
 	)
 
 	prices = list(

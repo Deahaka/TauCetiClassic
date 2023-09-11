@@ -72,7 +72,7 @@
 		/obj/item/ammo_box/magazine/glock/rubber = 10,
 	)
 	contraband = list(
-		/obj/item/clothing/glasses/sunglasses = 2,
+		/obj/item/clothing/glasses/sunglasses/default = 2,
 		/obj/item/device/flashlight/seclite = 4,
 	)
 	syndie = list(
@@ -215,7 +215,7 @@
 		/obj/item/clothing/head/sushi_band = 1,
 		/obj/item/weapon/kitchen/utensil/spoon = 2,
 		/obj/item/weapon/kitchen/rollingpin = 2,
-		/obj/item/weapon/kitchenknife/butch = 2,		
+		/obj/item/weapon/kitchenknife/butch = 2,
 	)
 	syndie = list(
 		/obj/item/weapon/reagent_containers/glass/bottle/alphaamanitin/syndie = 1,

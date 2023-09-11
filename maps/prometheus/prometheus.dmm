@@ -14744,14 +14744,14 @@
 /turf/simulated/floor/plating,
 /area/station/maintenance/science)
 "dif" = (
-/obj/item/clothing/glasses/sunglasses{
+/obj/item/clothing/glasses/sunglasses/default{
 	pixel_y = 4
 	},
 /obj/structure/rack,
 /obj/structure/extinguisher_cabinet{
 	pixel_y = 29
 	},
-/obj/item/clothing/glasses/sunglasses,
+/obj/item/clothing/glasses/sunglasses/default,
 /turf/simulated/floor{
 	dir = 1;
 	icon_state = "darkred"

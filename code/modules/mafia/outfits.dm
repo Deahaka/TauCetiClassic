@@ -63,7 +63,7 @@
 
 	uniform = /obj/item/clothing/under/rank/head_of_personnel
 	shoes = /obj/item/clothing/shoes/brown
-	glasses = /obj/item/clothing/glasses/sunglasses
+	glasses = /obj/item/clothing/glasses/sunglasses/default
 
 /datum/outfit/mafia/hos
 	name = "Mafia Head of Security"

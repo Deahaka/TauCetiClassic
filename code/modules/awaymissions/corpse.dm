@@ -234,7 +234,7 @@
 	corpseuniform = /obj/item/clothing/under/rank/centcom_officer
 	corpsesuit = /obj/item/clothing/suit/armor/bulletproof
 	corpseshoes = /obj/item/clothing/shoes/black
-	corpseglasses = /obj/item/clothing/glasses/sunglasses
+	corpseglasses = /obj/item/clothing/glasses/sunglasses/default
 	corpseid = 1
 	corpseidjob = "Bridge Officer"
 

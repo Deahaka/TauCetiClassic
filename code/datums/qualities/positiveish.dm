@@ -141,7 +141,7 @@
 	H.equip_or_collect(new /obj/item/clothing/head/helmet/space/unathi/breacher(H), SLOT_HEAD)
 
 
-/datum/quality/positiveish/sunglasses
+/datum/quality/positiveish/sunglasses/default
 	name = "Sunglasses"
 	desc = "Крутые очки, чувак."
 	requirement = "Нет."

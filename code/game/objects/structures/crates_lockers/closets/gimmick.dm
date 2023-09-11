@@ -47,7 +47,7 @@
 /obj/structure/closet/gimmick/tacticool/PopulateContents()
 	..()
 	new /obj/item/clothing/glasses/eyepatch(src)
-	new /obj/item/clothing/glasses/sunglasses(src)
+	new /obj/item/clothing/glasses/sunglasses/default(src)
 	for (var/i in 1 to 2)
 		new /obj/item/clothing/gloves/swat(src)
 		new /obj/item/clothing/head/helmet/swat(src)
