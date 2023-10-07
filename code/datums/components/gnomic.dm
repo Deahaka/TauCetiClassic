@@ -34,9 +34,6 @@
 		return COMPONENT_MOB_CAN_NOT_PICKUP
 
 /datum/component/gnomic/Destroy()
-	var/atom/A = parent
-	A.resize = original_size_atom
-	A.update_transform()
 	UnregisterSignal(parent, list(COMSIG_MOB_CAN_PICKUP))
 	return ..()
 

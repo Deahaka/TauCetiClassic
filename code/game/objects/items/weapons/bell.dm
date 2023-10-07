@@ -19,7 +19,6 @@
 	if(user.a_intent == INTENT_HARM)
 		user.visible_message("<span class='warning'>\The [user] hammers \the [src]!</span>")
 		playsound(user, 'sound/items/manydings.ogg', VOL_EFFECTS_MASTER)
-		qdel(user.GetComponent(/datum/component/gnomic))
 	else
 		user.visible_message("<span class='notice'>\The [user] rings \the [src].</span>")
 		playsound(user, 'sound/items/oneding.ogg', VOL_EFFECTS_MASTER, 20)
