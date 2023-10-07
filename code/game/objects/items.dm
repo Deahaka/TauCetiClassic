@@ -210,7 +210,9 @@
 /obj/item/proc/mob_pickup(mob/user, hand_index=null)
 	if (!user || anchored)
 		return
-
+	if(SEND_SIGNAL(user, COMSIG_MOB_CAN_PICKUP, src) & COMPONENT_MOB_CAN_NOT_PICKUP)
+		user.visible_message("<span class='notice'>[user] tries pickup \a [src] but fails.</span>", "<span class='notice'>You can't pickup [src].</span>")
+		return
 	if(HULK in user.mutations)//#Z2 Hulk nerfz!
 		if(istype(src, /obj/item/weapon/gun))
 			if(prob(20))
