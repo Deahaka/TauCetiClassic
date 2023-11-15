@@ -391,3 +391,466 @@
 	P.info = t1
 	P.name = "Результаты сканирования [occupant.name]"
 	P.update_icon()
+
+/obj/machinery/autodoc
+	name = "improper autodoc medical system"
+	desc = "A fancy machine developed to be capable of operating on people with some human intervention. However, the interface is rather complex and most of it would only be useful to trained medical personnel."
+	icon = 'icons/obj/autodoc.dmi'
+	icon_state = "bodyscanner"
+	density = TRUE
+	anchored = TRUE
+	//coverage = 20
+	//req_one_access = list(ACCESS_MARINE_MEDBAY, ACCESS_MARINE_CHEMISTRY, ACCESS_MARINE_MEDPREP)
+	light_range = 1
+	light_power = 0.5
+//	light_color = LIGHT_COLOR_BLUE
+	dir = EAST
+	var/mob/living/carbon/human/occupant = null
+	var/list/surgery_todo_list = list() //a list of surgeries to do.
+//	var/surgery_t = 0 //Surgery timer in seconds.
+	var/surgery = FALSE
+	var/surgery_mod = 1 //What multiple to increase the surgery timer? This is used for any non-WO maps or events that are done.
+	var/filtering = 0
+	var/blood_transfer = 0
+	var/heal_brute = 0
+	var/heal_burn = 0
+	var/heal_toxin = 0
+	var/automaticmode = 0
+	var/event = 0
+	var/forceeject = FALSE
+
+	var/obj/machinery/autodoc_console/connected
+
+	//It uses power
+	use_power = ACTIVE_POWER_USE
+	idle_power_usage = 15
+	active_power_usage = 120000 // It rebuilds you from nothing...
+
+/obj/machinery/autodoc/atom_init()
+	. = ..()
+	update_icon()
+
+
+/obj/machinery/bodyscanner/MouseDrop_T(mob/target, mob/user)
+	close_machine(target)
+
+/obj/machinery/autodoc/proc/go_out()
+	for(var/i in contents)
+		var/atom/movable/AM = i
+		AM.forceMove(loc)
+	occupant = null
+	update_icon()
+
+/obj/machinery/autodoc/Destroy()
+	go_out()
+	if(connected)
+		connected.connected = null
+		connected = null
+	return ..()
+
+/obj/machinery/autodoc/power_change()
+	. = ..()
+	if(is_operational() || !occupant)
+		return
+	visible_message("[src] engages the safety override, ejecting the occupant.")
+	surgery = FALSE
+	go_out()
+
+/obj/machinery/autodoc/update_icon()
+	. = ..()
+	cut_overlays()
+	if(stat & NOPOWER)
+		set_light(0)
+	else if(surgery || occupant)
+		set_light(initial(light_range) + 1)
+	else
+		set_light(initial(light_range))
+	var/mutable_appearance/appearance = mutable_appearance(icon, icon_state, ABOVE_LIGHTING_LAYER, ABOVE_LIGHTING_PLANE)
+	//FLOAT_LAYER //appearance.color = GLOB.emissive_color
+	add_overlay(appearance)
+
+/obj/machinery/autodoc/process()
+	if(!occupant)
+		return
+
+	if(occupant.stat == DEAD)
+		//say("Patient has expired.")
+		surgery = FALSE
+		go_out()
+		return
+
+	if(!surgery)
+		return
+
+	// keep them alive
+	var/updating_health = FALSE
+	occupant.adjustToxLoss(-0.5) // pretend they get IV dylovene
+	occupant.adjustOxyLoss(-occupant.getOxyLoss()) // keep them breathing, pretend they get IV dexalinplus
+	if(filtering)
+		var/filtered = 0
+		for(var/datum/reagent/x in occupant.reagents.reagent_list)
+			occupant.reagents.remove_reagent(x.type, 10) // same as sleeper, may need reducing
+			filtered += 10
+		if(!filtered)
+			filtering = 0
+			audible_message("<span class='warning'>Blood filtering complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+		else if(prob(10))
+			visible_message("[src] whirrs and gurgles as the dialysis module operates.")
+			to_chat(occupant, "<span class='info'>You feel slightly better.</span>")
+	if(blood_transfer)
+		audible_message("<span class='warning'>Blood reserves depleted, switching to fresh bag.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+		occupant.blood_add(8)
+		if(prob(10))
+			visible_message("[src] whirrs and gurgles as it tranfuses blood.")
+			to_chat(occupant, "<span class='info'>You feel slightly less faint.</span>")
+		else
+			blood_transfer = 0
+			audible_message("<span class='warning'>Blood transfer complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	if(heal_brute)
+		if(occupant.getBruteLoss() > 0)
+			//occupant.heal_limb_damage(3, 0)
+			updating_health = TRUE
+			if(prob(10))
+				visible_message("[src] whirrs and clicks as it stitches flesh together.")
+				//to_chat(occupant, span_info("You feel your wounds being stitched and sealed shut."))
+		else
+			heal_brute = 0
+			audible_message("<span class='warning'>Trauma repair surgery complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	if(heal_burn)
+		if(occupant.getFireLoss() > 0)
+			occupant.heal_limb_damage(0, 3)
+			updating_health = TRUE
+			if(prob(10))
+				visible_message("[src] whirrs and clicks as it grafts synthetic skin.")
+				//to_chat(occupant, span_info("You feel your burned flesh being sliced away and replaced."))
+		else
+			heal_burn = 0
+			audible_message("<span class='warning'>Skin grafts complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	if(heal_toxin)
+		if(occupant.getToxLoss() > 0)
+			occupant.adjustToxLoss(-3)
+			updating_health = TRUE
+			if(prob(10))
+				visible_message("[src] whirrs and gurgles as it kelates the occupant.")
+				//to_chat(occupant, span_info("You feel slighly less ill."))
+		else
+			heal_toxin = 0
+			audible_message("<span class='warning'>Chelation complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	if(updating_health)
+		occupant.updatehealth()
+
+/obj/machinery/autodoc/proc/surgery_op()
+	//This is called via href, let's avoid duplicate surgeries.
+	if(surgery)
+		return
+	if(QDELETED(occupant) || occupant.stat == DEAD)
+		if(!ishuman(occupant))
+			stack_trace("Non-human occupant made its way into the autodoc: [occupant] | [occupant?.type].")
+		visible_message("[src] buzzes.")
+		go_out() //kick them out too.
+		return
+
+	visible_message("[src] begins to operate, the pod locking shut with a loud click.")
+	surgery = TRUE
+	update_icon()
+	/*
+	if(ADSURGERY_EYES)
+		audible_message("<span class='warning'>Beginning corrective eye surgery.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+		if(S.unneeded)
+			sleep(UNNEEDED_DELAY)
+			audible_message("<span class='warning'>Procedure has been deemed unnecessary.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+			surgery_todo_list -= S
+			continue
+		if(istype(S.organ_ref,/datum/internal_organ/eyes))
+			var/datum/internal_organ/eyes/E = S.organ_ref
+
+			if(E.eye_surgery_stage == 0)
+				sleep(EYE_CUT_MAX_DURATION)
+				if(!surgery)
+					break
+				E.eye_surgery_stage = 1
+				occupant.disabilities |= NEARSIGHTED // code\#define\mobs.dm
+
+			if(E.eye_surgery_stage == 1)
+				sleep(EYE_LIFT_MAX_DURATION)
+				if(!surgery)
+					break
+				E.eye_surgery_stage = 2
+
+			if(E.eye_surgery_stage == 2)
+				sleep(EYE_MEND_MAX_DURATION)
+				if(!surgery)
+					break
+				E.eye_surgery_stage = 3
+
+			if(E.eye_surgery_stage == 3)
+				sleep(EYE_CAUTERISE_MAX_DURATION)
+				if(!surgery)
+					break
+				occupant.disabilities &= ~NEARSIGHTED
+				occupant.disabilities &= ~BLIND
+				E.heal_organ_damage(E.damage)
+				E.eye_surgery_stage = 0
+	*/
+/obj/machinery/autodoc/proc/heal_arterial(obj/item/organ/external/BP)
+	if(!(BP.status & ORGAN_ARTERY_CUT))
+		return
+	//open_incision(occupant, S.limb_ref)
+	audible_message("<span class='warning'>Beginning internal bleeding procedure.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	sleep(6 SECONDS)
+	BP.status &= ~ORGAN_ARTERY_CUT
+	//close_incision(occupant, S.limb_ref)
+
+/obj/machinery/autodoc/proc/heal_broken_bp(obj/item/organ/external/BP)
+	audible_message("<span class='warning'>Beginning broken bone procedure.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	//open_incision(occupant, S.limb_ref)
+	sleep(8 SECONDS)
+	BP.status &= ~ORGAN_BROKEN
+	BP.perma_injury = 0
+	//close_incision(occupant, S.limb_ref)
+
+
+/obj/machinery/autodoc/proc/heal_necrosis(obj/item/organ/external/BP)
+	audible_message("<span class='warning'>Beginning necrotic tissue removal.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	//open_incision(occupant, S.limb_ref)
+	sleep(6 SECONDS)
+	BP.status &= ~ORGAN_DEAD
+	occupant.update_body()
+	/*
+	BP.open = 1
+	BP.take_damage(1, 1, DAM_SHARP|DAM_EDGE, tool)
+	BP.strap()
+	*/
+	//close_incision(occupant, S.limb_ref)
+/obj/machinery/autodoc/proc/heal_shrapnel(obj/item/organ/external/BP)
+	audible_message("<span class='warning'>Beginning foreign body removal.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	//open_incision(occupant, S.limb_ref)
+	//if(S.limb_ref.body_part == CHEST || S.limb_ref.body_part == HEAD)
+	//	open_encased(occupant, S.limb_ref)
+	for(var/obj/implanted_object in BP.implants)
+		if(!istype(implanted_object,/obj/item/weapon/implant))	// We don't want to remove REAL implants. Just shrapnel etc.
+			implanted_object.forceMove(BP.owner.loc)
+			BP.implants -= implanted_object
+			sleep(6 SECONDS)
+		if(!surgery)
+			break
+	//if(S.limb_ref.body_part == CHEST || S.limb_ref.body_part == HEAD)
+	//	close_encased(occupant, S.limb_ref)
+	//close_incision(occupant, S.limb_ref)
+/obj/machinery/autodoc/proc/heal_face(obj/item/organ/external/BP)
+	if(!istype(BP, obj/item/organ/external/head))
+		return
+	audible_message("<span class='warning'>Beginning Facial Reconstruction Surgery.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "Next")
+	BP.disfigured = 0
+	sleep(6 SECONDS)
+
+
+
+
+
+/obj/machinery/autodoc/proc/end_surgery()
+	if(!surgery)
+		return
+	audible_message("<span class='warning'>Procedure complete.</span>", "<span class='notice'>You hear a quiet ping.</span>", world.view, list(), "End")
+	visible_message("\The [src] clicks and opens up having finished the requested operations.")
+	surgery = FALSE
+	//go_out(AUTODOC_NOTICE_SUCCESS)
+
+
+/obj/machinery/computer/autodoc_console
+	name = "autodoc medical system control console"
+	icon = 'icons/obj/machines/cryogenics.dmi'
+	icon_state = "sleeperconsole"
+	screen_overlay = "sleeperconsole_emissive"
+	light_color = LIGHT_COLOR_EMISSIVE_RED
+	req_one_access = list(ACCESS_MARINE_MEDBAY, ACCESS_MARINE_CHEMISTRY, ACCESS_MARINE_MEDPREP) //Valid access while locked
+	density = FALSE
+	idle_power_usage = 40
+	dir = EAST
+	var/obj/item/radio/headset/mainship/doc/radio
+	var/obj/item/reagent_containers/blood/OMinus/blood_pack
+	///connected autodoc
+	var/obj/machinery/autodoc/connected = null
+
+/obj/machinery/autodoc_console/interact(mob/user)
+	. = ..()
+	if(.)
+		return
+
+	var/dat = ""
+
+	dat += "<hr><font color='#487553'><B>Occupant Statistics:</B></FONT><BR>"
+	if(!connected.occupant)
+		dat += "No occupant detected."
+		var/datum/browser/popup = new(user, "autodoc", "<div align='center'>Autodoc Console</div>", 600, 600)
+		popup.set_content(dat)
+		popup.open()
+		return
+
+	var/t1
+	switch(connected.occupant.stat)
+		if(CONSCIOUS)
+			t1 = "Conscious"
+		if(UNCONSCIOUS)
+			t1 = "<font color='#487553'>Unconscious</font>"
+		if(DEAD)
+			t1 = "<font color='#b54646'>*Dead*</font>"
+	var/operating
+	switch(connected.surgery)
+		if(0)
+			operating = "Not in surgery"
+		if(1)
+			operating = "<font color='#b54646'><B>SURGERY IN PROGRESS: MANUAL EJECTION ONLY TO BE ATTEMPTED BY TRAINED OPERATORS!</B></FONT>"
+	dat += "[connected.occupant.health > 50 ? "<font color='#487553'>" : "<font color='#b54646'>"]\tHealth %: [round(connected.occupant.health)] ([t1])</FONT><BR>"
+	var/pulse = connected.occupant.handle_pulse()
+	dat += "[pulse == PULSE_NONE || pulse == PULSE_THREADY ? "<font color='#b54646'>" : "<font color='#487553'>"]\t-Pulse, bpm: [connected.occupant.get_pulse(GETPULSE_TOOL)]</FONT><BR>"
+	dat += "[connected.occupant.getBruteLoss() < 60 ? "<font color='#487553'>" : "<font color='#b54646'>"]\t-Brute Damage %: [connected.occupant.getBruteLoss()]</FONT><BR>"
+	dat += "[connected.occupant.getOxyLoss() < 60 ? "<font color='#487553'>" : "<font color='#b54646'>"]\t-Respiratory Damage %: [connected.occupant.getOxyLoss()]</FONT><BR>"
+	dat += "[connected.occupant.getToxLoss() < 60 ? "<font color='#487553'>" : "<font color='#b54646'>"]\t-Toxin Content %: [connected.occupant.getToxLoss()]</FONT><BR>"
+	dat += "[connected.occupant.getFireLoss() < 60 ? "<font color='#487553'>" : "<font color='#b54646'>"]\t-Burn Severity %: [connected.occupant.getFireLoss()]</FONT><BR>"
+
+	dat += "<hr><a href='?src=[text_ref(src)];refresh=1'>Refresh Menu</a>"
+	dat += "<hr><a href='?src=[text_ref(src)];ejectify=1'>Eject Patient</a>"
+	if(!connected.surgery)
+		if(connected.automaticmode)
+			dat += "<hr>Manual Surgery Interface Unavaliable, Automatic Mode Engaged."
+		else
+			dat += "<hr>Manual Surgery Interface<hr>"
+			dat += "<b>Trauma Surgeries</b>"
+			dat += "<br>"
+			if(isnull(surgeryqueue["brute"]))
+				dat += "<a href='?src=[text_ref(src)];brute=1'>Surgical Brute Damage Treatment</a><br>"
+			if(isnull(surgeryqueue["burn"]))
+				dat += "<a href='?src=[text_ref(src)];burn=1'>Surgical Burn Damage Treatment</a><br>"
+			dat += "<b>Orthopedic Surgeries</b>"
+			dat += "<br>"
+			if(isnull(surgeryqueue["broken"]))
+				dat += "<a href='?src=[text_ref(src)];broken=1'>Broken Bone Surgery</a><br>"
+			if(isnull(surgeryqueue["internal"]))
+				dat += "<a href='?src=[text_ref(src)];internal=1'>Internal Bleeding Surgery</a><br>"
+			if(isnull(surgeryqueue["shrapnel"]))
+				dat += "<a href='?src=[text_ref(src)];shrapnel=1'>Foreign Body Removal Surgery</a><br>"
+			if(isnull(surgeryqueue["missing"]))
+				dat += "<a href='?src=[text_ref(src)];missing=1'>Limb Replacement Surgery</a><br>"
+			dat += "<b>Organ Surgeries</b>"
+			dat += "<br>"
+			if(isnull(surgeryqueue["organdamage"]))
+				dat += "<a href='?src=[text_ref(src)];organdamage=1'>Surgical Organ Damage Treatment</a><br>"
+			if(isnull(surgeryqueue["organgerms"]))
+				dat += "<a href='?src=[text_ref(src)];organgerms=1'>Organ Infection Treatment</a><br>"
+			if(isnull(surgeryqueue["eyes"]))
+				dat += "<a href='?src=[text_ref(src)];eyes=1'>Corrective Eye Surgery</a><br>"
+			dat += "<b>Hematology Treatments</b>"
+			dat += "<br>"
+			if(isnull(surgeryqueue["blood"]))
+				dat += "<a href='?src=[text_ref(src)];blood=1'>Blood Transfer</a><br>"
+			if(isnull(surgeryqueue["toxin"]))
+				dat += "<a href='?src=[text_ref(src)];toxin=1'>Toxin Damage Chelation</a><br>"
+			if(isnull(surgeryqueue["dialysis"]))
+				dat += "<a href='?src=[text_ref(src)];dialysis=1'>Dialysis</a><br>"
+			if(isnull(surgeryqueue["necro"]))
+				dat += "<a href='?src=[text_ref(src)];necro=1'>Necrosis Removal Surgery</a><br>"
+			if(isnull(surgeryqueue["limbgerm"]))
+				dat += "<a href='?src=[text_ref(src)];limbgerm=1'>Limb Disinfection Procedure</a><br>"
+			dat += "<b>Special Surgeries</b>"
+			dat += "<br>"
+			if(isnull(surgeryqueue["facial"]))
+				dat += "<a href='?src=[text_ref(src)];facial=1'>Facial Reconstruction Surgery</a><br>"
+			if(isnull(surgeryqueue["open"]))
+				dat += "<a href='?src=[text_ref(src)];open=1'>Close Open Incision</a><br>"
+
+	var/datum/browser/popup = new(user, "autodoc", "<div align='center'>Autodoc Console</div>", 600, 600)
+	popup.set_content(dat)
+	popup.open()
+
+/obj/machinery/autodoc_console/Topic(href, href_list)
+	. = ..()
+	if(.)
+		return
+
+	if(!connected)
+		return
+
+	if(href_list["ejectify"])
+		connected.eject()
+
+	if(!ishuman(connected.occupant))
+		updateUsrDialog()
+		return
+
+	if(href_list["blood"])
+		toggle_blood_transfer()
+
+	if(href_list["eyes"])
+		connected.surgery_op(eyes)
+	/*
+	if(href_list["organdamage"])
+		var/list/choose_organ = list()
+		for(var/i in connected.occupant.bodyparts)
+			choose_organ += i
+			for(var/x in L.internal_organs)
+				var/datum/internal_organ/I = x
+				if(I.robotic == ORGAN_ASSISTED || I.robotic == ORGAN_ROBOT)
+					continue
+				if(I.damage > 0)
+					N.fields["autodoc_manual"] += create_autodoc_surgery(L,ORGAN_SURGERY,ADSURGERY_DAMAGE,0,I)
+		connected.surgery_op()
+	*/
+	/*
+	if(href_list["internal"])
+		var/list/choose_organ = list()
+		for(var/i in connected.occupant.bodyparts)
+			var/datum/limb/L = i
+			if(length(L.wounds))
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L,LIMB_SURGERY,ADSURGERY_INTERNAL)
+		connected.surgery_op()
+	*/
+	/*
+	if(href_list["broken"])
+		var/list/choose_organ = list()
+		for(var/i in connected.occupant.limbs)
+			var/datum/limb/L = i
+			if(L.limb_status & LIMB_BROKEN)
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L,LIMB_SURGERY,ADSURGERY_BROKEN)
+		connected.surgery_op()
+	*/
+	if(href_list["necro"])
+		for(var/i in connected.occupant.limbs)
+			var/datum/limb/L = i
+			if(L.limb_status & LIMB_NECROTIZED)
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L,LIMB_SURGERY,ADSURGERY_NECRO)
+
+	if(href_list["shrapnel"])
+		for(var/i in connected.occupant.limbs)
+			var/datum/limb/L = i
+			var/skip_embryo_check = FALSE
+			var/obj/item/alien_embryo/A = locate() in connected.occupant
+			for(var/I in L.implants)
+				if(is_type_in_list(I, GLOB.known_implants))
+					continue
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L, LIMB_SURGERY,ADSURGERY_SHRAPNEL)
+				if(L.body_part == CHEST)
+					skip_embryo_check = TRUE
+			if(A && L.body_part == CHEST && !skip_embryo_check) //If we're not already doing a shrapnel removal surgery of the chest proceed.
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L, LIMB_SURGERY,ADSURGERY_SHRAPNEL)
+
+	if(href_list["facial"])
+		for(var/i in connected.occupant.limbs)
+			var/datum/limb/L = i
+			if(!istype(L, /datum/limb/head))
+				continue
+			var/datum/limb/head/J = L
+			if(J.disfigured || J.face_surgery_stage)
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L, LIMB_SURGERY,ADSURGERY_FACIAL)
+			else
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L, LIMB_SURGERY,ADSURGERY_FACIAL, 1)
+			break
+
+	if(href_list["open"])
+		for(var/i in connected.occupant.limbs)
+			var/datum/limb/L = i
+			if(L.surgery_open_stage)
+				N.fields["autodoc_manual"] += create_autodoc_surgery(L,LIMB_SURGERY,ADSURGERY_OPEN)
+		if(href_list["open"])
+			N.fields["autodoc_manual"] += create_autodoc_surgery(null,LIMB_SURGERY,ADSURGERY_OPEN,1)
+	updateUsrDialog()
