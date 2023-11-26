@@ -22,7 +22,6 @@
 #define ROLE_GHOSTLY           "Ghostly Roles"
 #define ROLE_IMPOSTER          "Imposter"
 #define ROLE_REPLICATOR        "Replicator"
-#define ROLE_RAIDER            "Raider"
 
 #define ROLE_ERT               "Emergency Response Team"
 #define ROLE_DRONE             "Maintenance Drone"
