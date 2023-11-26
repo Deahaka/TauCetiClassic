@@ -18,6 +18,7 @@
 	All gamemodes,
 	/datum/game_mode/abduction,
 	/datum/game_mode/blob,
+	/datum/game_mode/borer,
 	/datum/game_mode/changeling,
 	/datum/game_mode/cult,
 	/datum/game_mode/extended,
