@@ -457,7 +457,73 @@
 	. = ..()
 
 /turf/simulated/mineral/random/caves
+	mineralChance = 5
+
+/turf/simulated/mineral/random/caves/high_chance
+	icon_state = "rock_cave_highchance"
 	mineralChance = 25
+	mineralSpawnChanceList = list("Phoron" = 25, "Silver" = 15, "Gold" = 15, "Uranium" = 10, "Platinum" = 5, "Diamond" = 10)
+
+/turf/simulated/mineral/random/caves/high_chance/atom_init()
+	icon_state = "rock"
+	return ..()
+
+/turf/simulated/mineral/random/caves/atom_init_late()
+	if(prob(75))
+		return ..()
+	AddComponent(/datum/component/acidfern, 3)
+
+/datum/component/acidfern
+	var/x_center = 0
+	var/y_center = 0
+	var/z_center = 0
+	var/lenght = 0
+	var/leght_spreaded = 0
+
+/datum/component/acidfern/Initialize(lenght_spread = 1)
+	lenght = lenght_spread
+	var/atom/A = parent
+	x_center = A.x
+	y_center = A.y
+	z_center = A.z
+	addtimer(CALLBACK(src, PROC_REF(spread)), 10 SECONDS)
+
+#define COMSIG_DETECT_ACID "detect_acid"
+	#define COMPONENT_ACID_DETECTED 1
+
+/datum/component/acidfern/proc/spread()
+	if(lenght <= leght_spreaded)
+		//qdel(src)
+		return
+	leght_spreaded++
+	addtimer(CALLBACK(src, PROC_REF(spread)), 10 SECONDS)
+	for(var/atom/A in range(leght_spreaded, parent))
+		if(SEND_SIGNAL(A, COMSIG_DETECT_ACID) & COMPONENT_ACID_DETECTED)
+			continue
+		var/time_to_del = ((lenght - leght_spreaded) )//*5
+		A.AddComponent(/datum/component/strong_acid, time_to_del MINUTES)
+
+/datum/component/strong_acid
+	var/time_to_del = 30 MINUTES
+
+/datum/component/strong_acid/Initialize(rastvor = 1 MINUTE)
+	time_to_del = rastvor
+	spread_acid()
+	addtimer(CALLBACK(src, PROC_REF(unacid)), time_to_del)
+	RegisterSignal(parent, COMSIG_DETECT_ACID, PROC_REF(already_have))
+
+/datum/component/strong_acid/proc/unacid(time_to_del)
+	var/atom/A = parent
+	A.color = null
+	qdel(src)
+
+/datum/component/strong_acid/proc/spread_acid()
+	var/atom/A = parent
+	A.color = "#008000"
+
+/datum/component/strong_acid/proc/already_have(datum/source)
+	SIGNAL_HANDLER
+	return COMPONENT_ACID_DETECTED
 
 /turf/simulated/mineral/random/high_chance
 	icon_state = "rock_highchance"
