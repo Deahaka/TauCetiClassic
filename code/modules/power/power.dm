@@ -248,6 +248,8 @@
 
 //remove the old powernet and replace it with a new one throughout the network.
 /proc/propagate_network(obj/O, datum/powernet/PN)
+	if(SScellauto.currentrun.len)
+		sleep(50)
 	var/list/worklist = list()
 	var/list/found_machines = list()
 	var/index = 1
@@ -276,7 +278,6 @@
 	for(var/obj/machinery/power/PM in found_machines)
 		if(!PM.connect_to_network()) //couldn't find a node on its turf...
 			PM.disconnect_from_network() //... so disconnect if already on a powernet
-
 
 //Merge two powernets, the bigger (in cable length term) absorbing the other
 /proc/merge_powernets(datum/powernet/net1, datum/powernet/net2)

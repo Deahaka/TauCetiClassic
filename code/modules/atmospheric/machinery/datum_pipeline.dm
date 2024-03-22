@@ -42,6 +42,8 @@
 			member.check_pressure(pressure)
 
 /datum/pipeline/proc/build_pipeline(obj/machinery/atmospherics/base)
+	if(SScellauto.currentrun.len)
+		sleep(50)
 	var/volume = 0
 
 	if(istype(base, /obj/machinery/atmospherics/pipe))

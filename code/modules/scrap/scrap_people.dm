@@ -5,6 +5,7 @@
 /mob/living/carbon/human/bum/atom_init_late()
 	..() // in case someone implements something for parent inside late init, that i'm pretty sure will require calling parent.
 	generate_random_bum()
+	cell_explosion(get_turf(src), 600, 30, EXPLOSION_FALLOFF_SHAPE_LINEAR, null) //break shit around
 
 /mob/living/carbon/human/proc/generate_random_bum()
 	if(prob(80))
