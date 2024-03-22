@@ -1,6 +1,530 @@
+var/global/list/cellauto_cells = list()
 /// A wrapper for [/atom/proc/ex_act] for tg compability, we can need it in the future for signals and contents_explosion
 #define EX_ACT(target, args...)\
 	target.ex_act(##args);
+
+#define SS_PRIORITY_CELLAUTO 600
+
+SUBSYSTEM_DEF(cellauto)
+	name  = "Cellular Automata"
+	wait  = 0.05 SECONDS
+	priority = SS_PRIORITY_CELLAUTO
+	flags = SS_NO_INIT
+
+	var/list/currentrun = list()
+
+/datum/controller/subsystem/cellauto/stat_entry(msg)
+	msg = "C: [global.cellauto_cells.len]"
+	return ..()
+
+/datum/controller/subsystem/cellauto/fire(resumed = FALSE)
+	if(!resumed)
+		currentrun = global.cellauto_cells.Copy()
+
+	while(currentrun.len)
+		var/datum/automata_cell/C = currentrun[currentrun.len]
+		currentrun.len--
+
+		if(!C || QDELETED(C))
+			continue
+
+		C.update_state()
+
+		if(MC_TICK_CHECK)
+			return
+
+/turf
+	var/list/datum/automata_cell/autocells
+
+/turf/proc/get_cell(type)
+	for(var/datum/automata_cell/C in autocells)
+		if(istype(C, type))
+			return C
+	return null
+
+/*
+	Each datum represents a single cellular automataton
+
+	Cell death is just the cell being deleted.
+	So if you want a cell to die, just qdel it.
+*/
+
+// No neighbors
+#define NEIGHBORS_NONE  0
+// Cardinal neighborhood
+#define NEIGHBORS_CARDINAL 1
+// Ordinal neighborhood
+#define NEIGHBORS_ORDINAL  2
+// Note that NEIGHBORS_CARDINAL | NEIGHBORS_ORDINALS gives you all 8 surrounding neighbors
+
+/datum/automata_cell
+	// Which turf is the cell contained in
+	var/turf/in_turf = null
+
+	// What type of neighborhood do we use?
+	// This affects what neighbors you'll get passed in update_state()
+	var/neighbor_type = NEIGHBORS_CARDINAL
+
+/datum/automata_cell/New(turf/T)
+	..()
+
+	if(!istype(T))
+		qdel(src)
+		return
+
+	// Attempt to merge the two cells if they end up in the same turf
+	var/datum/automata_cell/C = T.get_cell(type)
+	if(C && merge(C))
+		qdel(src)
+		return
+
+	in_turf = T
+	LAZYADD(in_turf.autocells, src)
+
+	global.cellauto_cells += src
+
+	birth()
+
+/datum/automata_cell/Destroy()
+	. = ..()
+
+	if(!QDELETED(in_turf))
+		LAZYREMOVE(in_turf.autocells, src)
+		in_turf = null
+
+	global.cellauto_cells -= src
+
+	death()
+
+// Called when the cell is created
+/datum/automata_cell/proc/birth()
+	return
+
+// Called when the cell is deleted/when it dies
+/datum/automata_cell/proc/death()
+	return
+
+// Transfer this automata cell to another turf
+/datum/automata_cell/proc/transfer_turf(turf/new_turf)
+	if(QDELETED(new_turf))
+		return
+
+	if(!QDELETED(in_turf))
+		LAZYREMOVE(in_turf.autocells, src)
+		in_turf = null
+
+	in_turf = new_turf
+	LAZYADD(in_turf.autocells, src)
+
+// Use this proc to merge this cell with another one if the other cell enters the same turf
+// Return TRUE if this cell should survive the merge (the other one will die/be qdeleted)
+// Return FALSE if this cell should die and be replaced by the other cell
+/datum/automata_cell/proc/merge(datum/automata_cell/other_cell)
+	return TRUE
+
+// Returns a list of neighboring cells
+// This is called by and results are passed to update_state by the cellauto subsystem
+/datum/automata_cell/proc/get_neighbors()
+	if(QDELETED(in_turf))
+		return
+
+	var/list/neighbors = list()
+
+	// Get cardinal neighbors
+	if(neighbor_type & NEIGHBORS_CARDINAL)
+		for(var/dir in global.cardinal)
+			var/turf/T = get_step(in_turf, dir)
+			if(QDELETED(T))
+				continue
+
+			// Only add neighboring cells of the same type
+			for(var/datum/automata_cell/C in T.autocells)
+				if(istype(C, type))
+					neighbors += C
+
+	// Get ordinal/diagonal neighbors
+	if(neighbor_type & NEIGHBORS_ORDINAL)
+		for(var/dir in global.cornerdirs)
+			var/turf/T = get_step(in_turf, dir)
+			if(QDELETED(T))
+				continue
+
+			for(var/datum/automata_cell/C in T.autocells)
+				if(istype(C, type))
+					neighbors += C
+
+	return neighbors
+
+// Create a new cell in the given direction
+// Obviously override this if you want custom propagation,
+// but I figured this is pretty useful as a basic propagation function
+/datum/automata_cell/proc/propagate(dir)
+	if(!dir)
+		return
+
+	var/turf/T = get_step(in_turf, dir)
+	if(QDELETED(T))
+		return
+
+	// Create the new cell
+	var/datum/automata_cell/C = new type(T)
+	return C
+
+// Update the state of this cell
+/datum/automata_cell/proc/update_state(list/turf/neighbors)
+	// just fucking DIE
+	qdel(src)
+
+/*
+	Cellular automaton explosions!
+
+	Often in life, you can't have what you wish for. This is one massive, huge,
+	gigantic, gaping exception. With this, you get EVERYTHING you wish for.
+
+	This thing is AWESOME. It's made with super simple rules, and it still produces
+	highly complex explosions because it's simply emergent behavior from the rules.
+	If that didn't amaze you (it should), this also means the code is SUPER short,
+	and because cellular automata is handled by a subsystem, this doesn't cause
+	lagspikes at all.
+
+	Enough nerd enthusiasm about this. Here's how it actually works:
+
+		1. You start the explosion off with a given power
+
+		2. The explosion begins to propagate outwards in all 8 directions
+
+		3. Each time the explosion propagates, it loses power_falloff power
+
+		4. Each time the explosion propagates, atoms in the tile the explosion is in
+		may reduce the power of the explosion by their explosive resistance
+
+	That's it. There are some special rules, though, namely:
+
+		* If the explosion occurred in a wall, the wave is strengthened
+		with power *= reflection_multiplier and reflected back in the
+		direction it came from
+
+		* If two explosions meet, they will either merge into an amplified
+		or weakened explosion
+*/
+
+#define EXPLOSION_FALLOFF_SHAPE_LINEAR 0
+#define EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL  1
+#define EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL_HALF 2
+
+/datum/automata_cell/explosion
+	// Explosions only spread outwards and don't need to know their neighbors to propagate properly
+	neighbor_type = NEIGHBORS_NONE
+
+	// Power of the explosion at this cell
+	var/power = 0
+	// How much will the power drop off when the explosion propagates?
+	var/power_falloff = 20
+	// Falloff shape is used to determines whether or not the falloff will change during the explosion traveling.
+	var/falloff_shape = EXPLOSION_FALLOFF_SHAPE_LINEAR
+	// How much power does the explosion gain (or lose) by bouncing off walls?
+	var/reflection_power_multiplier = 0.4
+
+	//Diagonal cells have a small delay when branching off from a non-diagonal cell. This helps the explosion look circular
+	var/delay = 0
+
+	// Which direction is the explosion traveling?
+	// Note that this will be null for the epicenter
+	var/direction = null
+
+	// Whether or not the explosion should merge with other explosions
+	var/should_merge = TRUE
+
+	// For stat tracking and logging purposes
+	var/datum/cause_data/explosion_cause_data
+
+	// Workaround to account for the fact that this is subsystemized
+	// See on_turf_entered
+	var/list/atom/exploded_atoms = list()
+
+	var/obj/effect/particle_effect/shockwave/shockwave = null
+
+// If we're on a fake z teleport, teleport over
+/datum/automata_cell/explosion/birth()
+	shockwave = new(in_turf)
+
+	var/obj/effect/step_trigger/teleporter_vector/V = locate() in in_turf
+	if(!V)
+		return
+
+	var/turf/new_turf = locate(in_turf.x + V.vector_x, in_turf.y + V.vector_y, in_turf.z)
+	transfer_turf(new_turf)
+
+/datum/automata_cell/explosion/death()
+	if(shockwave)
+		qdel(shockwave)
+
+// Compare directions. If the other explosion is traveling in the same direction,
+// the explosion is amplified. If not, it's weakened
+/datum/automata_cell/explosion/merge(datum/automata_cell/explosion/E)
+	// Non-merging explosions take priority
+	if(!should_merge)
+		return TRUE
+
+	// The strongest of the two explosions should survive the merge
+	// This prevents a weaker explosion merging with a strong one,
+	// the strong one removing all the weaker one's power and just killing the explosion
+	var/is_stronger = (power >= E.power)
+	var/datum/automata_cell/explosion/survivor = is_stronger ? src : E
+	var/datum/automata_cell/explosion/dying = is_stronger ? E : src
+
+	// Two epicenters merging, or a new epicenter merging with a traveling wave
+	if((!survivor.direction && !dying.direction) || (survivor.direction && !dying.direction))
+		survivor.power += dying.power
+
+	// A traveling wave hitting the epicenter weakens it
+	if(!survivor.direction && dying.direction)
+		survivor.power -= dying.power
+
+	// Two traveling waves meeting each other
+	// Note that we don't care about waves traveling perpendicularly to us
+	// I.e. they do nothing
+
+	// Two waves traveling the same direction amplifies the explosion
+	if(survivor.direction == dying.direction)
+		survivor.power += dying.power
+
+	// Two waves travling towards each other weakens the explosion
+	if(survivor.direction == global.reverse_dir[dying.direction])
+		survivor.power -= dying.power
+
+	return is_stronger
+
+// Get a list of all directions the explosion should propagate to before dying
+/datum/automata_cell/explosion/proc/get_propagation_dirs(reflected)
+	var/list/propagation_dirs = list()
+
+	// If the cell is the epicenter, propagate in all directions
+	if(isnull(direction))
+		return global.alldirs
+
+	var/dir = reflected ? global.reverse_dir[direction] : direction
+
+	if(dir in global.cardinal)
+		propagation_dirs += list(dir, turn(dir, 45), turn(dir, -45))
+	else
+		propagation_dirs += dir
+
+	return propagation_dirs
+
+// If you need to set vars on the new cell other than the basic ones
+/datum/automata_cell/explosion/proc/setup_new_cell(datum/automata_cell/explosion/E)
+	if(E.shockwave)
+		E.shockwave.alpha = E.power
+	return
+
+/datum/automata_cell/explosion/update_state(list/turf/neighbors)
+	if(delay > 0)
+		delay--
+		return
+	// The resistance here will affect the damage taken and the falloff in the propagated explosion
+	var/resistance = max(0, in_turf.explosive_resistance)
+	for(var/atom/A in in_turf)
+		resistance += max(0, A.explosive_resistance)
+
+	// Blow stuff up
+	if(istype(in_turf, /turf/simulated/floor))
+		var/turf/simulated/floor/F = in_turf
+		F.break_tile()
+	//INVOKE_ASYNC(in_turf, TYPE_PROC_REF(/atom, ex_act), EXPLODE_HEAVY, direction)
+	for(var/atom/A in in_turf)
+		if(A in exploded_atoms)
+			continue
+		if(A.gc_destroyed)
+			continue
+		if(istype(A, /obj/machinery/door/firedoor))
+			continue
+		EX_ACT(A, EXPLODE_HEAVY)
+		//INVOKE_ASYNC(A, TYPE_PROC_REF(/atom, ex_act), EXPLODE_HEAVY, direction)
+		exploded_atoms += A
+
+	var/reflected = FALSE
+
+	// Epicenter is inside a wall if direction is null.
+	// Prevent it from slurping the entire explosion
+	if(!isnull(direction))
+		// Bounce off the wall in the opposite direction, don't keep phasing through it
+		// Notice that since we do this after the ex_act()s,
+		// explosions will not bounce if they destroy a wall!
+		if(power < resistance)
+			reflected = TRUE
+			power *= reflection_power_multiplier
+		else
+			power -= resistance
+
+	if(power <= 0)
+		qdel(src)
+		return
+
+	// Propagate the explosion
+	var/list/to_spread = get_propagation_dirs(reflected)
+	for(var/dir in to_spread)
+		// Diagonals are longer, that should be reflected in the power falloff
+		var/dir_falloff = 1
+		if(dir in global.cornerdirs)
+			dir_falloff = 1.414
+
+		if(isnull(direction))
+			dir_falloff = 0
+
+		var/new_power = power - (power_falloff * dir_falloff)
+
+		// Explosion is too weak to continue
+		if(new_power <= 0)
+			continue
+
+		var/new_falloff = power_falloff
+		// Handle our falloff function.
+		switch(falloff_shape)
+			if(EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL)
+				new_falloff += new_falloff * dir_falloff
+			if(EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL_HALF)
+				new_falloff += (new_falloff*0.5) * dir_falloff
+
+		var/datum/automata_cell/explosion/E = propagate(dir)
+		if(E)
+			E.power = new_power
+			E.power_falloff = new_falloff
+			E.falloff_shape = falloff_shape
+
+			// Set the direction the explosion is traveling in
+			E.direction = dir
+			//Diagonal cells have a small delay when branching off the center. This helps the explosion look circular
+			if(!direction && (dir in global.cornerdirs))
+				E.delay = 1
+
+			setup_new_cell(E)
+
+	// We've done our duty, now die pls
+	qdel(src)
+
+/*
+The issue is that between the cell being birthed and the cell processing,
+someone could potentially move through the cell unharmed.
+
+To prevent that, we track all atoms that enter the explosion cell's turf
+and blow them up immediately once they do.
+
+When the cell processes, we simply don't blow up atoms that were tracked
+as having entered the turf.
+*/
+
+/datum/automata_cell/explosion/proc/on_turf_entered(atom/movable/A)
+	// Once is enough
+	if(A in exploded_atoms)
+		return
+
+	exploded_atoms += A
+
+	// Note that we don't want to make it a directed ex_act because
+	// it could toss them back and make them get hit by the explosion again
+	if(A.gc_destroyed)
+		return
+
+	INVOKE_ASYNC(A, TYPE_PROC_REF(/atom, ex_act), EXPLODE_HEAVY, null)
+
+// I'll admit most of the code from here on out is basically just copypasta from DOREC
+#define EXPLOSION_MAX_POWER 5000
+// Spawns a cellular automaton of an explosion
+/proc/cell_explosion(turf/epicenter, power, falloff, falloff_shape = EXPLOSION_FALLOFF_SHAPE_LINEAR, direction)
+	if(!istype(epicenter))
+		epicenter = get_turf(epicenter)
+
+	if(!epicenter)
+		return
+
+	falloff = max(falloff, power/100)
+
+	//msg_admin_attack("Explosion with Power: [power], Falloff: [falloff], Shape: [falloff_shape] in [epicenter.loc.name] ([epicenter.x],[epicenter.y],[epicenter.z]).", epicenter.x, epicenter.y, epicenter.z)
+
+	playsound(epicenter, pick(SOUNDIN_EXPLOSION_ECHO), 100, 1, round(power^2,1))
+
+	if(power >= 300) //Make BIG BOOMS
+		playsound(epicenter, "bigboom", 80, 1, max(round(power,1),7))
+	else
+		playsound(epicenter, "explosion", 90, 1, max(round(power,1),7))
+
+	var/datum/automata_cell/explosion/E = new /datum/automata_cell/explosion(epicenter)
+	if(power > EXPLOSION_MAX_POWER)
+		log_debug("exploded with force of [power]. Overriding to capacity of [EXPLOSION_MAX_POWER].")
+		power = EXPLOSION_MAX_POWER
+
+	// something went wrong :(
+	if(QDELETED(E))
+		return
+
+	E.power = power
+	E.power_falloff = falloff
+	E.falloff_shape = falloff_shape
+	E.direction = direction
+
+	if(power >= 100) // powerful explosions send out some special effects
+		epicenter = get_turf(epicenter) // the ex_acts might have changed the epicenter
+		//create_shrapnel(epicenter, rand(5,9), , ,/datum/ammo/bullet/shrapnel/light/effect/ver1, explosion_cause_data)
+		//create_shrapnel(epicenter, rand(5,9), , ,/datum/ammo/bullet/shrapnel/light/effect/ver2, explosion_cause_data)
+
+/obj/effect/particle_effect/shockwave
+	name = "shockwave"
+	icon = 'icons/effects/effects.dmi'
+	icon_state = "smoke"
+	anchored = TRUE
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	layer = FLY_LAYER
+
+/* Simple object type, calls a proc when "stepped" on by something */
+
+/obj/effect/step_trigger/teleporter_vector
+	var/vector_x = 0 //Teleportation vector
+	var/vector_y = 0
+	var/vector_z = 0
+	affect_ghosts = 1
+
+/obj/effect/step_trigger/teleporter_vector/Trigger(atom/movable/A)
+	if(A && A.loc)
+		var/lx = A.x
+		var/ly = A.y
+		var/target = locate(A.x + vector_x, A.y + vector_y, A.z)
+		//var/target_dir = get_dir(A, target)
+
+		if(istype(A,/mob))
+			var/mob/AM = A
+			sleep(AM.movement_delay() + 0.4) //Make the transition as seamless as possible
+
+		if(!Adjacent(A, locate(lx, ly, A.z))) //If the subject has moved too quickly, abort - this prevents double jumping
+			return
+
+		for(var/mob/M in target) //If the target location is obstructed, abort
+			if(!M.CanPass(A, target))
+				return
+
+		A.x += vector_x
+		A.y += vector_y
+		A.z += vector_z
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 SUBSYSTEM_DEF(explosions)
 	name = "Explosions"
@@ -455,5 +979,5 @@ SUBSYSTEM_DEF(explosions)
 				continue
 			EX_ACT(movable_thing, EXPLODE_LIGHT)
 		cost_low_mov_atom = MC_AVERAGE(cost_low_mov_atom, TICK_DELTA_TO_MS(TICK_USAGE_REAL - timer))
-	
+
 	currentpart = SSEXPLOSIONS_TURFS
