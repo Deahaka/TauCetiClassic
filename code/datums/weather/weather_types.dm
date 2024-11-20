@@ -229,6 +229,9 @@
 
 	frequency.post_signal(src, status_signal)
 
+/datum/weather/rad_storm/total
+	name = "total radiation storm"
+	protected_areas = list()
 
 /datum/weather/acid_rain
 	name = "acid rain"

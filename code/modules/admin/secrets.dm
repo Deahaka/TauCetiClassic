@@ -101,6 +101,7 @@
 					<A href='?src=\ref[src];secretsfun=fakeguns'>Make all items look like guns</A><BR>
 					<A href='?src=\ref[src];secretsfun=floorlava'>The floor is lava! (DANGEROUS: extremely lame)</A><BR>
 					<A href='?src=\ref[src];secretsfun=advanceddarkness'>Advanced darkness! (DANGEROUS: extremely dark)</A><BR>
+					<A href='?src=\ref[src];secretsfun=totalradstrom'>Total RadStorm! (DANGEROUS: all station irradiate)</A><BR>
 					"}
 				if(check_rights(R_VAREDIT, 0))
 					dat += "<A href='?src=\ref[src];secretsadmin=mass_sleep'>Put everyone to sleep</A><BR>"
@@ -412,6 +413,10 @@
 		// Advanced darkness! (DANGEROUS: extremely dark)
 		if("advanceddarkness")
 			SSweather.run_weather("advanced darkness", ZTRAIT_STATION)
+		if("totalradstrom")
+			var/datum/announcement/centcomm/anomaly/radstorm/total/announcement = new()
+			announcement.play()
+			SSweather.run_weather("total radiation storm", ZTRAIT_STATION)
 		// Trigger a Virus Outbreak
 		if("virus")
 			feedback_inc("admin_secrets_fun_used",1)

@@ -18,6 +18,12 @@
 			"Всему экипажу станции срочно укрыться в технических туннелях станции. "
 	sound = "radiation"
 
+/datum/announcement/centcomm/anomaly/radstorm/total
+	name = "Anomaly: Radiation Belt"
+	message = "Станция приближается к зоне с экстремально высоким уровнем радиации. " + \
+			"Всему экипажу станции срочно эвакуироваться со станции. "
+	sound = "radiation"
+
 /datum/announcement/centcomm/anomaly/radstorm_passed
 	name = "Anomaly: Radiation Belt Passed"
 	message = "Станция прошла опасную зону. " + \
