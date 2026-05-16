@@ -1,3 +1,322 @@
+#define VISION_PREPARE_TIME 30 MINUTES
+#define VISION_CHOP_MONEY_NEEDED_TO_SAVE 10000
+#define CHOP_VISION_TYPE "CHOP VISION"
+#define VISION_OBJECTIVE_LOSS FALSE
+#define VISION_OBJECTIVE_WIN TRUE
+
+var/global/list/places_to_spawn_chop_vision = global.communications_list
+var/global/list/intention_visions_types
+var/global/list/intentional_vision_owner_by_type
+var/global/list/successed_victorious_visions
+var/global/list/previous_laws_vision_types
+var/global/list/active_law_papers
+var/global/list/active_chop_brains
+
+/proc/get_job_name_by_stamp_type(stamp_type)
+	if(stamp_type == /obj/item/weapon/stamp/cap) . = JOB_CAPTAIN
+	else if(stamp_type == /obj/item/weapon/stamp/hop) . = JOB_HOP
+	else if(stamp_type == /obj/item/weapon/stamp/sec/hos) . = JOB_HOS
+	else if(stamp_type == /obj/item/weapon/stamp/eng/ce) . = JOB_CHIEF_ENGINEER
+	else if(stamp_type == /obj/item/weapon/stamp/sci/rd) . = JOB_RD
+	else if(stamp_type == /obj/item/weapon/stamp/med/cmo) . = JOB_CMO
+	else . = null
+
+/datum/job/qm/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, alt_title)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	if(!islist(global.active_chop_brains))
+		global.active_chop_brains = list()
+	global.active_chop_brains += H.mind
+
+/datum/job/cargo_tech/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, alt_title)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	if(!islist(global.active_chop_brains))
+		global.active_chop_brains = list()
+	global.active_chop_brains += H.mind
+
+/datum/job/mining/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, alt_title)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	if(!islist(global.active_chop_brains))
+		global.active_chop_brains = list()
+	global.active_chop_brains += H.mind
+
+/datum/job/recycler/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, alt_title)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	if(!islist(global.active_chop_brains))
+		global.active_chop_brains = list()
+	global.active_chop_brains += H.mind
+
+/obj/item/weapon/paper/weapons_for_gruztorg
+	name = "Разрешение на работу ЧОП"
+	info = {"<h1 style="text-align: center;"Разрешение на работу ЧОП></h1>
+	<p>Данный документ подтверждает, что держатель документа (далее Сотрудник) является сотрудником охранного предприятия Карго.</p>
+	<p>Сотрудник имеет право на владение и использование пистолета W&J PP и/или флешера и средств личной защиты в целях охраны активов Карго.</p>
+	<p>При неправомерном применении спецсредств офицеры охраны имеют право изъять пистолет, флешер и средства личной защиты.</p>"}
+
+/obj/item/weapon/paper/weapons_for_gruztorg/atom_init()
+	. = ..()
+	var/obj/item/weapon/stamp/centcomm/S = new
+	S.stamp_paper(src, "CentComm Logistics Department")
+
+/proc/equip_cargo_industries_by_arms(mob/user_reciever)
+	var/mob/living/carbon/human/H = user_reciever
+	H.equip_or_collect(new /obj/item/clothing/suit/armor/vest(H), SLOT_WEAR_SUIT)
+	H.equip_or_collect(new /obj/item/weapon/paper/weapons_for_gruztorg(H), SLOT_IN_BACKPACK)
+	if(H.get_species() != HUMAN)
+		H.equip_or_collect(new /obj/item/device/flash(H), SLOT_IN_BACKPACK)
+	else
+		H.equip_or_collect(new /obj/item/weapon/gun/projectile/automatic/pistol/wjpp(H), SLOT_S_STORE)
+		H.equip_or_collect(new /obj/item/ammo_box/magazine/wjpp/rubber(H), SLOT_IN_BACKPACK)
+		H.equip_or_collect(new /obj/item/ammo_box/magazine/wjpp/rubber(H), SLOT_IN_BACKPACK)
+
+/datum/outfit/job/qm/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	equip_cargo_industries_by_arms(H)
+
+/datum/outfit/job/cargo_tech/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	equip_cargo_industries_by_arms(H)
+
+/datum/outfit/job/mining/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	equip_cargo_industries_by_arms(H)
+
+/datum/outfit/job/recycler/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		return
+	equip_cargo_industries_by_arms(H)
+
+/proc/is_vision_succession_true(type)
+	if(type != CHOP_VISION_TYPE)
+		return VISION_OBJECTIVE_LOSS
+	//Case 1
+	if(global.cargo_account.money < VISION_CHOP_MONEY_NEEDED_TO_SAVE)
+		return VISION_OBJECTIVE_LOSS
+	//Case 2
+	if(!islist(global.active_chop_brains))
+		return VISION_OBJECTIVE_LOSS
+	var/mob/chop_holder = null
+	for(var/datum/mind/M as anything in global.active_chop_brains)
+		if(QDELETED(M))
+			continue
+		if(iscarbon(M.current))
+			var/mob/living/carbon/C = M.current
+			if(C.restrained())
+				continue
+		var/turf/location = get_turf(M.current.loc)
+		if(!location)
+			continue
+		var/area/check_area = location.loc
+		if(!istype(check_area, /area/shuttle/escape/centcom))
+			continue
+		chop_holder = M.current
+	//at least 1 man for keeping law true
+	if(isnull(chop_holder))
+		return VISION_OBJECTIVE_LOSS
+	// law paper needs stamps or signs of heads to decline law
+	for(var/obj/item/weapon/paper/active_law_paper/P as anything in global.active_law_papers)
+		if(QDELETED(P))
+			continue
+		if(P.is_law_decline_fullfill())
+			return VISION_OBJECTIVE_LOSS
+
+	return VISION_OBJECTIVE_WIN
+
+/proc/is_completion_of_vision_success(type)
+	if(type != CHOP_VISION_TYPE)
+		return VISION_OBJECTIVE_LOSS
+	//copypaste Escape on the shuttle objective
+	var/mob/living/carbon/human/owner_vision = intentional_vision_owner_by_type[CHOP_VISION_TYPE]
+	var/datum/mind/owner = owner_vision.mind
+	if(QDELETED(owner_vision))
+		return VISION_OBJECTIVE_LOSS
+	if(issilicon(owner.current))
+		return VISION_OBJECTIVE_LOSS
+	if(!owner.current || owner.current.stat == DEAD)
+		return VISION_OBJECTIVE_LOSS
+	var/turf/location = get_turf(owner.current.loc)
+	if(!location)
+		return VISION_OBJECTIVE_LOSS
+	if(iscarbon(owner.current))
+		var/mob/living/carbon/C = owner.current
+		if(C.restrained())
+			return VISION_OBJECTIVE_LOSS
+	var/area/check_area = location.loc
+	if(!istype(check_area, /area/shuttle/escape/centcom))
+		return VISION_OBJECTIVE_LOSS
+	var/obj/item/weapon/paper/vision/V = locate(/obj/item/weapon/paper/vision, get_turf(owner_vision))
+	if(isnull(V))
+		return VISION_OBJECTIVE_LOSS
+	if(type != V.type_of_vision)
+		return VISION_OBJECTIVE_LOSS
+	return VISION_OBJECTIVE_WIN
+
+//for ticker
+/proc/try_success_vision()
+	if(islist(global.intention_visions_types))
+		for(var/declared_vision in global.intention_visions_types)
+			var/we_get_goal = global.is_completion_of_vision_success(declared_vision)
+			if(!we_get_goal)
+				continue
+			if(!islist(global.successed_victorious_visions))
+				global.successed_victorious_visions = list()
+			global.successed_victorious_visions += declared_vision
+
+	if(islist(global.previous_laws_vision_types))
+		for(var/already_active_law_vision in global.previous_laws_vision_types)
+			var/we_get_goal = global.is_vision_succession_true(already_active_law_vision)
+			if(we_get_goal)
+				continue
+			global.previous_laws_vision_types -= already_active_law_vision
+
+/proc/chop_declared(mob/user, obj/item/weapon/paper/vision/task)
+	to_chat(world, "[task.type_of_vision] ACTIVATE BY [user]")
+
+	if(!islist(global.intention_visions_types))
+		global.intention_visions_types = list()
+	global.intention_visions_types += task.type_of_vision
+
+	if(!islist(global.intentional_vision_owner_by_type))
+		global.intentional_vision_owner_by_type[0] = list()
+	global.intentional_vision_owner_by_type[task.type_of_vision] = user
+
+/obj/item/weapon/paper/vision
+	name = "Vision of CHOP"
+	var/type_of_vision = CHOP_VISION_TYPE
+
+/obj/item/weapon/paper/vision/proc/called_chop(mob/user)
+
+	global.chop_declared(user, src)
+
+/obj/item/weapon/paper/active_law_paper
+	var/rejecting_votes_needed = 3
+	var/list/disaproves_headstuffs_job_list = list()
+	var/list/decline_stamp_headstuffs_type_list = list()
+	var/static/list/acceptable_type_stamps_for_declining = list(/obj/item/weapon/stamp/cap,
+																/obj/item/weapon/stamp/hop,
+																/obj/item/weapon/stamp/sec/hos,
+																/obj/item/weapon/stamp/eng/ce,
+																/obj/item/weapon/stamp/sci/rd,
+																/obj/item/weapon/stamp/med/cmo)
+
+/obj/item/weapon/paper/active_law_paper/proc/make_disaprove_to_vision(mob/user)
+	var/datum/job/user_job = SSjob.GetJob(user.mind.assigned_role)
+	if(isnull(user_job))
+		return
+	if(!(user_job in SSjob.heads_positions))
+		return
+	if(user_job in disaproves_headstuffs_job_list)
+		return
+	disaproves_headstuffs_job_list += user_job
+
+/obj/item/weapon/paper/active_law_paper/proc/make_decline_by_stamp_to_vision(mob/user, obj/item/weapon/stamp/used_stamp)
+	if(acceptable_type_stamps_for_declining.len > 1)
+		if(!(used_stamp.type in acceptable_type_stamps_for_declining))
+			return
+	if(used_stamp.type in decline_stamp_headstuffs_type_list)
+		return
+	decline_stamp_headstuffs_type_list += used_stamp.type
+
+/obj/item/weapon/paper/active_law_paper/proc/is_law_decline_fullfill()
+	if(disaproves_headstuffs_job_list.len > rejecting_votes_needed)
+		return TRUE
+	if(decline_stamp_headstuffs_type_list.len > rejecting_votes_needed)
+		return TRUE
+	//check sum of signs and stamps on vision
+	var/list/rejected_votes_from_headstuff_by_jobname = list()
+	for(var/stamp in decline_stamp_headstuffs_type_list)
+		var/jobname_string = get_job_name_by_stamp_type(stamp)
+		if(isnull(jobname_string))
+			continue
+		rejected_votes_from_headstuff_by_jobname += jobname_string
+
+	for(var/datum/job/job as anything in disaproves_headstuffs_job_list)
+		if(job.title in rejected_votes_from_headstuff_by_jobname)
+			continue
+		rejected_votes_from_headstuff_by_jobname += job.title
+
+	if(rejected_votes_from_headstuff_by_jobname >= rejecting_votes_needed)
+		return TRUE
+	return FALSE
+
+
+/obj/machinery/computer/communications/proc/get_info_about_visions()
+	if(!islist(global.previous_laws_vision_types))
+		return
+	for(var/law in global.previous_laws_vision_types)
+		if(law == CHOP_VISION_TYPE)
+			var/obj/item/weapon/paper/active_law_paper/P = new(loc)
+			P.info = "Chop on the station"
+			//P.update_icon()
+			global.active_law_papers += P
+
+/obj/machinery/computer/communications/atom_init()
+	. = ..()
+	get_info_about_visions()
+
+/obj/machinery/computer/communications/attackby(obj/item/W, mob/user, params)
+	. = ..()
+	ask_chop(user)
+
+/obj/machinery/computer/communications/proc/ask_chop(mob/user)
+	if(world.has_round_finished())
+		to_chat(user, "Its round end")
+		return
+	if(world.is_round_preparing())
+		to_chat(user, "No round yet")
+		return
+	if(SSshuttle.online || SSshuttle.location != 0)
+		to_chat(user, "Шаттл используется")
+		return
+	if(world.time > VISION_PREPARE_TIME)
+		to_chat(user, "COUNCIL ON THE VACATION")
+		return
+	//show everyone copy of vision
+	for(var/obj/machinery/computer/communications/C in global.places_to_spawn_chop_vision)
+		if(C.stat & (BROKEN | NOPOWER))
+			continue
+		var/obj/item/weapon/paper/vision/V = new(C.loc)
+		V.info = "CHOP IS CALLED"
+		//V.update_icon()
+	//let him cook with original paper
+	var/obj/item/weapon/paper/vision/P = new(user.loc)
+	user.put_in_hands(P)
+	P.called_chop(user)
+	P.info = "CHOP IS CALLED"
+	//P.update_icon()
+
+
+
 // The communications computer
 /obj/machinery/computer/communications
 	name = "Communications Console"
