@@ -1,5 +1,6 @@
 #define VISION_PREPARE_TIME 30 MINUTES
 #define VISION_CHOP_MONEY_NEEDED_TO_SAVE 10000
+#define VISION_CHOP_REJECTING_VOTES_NEEDED 3
 #define CHOP_VISION_TYPE "CHOP VISION"
 #define VISION_OBJECTIVE_LOSS FALSE
 #define VISION_OBJECTIVE_WIN TRUE
@@ -129,27 +130,37 @@ var/global/list/active_chop_brains
 	for(var/datum/mind/M as anything in global.active_chop_brains)
 		if(QDELETED(M))
 			continue
-		if(iscarbon(M.current))
-			var/mob/living/carbon/C = M.current
-			if(C.restrained())
-				continue
-		var/turf/location = get_turf(M.current.loc)
+		if(!iscarbon(M.current))
+			continue
+		var/mob/living/carbon/C = M.current
+		if(C.restrained())
+			continue
+		var/turf/location = get_turf(C)
+		//var/turf/location = get_turf(M.current.loc)
 		if(!location)
 			continue
-		var/area/check_area = location.loc
+		var/area/check_area = get_area(location)
 		if(!istype(check_area, /area/shuttle/escape/centcom))
 			continue
 		chop_holder = M.current
 	//at least 1 man for keeping law true
 	if(isnull(chop_holder))
 		return VISION_OBJECTIVE_LOSS
+	//Case 3
 	// law paper needs stamps or signs of heads to decline law
+	var/law_paper_decline_scored = FALSE
 	for(var/obj/item/weapon/paper/active_law_paper/P as anything in global.active_law_papers)
 		if(QDELETED(P))
 			continue
 		if(P.is_law_decline_fullfill())
+			law_paper_decline_scored = TRUE
+	//survived security means no needs for chop on the station
+	if(law_paper_decline_scored)
+		//Case 3.2
+		var/survived_cargo = SSticker.calculated_survive_cargo_holders
+		var/survived_security = SSticker.calculated_survive_security
+		if(survived_cargo < survived_security)
 			return VISION_OBJECTIVE_LOSS
-
 	return VISION_OBJECTIVE_WIN
 
 /proc/is_completion_of_vision_success(type)
@@ -158,23 +169,30 @@ var/global/list/active_chop_brains
 	//copypaste Escape on the shuttle objective
 	var/mob/living/carbon/human/owner_vision = intentional_vision_owner_by_type[CHOP_VISION_TYPE]
 	var/datum/mind/owner = owner_vision.mind
+	//here is null owner mind
 	if(QDELETED(owner_vision))
 		return VISION_OBJECTIVE_LOSS
-	if(issilicon(owner.current))
+	if(issilicon(owner_vision))
 		return VISION_OBJECTIVE_LOSS
-	if(!owner.current || owner.current.stat == DEAD)
+	if(!owner_vision || owner_vision.stat == DEAD)
 		return VISION_OBJECTIVE_LOSS
-	var/turf/location = get_turf(owner.current.loc)
+	var/turf/location = get_turf(owner_vision.loc)
 	if(!location)
 		return VISION_OBJECTIVE_LOSS
-	if(iscarbon(owner.current))
-		var/mob/living/carbon/C = owner.current
+	if(iscarbon(owner_vision))
+		var/mob/living/carbon/C = owner_vision
 		if(C.restrained())
 			return VISION_OBJECTIVE_LOSS
 	var/area/check_area = location.loc
 	if(!istype(check_area, /area/shuttle/escape/centcom))
 		return VISION_OBJECTIVE_LOSS
-	var/obj/item/weapon/paper/vision/V = locate(/obj/item/weapon/paper/vision, get_turf(owner_vision))
+	var/obj/item/weapon/paper/vision/V
+	for(var/i in owner_vision.GetAllContents())
+		if(istype(i, /obj/item/weapon/paper/vision))
+			var/obj/item/weapon/paper/vision/vision = i
+			if(type != vision.type_of_vision)
+				continue
+			V = i
 	if(isnull(V))
 		return VISION_OBJECTIVE_LOSS
 	if(type != V.type_of_vision)
@@ -200,14 +218,13 @@ var/global/list/active_chop_brains
 			global.previous_laws_vision_types -= already_active_law_vision
 
 /proc/chop_declared(mob/user, obj/item/weapon/paper/vision/task)
-	to_chat(world, "[task.type_of_vision] ACTIVATE BY [user]")
 
 	if(!islist(global.intention_visions_types))
 		global.intention_visions_types = list()
 	global.intention_visions_types += task.type_of_vision
 
 	if(!islist(global.intentional_vision_owner_by_type))
-		global.intentional_vision_owner_by_type[0] = list()
+		global.intentional_vision_owner_by_type = list()
 	global.intentional_vision_owner_by_type[task.type_of_vision] = user
 
 /obj/item/weapon/paper/vision
@@ -215,11 +232,19 @@ var/global/list/active_chop_brains
 	var/type_of_vision = CHOP_VISION_TYPE
 
 /obj/item/weapon/paper/vision/proc/called_chop(mob/user)
-
 	global.chop_declared(user, src)
 
+/obj/item/weapon/paper/active_law_paper/attackby(obj/item/I, mob/user, params)
+	. = ..()
+	if(!istype(I, /obj/item/weapon/stamp))
+		return
+	//Check if we stamped this in parent or failed
+	if(stamped && (I.type in stamped))
+		make_decline_by_stamp_to_vision(I, user)
+		//to do make this work and sign too
+
 /obj/item/weapon/paper/active_law_paper
-	var/rejecting_votes_needed = 3
+	var/rejecting_votes_needed = VISION_CHOP_REJECTING_VOTES_NEEDED
 	var/list/disaproves_headstuffs_job_list = list()
 	var/list/decline_stamp_headstuffs_type_list = list()
 	var/static/list/acceptable_type_stamps_for_declining = list(/obj/item/weapon/stamp/cap,
@@ -229,6 +254,7 @@ var/global/list/active_chop_brains
 																/obj/item/weapon/stamp/sci/rd,
 																/obj/item/weapon/stamp/med/cmo)
 
+//todo make this all works
 /obj/item/weapon/paper/active_law_paper/proc/make_disaprove_to_vision(mob/user)
 	var/datum/job/user_job = SSjob.GetJob(user.mind.assigned_role)
 	if(isnull(user_job))
@@ -239,6 +265,7 @@ var/global/list/active_chop_brains
 		return
 	disaproves_headstuffs_job_list += user_job
 
+//todo make this all works see stamp_paper()
 /obj/item/weapon/paper/active_law_paper/proc/make_decline_by_stamp_to_vision(mob/user, obj/item/weapon/stamp/used_stamp)
 	if(acceptable_type_stamps_for_declining.len > 1)
 		if(!(used_stamp.type in acceptable_type_stamps_for_declining))
@@ -265,7 +292,7 @@ var/global/list/active_chop_brains
 			continue
 		rejected_votes_from_headstuff_by_jobname += job.title
 
-	if(rejected_votes_from_headstuff_by_jobname >= rejecting_votes_needed)
+	if(rejected_votes_from_headstuff_by_jobname.len >= rejecting_votes_needed)
 		return TRUE
 	return FALSE
 
@@ -277,7 +304,9 @@ var/global/list/active_chop_brains
 		if(law == CHOP_VISION_TYPE)
 			var/obj/item/weapon/paper/active_law_paper/P = new(loc)
 			P.info = "Chop on the station"
-			//P.update_icon()
+			P.update_icon()
+			if(!islist(global.active_law_papers))
+				global.active_law_papers = list()
 			global.active_law_papers += P
 
 /obj/machinery/computer/communications/atom_init()
@@ -287,6 +316,8 @@ var/global/list/active_chop_brains
 /obj/machinery/computer/communications/attackby(obj/item/W, mob/user, params)
 	. = ..()
 	ask_chop(user)
+	//to do do not ask chop if already chop
+	global.cargo_account.money = 100000
 
 /obj/machinery/computer/communications/proc/ask_chop(mob/user)
 	if(world.has_round_finished())
@@ -307,13 +338,13 @@ var/global/list/active_chop_brains
 			continue
 		var/obj/item/weapon/paper/vision/V = new(C.loc)
 		V.info = "CHOP IS CALLED"
-		//V.update_icon()
+		V.update_icon()
 	//let him cook with original paper
 	var/obj/item/weapon/paper/vision/P = new(user.loc)
 	user.put_in_hands(P)
 	P.called_chop(user)
 	P.info = "CHOP IS CALLED"
-	//P.update_icon()
+	P.update_icon()
 
 
 

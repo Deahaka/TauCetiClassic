@@ -291,3 +291,13 @@ SUBSYSTEM_DEF(economy)
 			data[++data.len] = list("name" = person["name"], "rank" = person["rank"], "salary" = MA.owner_salary, "account" = person["account"])
 
 	return data	// --> list(real_name, assignment, salary, account_number)
+
+/datum/controller/subsystem/economy/proc/setup_cargo_divident_rate()
+	var/apply_divident_rate = 0.1
+	. = apply_divident_rate
+	if(!islist(global.previous_laws_vision_types))
+		return
+	//move define higher and delete commenting
+	//if(!(CHOP_VISION_TYPE in global.previous_laws_vision_types))
+		//return
+	apply_divident_rate /= 4

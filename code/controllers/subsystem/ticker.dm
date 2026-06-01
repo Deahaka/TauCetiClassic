@@ -45,6 +45,8 @@ SUBSYSTEM_DEF(ticker)
 	var/hacked_apcs = 0 //check the amount of hacked apcs either by a malf ai, or a traitor
 	var/Malf_announce_stage = 0//Used for announcement
 	var/is_lowpop = FALSE
+	var/calculated_survive_security = 0 // used for vision mechanic
+	var/calculated_survive_cargo_holders = 0 // used for vision mechanic
 
 	var/force_end = FALSE // set TRUE to forse round end and show credits
 
@@ -118,7 +120,9 @@ SUBSYSTEM_DEF(ticker)
 
 			var/mode_finished = mode.check_finished() || (SSshuttle.location == SHUTTLE_AT_CENTCOM && SSshuttle.alert == 1) || force_end
 			if(!explosion_in_progress && mode_finished && !SSrating.voting)
-
+				//to do if players > 20
+				//check this before your mind get teleported to arena
+				try_success_vision()
 				load_arena()
 
 				if(!SSrating.already_started)
@@ -559,23 +563,39 @@ SUBSYSTEM_DEF(ticker)
 
 	//Player status report
 	for(var/mob/Player as anything in mob_list)
-		if(Player.mind && !isnewplayer(Player))
-			if(Player.stat != DEAD && !isbrain(Player))
-				num_survivors++
-				if(station_evacuated) //If the shuttle has already left the station
-					var/turf/playerTurf = get_turf(Player)
-					// For some reason, player can be in null
-					if(!playerTurf)
-						continue
-					if(!is_centcom_level(playerTurf.z))
-						to_chat(Player, "<font color='blue'><b>Вам удалось выжить, но вы были брошены на [station_name_ru()]...</b></FONT>")
-					else
-						num_escapees++
-						to_chat(Player, "<font color='green'><b>Вам удалось пережить события на [station_name_ru()] как [Player.real_name].</b></FONT>")
-				else
-					to_chat(Player, "<font color='green'><b>Вам удалось пережить события на [station_name_ru()] как [Player.real_name].</b></FONT>")
-			else
-				to_chat(Player, "<font color='red'><b>Вы не пережили событий, произошедших на [station_name_ru()]...</b></FONT>")
+		if(isnewplayer(Player))
+			continue
+		if(!Player.mind)
+			continue
+		if(Player.stat == DEAD)
+			to_chat(Player, "<font color='red'><b>Вы не пережили событий, произошедших на [station_name_ru()]...</b></FONT>")
+			continue
+		if(isbrain(Player))
+			to_chat(Player, "<font color='red'><b>Вы не пережили событий, произошедших на [station_name_ru()]...</b></FONT>")
+			continue
+		num_survivors++
+
+		var/datum/job/job = SSjob.GetJob(Player.mind.assigned_role)
+		if(DEP_SECURITY in job.departments)
+			calculated_survive_security++
+
+		var/datum/money_account/MA = get_account(Player.mind.get_key_memory(MEM_ACCOUNT_NUMBER))
+		if(MA && MA.stocks["Cargo"] >= 1)
+			calculated_survive_cargo_holders++
+
+		if(!station_evacuated)
+			to_chat(Player, "<font color='green'><b>Вам удалось пережить события на [station_name_ru()] как [Player.real_name].</b></FONT>")
+			continue
+		//If the shuttle has already left the station
+		var/turf/playerTurf = get_turf(Player)
+		// For some reason, player can be in null
+		if(!playerTurf)
+			continue
+		if(!is_centcom_level(playerTurf.z))
+			to_chat(Player, "<font color='blue'><b>Вам удалось выжить, но вы были брошены на [station_name_ru()]...</b></FONT>")
+		else
+			num_escapees++
+			to_chat(Player, "<font color='green'><b>Вам удалось пережить события на [station_name_ru()] как [Player.real_name].</b></FONT>")
 
 	//Round statistics report
 	var/datum/station_state/end_state = new /datum/station_state()

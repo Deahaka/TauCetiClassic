@@ -118,7 +118,8 @@ var/global/initial_station_money = 7500
 	// todo: cargo department exists only in accounts, wold be better to separate them already
 	create_department_account("Cargo")
 	cargo_account = department_accounts["Cargo"]
-	SSeconomy.set_dividend_rate("Cargo", 0.1)
+	var/apply_divident_rate = SSeconomy.setup_cargo_divident_rate()
+	SSeconomy.set_dividend_rate("Cargo", apply_divident_rate)
 	// Enough stock to supply 2 cargos of employees with it. TO-DO: calculate it programatically depending on map changes to jobs?
 	SSeconomy.issue_founding_stock(cargo_account.account_number, "Cargo", 260)
 	// Pay out the insurance to everyone completely.
